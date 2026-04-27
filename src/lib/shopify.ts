@@ -704,3 +704,64 @@ export async function searchProducts(searchTerm: string): Promise<any[]> {
     images: product.images?.edges.map((e: any) => e.node) || []
   }));
 }
+
+export async function customerUpdate(accessToken: string, customer: { firstName?: string; lastName?: string; email?: string }) {
+  const query = `
+    mutation customerUpdate($customerAccessToken: String!, $customer: CustomerUpdateInput!) {
+      customerUpdate(customerAccessToken: $customerAccessToken, customer: $customer) {
+        customer {
+          firstName
+          lastName
+          email
+        }
+        customerUserErrors {
+          code
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const response = await shopifyFetch({
+    query,
+    variables: {
+      customerAccessToken: accessToken,
+      customer,
+    },
+  });
+
+  return response.data?.customerUpdate;
+}
+
+export async function customerAddressCreate(accessToken: string, address: any) {
+  const query = `
+    mutation customerAddressCreate($customerAccessToken: String!, $address: MailingAddressInput!) {
+      customerAddressCreate(customerAccessToken: $customerAccessToken, address: $address) {
+        customerAddress {
+          id
+          address1
+          city
+          country
+          zip
+        }
+        customerUserErrors {
+          code
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const response = await shopifyFetch({
+    query,
+    variables: {
+      customerAccessToken: accessToken,
+      address,
+    },
+  });
+
+  return response.data?.customerAddressCreate;
+}
+

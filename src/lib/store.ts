@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { type Product } from './data';
-import { customerLogin, getCustomer, getProductsByIds, customerCreate, customerRecover } from './shopify';
+import { customerLogin, getCustomer, getProductsByIds, customerCreate, customerRecover, customerUpdate } from './shopify';
 import { signOut } from 'next-auth/react';
 
 export type CartItem = {
@@ -37,6 +37,7 @@ interface CartState {
   logout: () => void;
   syncData: (merge?: boolean) => Promise<void>;
   saveData: () => Promise<void>;
+  updateUser: (firstName: string, lastName: string) => Promise<{ success: boolean; error?: string }>;
 
   wishlistPopupProduct: Product | null;
   clearWishlistPopup: () => void;
@@ -186,6 +187,35 @@ export const useCartStore = create<CartState>()(
           }
 
           return { success: true };
+        } catch (error) {
+          set({ isSyncing: false });
+          return { success: false, error: "An unexpected error occurred" };
+        }
+      },
+      
+      updateUser: async (firstName, lastName) => {
+        const { accessToken, user } = get();
+        if (!accessToken || !user) return { success: false, error: "Not authenticated" };
+        
+        set({ isSyncing: true });
+        try {
+          const result = await customerUpdate(accessToken, { firstName, lastName });
+          if (result?.customer) {
+            set({
+              user: {
+                ...user,
+                firstName: result.customer.firstName,
+                lastName: result.customer.lastName
+              },
+              isSyncing: false
+            });
+            return { success: true };
+          }
+          set({ isSyncing: false });
+          return {
+            success: false,
+            error: result?.customerUserErrors?.[0]?.message || "Failed to update profile"
+          };
         } catch (error) {
           set({ isSyncing: false });
           return { success: false, error: "An unexpected error occurred" };
