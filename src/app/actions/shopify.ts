@@ -94,14 +94,16 @@ export async function adminAddAddress(email: string, address: any) {
       });
 
       const createData = await createResponse.json();
+      console.log("Customer Create Response:", JSON.stringify(createData, null, 2));
       customerId = createData.data?.customerCreate?.customer?.id;
 
       if (!customerId) {
         return { 
           success: false, 
-          error: createData.data?.customerCreate?.userErrors[0]?.message || "Could not link your Google account to Shopify." 
+          error: createData.data?.customerCreate?.userErrors[0]?.message || `Could not link account. Response: ${JSON.stringify(createData)}` 
         };
       }
+
     }
 
     // 3. Add address to customer
