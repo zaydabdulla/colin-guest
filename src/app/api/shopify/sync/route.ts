@@ -23,6 +23,8 @@ async function getShopifySyncData(customerId: string) {
     });
 
     const data = await response.json();
+    console.log("Shopify Sync GET Response:", JSON.stringify(data, null, 2));
+    
     const wishlist = data.data?.customer?.wishlist?.value;
     const cart = data.data?.customer?.cart?.value;
 
@@ -67,6 +69,7 @@ async function saveShopifySyncData(customerId: string, wishlist: any[], cart: an
     });
 
     const data = await response.json();
+    console.log("Shopify Sync POST Response:", JSON.stringify(data, null, 2));
     return data.data?.customerUpdate?.userErrors?.length === 0;
   } catch (error) {
     console.error("Shopify Sync POST Error:", error);
