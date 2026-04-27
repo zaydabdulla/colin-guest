@@ -4,7 +4,8 @@ const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
 const clientId = process.env.SHOPIFY_CLIENT_ID;
 const clientSecret = process.env.SHOPIFY_CLIENT_SECRET;
 
-async function getAdminToken() {
+export async function getAdminToken() {
+
   if (!domain || !clientId || !clientSecret) {
     throw new Error("Shopify Admin credentials missing in .env.local");
   }
