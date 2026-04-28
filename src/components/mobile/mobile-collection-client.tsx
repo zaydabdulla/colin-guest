@@ -145,7 +145,7 @@ export function MobileCollectionClient({
   }, [displayProducts, selectedFilters, sortOption]);
 
   return (
-    <div className="min-h-screen bg-[#f4f4f4] pt-24 pb-32 w-full overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-[#f4f4f4] pt-20 pb-32 w-full overflow-x-hidden font-sans">
       
       <FilterDrawer 
         isOpen={isFilterOpen}
@@ -169,21 +169,24 @@ export function MobileCollectionClient({
         </h1>
 
         {/* Torch & Filters */}
-        <div className="flex items-center gap-5 relative z-[100]">
+        <div className="flex items-center gap-2 relative z-[110]">
           <button 
             type="button"
-            onClick={() => setIsDense(!isDense)}
-            className="transition-opacity flex items-center justify-center p-4 -m-4 active:opacity-50"
+            onClick={() => {
+              console.log("Torch clicked");
+              setIsDense(!isDense);
+            }}
+            className="flex items-center justify-center p-3 transition-opacity active:opacity-50 pointer-events-auto"
             aria-label="Toggle grid density"
           >
             <div className="relative">
-              <svg width="22" height="11" viewBox="0 0 24 12" fill="none" className="text-black -scale-x-100 relative z-10">
-                <rect x="2" y="4" width="12" height="4" rx="1" stroke="currentColor" strokeWidth="1.5"/>
-                <path d="M14 3.5V8.5L20 10V2L14 3.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
-                {isDense && <circle cx="20" cy="6" r="1" fill="currentColor" />}
+              <svg width="20" height="10" viewBox="0 0 24 12" fill="none" className="text-black -scale-x-100 relative z-10">
+                <rect x="2" y="4" width="12" height="4" rx="1" stroke="currentColor" strokeWidth="2"/>
+                <path d="M14 3.5V8.5L20 10V2L14 3.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+                {isDense && <circle cx="20" cy="6" r="1.5" fill="currentColor" />}
               </svg>
               {isDense && (
-                <div className="absolute top-1/2 -right-4 -translate-y-1/2 w-8 h-8 bg-yellow-400/50 rounded-full blur-xl pointer-events-none z-0 scale-x-150 animate-pulse" />
+                <div className="absolute top-1/2 -right-4 -translate-y-1/2 w-8 h-8 bg-yellow-400/30 rounded-full blur-xl pointer-events-none z-0 scale-x-150 animate-pulse" />
               )}
             </div>
           </button>
@@ -191,8 +194,11 @@ export function MobileCollectionClient({
           
           <button 
             type="button"
-            onClick={() => setIsFilterOpen(true)}
-            className="text-[12px] font-medium text-black py-4 px-4 -m-4 active:opacity-50 transition-opacity"
+            onClick={() => {
+              console.log("Filter clicked");
+              setIsFilterOpen(true);
+            }}
+            className="text-[11px] font-bold text-black px-3 py-2 transition-opacity active:opacity-40 pointer-events-auto bg-black/5 rounded-full"
           >
             Advance Filters
           </button>

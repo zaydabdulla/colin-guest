@@ -36,60 +36,66 @@ export function MobileNavbar() {
   return (
     <>
       {/* 1. TOP ICONS: Menu (Left), Logo (Center), Wishlist + Cart (Right) */}
-      <div className="fixed top-0 left-0 right-0 z-40 bg-white shadow-sm h-[75px]">
-        <div className="flex items-center justify-between px-5 h-full text-black relative">
-
-
-
-          {/* Left: Hamburger Menu */}
-          <button
-            onClick={() => setIsOpen(true)}
-            className="p-1 pointer-events-auto transition-transform active:scale-95"
-            aria-label="Open Menu"
-          >
-            <Menu className="w-7 h-7" strokeWidth={1.5} />
-          </button>
-
-          {/* Center: Logo Image */}
-          <Link
-            href="/"
-            className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-auto h-[50px] w-[100px]"
-          >
-            <Image
-              src="/logo_cg.png"
-              alt="COLIN GUEST"
-              fill
-              className="object-contain object-center scale-[4.0] pointer-events-none"
-              priority
-            />
-          </Link>
-
-
-
-
-
-          {/* Right: Wishlist & Cart */}
-          <div className="flex items-center gap-4 pointer-events-auto">
+      <div className="fixed top-0 left-0 right-0 z-[100] bg-white shadow-sm h-[60px] safe-top px-5">
+        <div className="grid grid-cols-3 items-center h-full text-black w-full relative">
+          
+          {/* Left: Hamburger Menu (1/3 width) */}
+          <div className="flex justify-start">
             <button
-              onClick={openWishlist}
-              className="relative transition-transform active:scale-95"
+              onClick={() => setIsOpen(true)}
+              className="p-3 -ml-3 pointer-events-auto transition-transform active:scale-95"
+              aria-label="Open Menu"
+            >
+              <Menu className="w-6 h-6" strokeWidth={1.2} />
+            </button>
+          </div>
+
+          {/* Center: Logo Image (1/3 width) */}
+          <div className="flex justify-center items-center h-full">
+            <Link
+              href="/"
+              className="pointer-events-auto flex items-center justify-center h-[40px] w-full max-w-[80px] relative"
+            >
+              <div className="relative w-full h-full overflow-visible">
+                <Image
+                  src="/logo_cg.png"
+                  alt="COLIN GUEST"
+                  fill
+                  className="object-contain object-center scale-[4.0] pointer-events-none"
+                  priority
+                />
+              </div>
+            </Link>
+          </div>
+
+          {/* Right: Wishlist & Cart (1/3 width) */}
+          <div className="flex justify-end items-center gap-3">
+            <button
+              onClick={() => {
+                console.log("Wishlist opened");
+                openWishlist();
+              }}
+              className="relative p-2 transition-transform active:scale-95 pointer-events-auto"
               aria-label="Wishlist"
             >
-              <Bookmark className="w-6 h-6" strokeWidth={1.5} />
+              <Bookmark className="w-5.5 h-5.5" strokeWidth={1.2} />
               {wishlistItems.length > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-white text-[9px] font-bold text-black">
+                <span className="absolute top-0.5 right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-black text-[8px] font-bold text-white border border-white">
                   {wishlistItems.length}
                 </span>
               )}
             </button>
             <button
-              onClick={openCart}
-              className="relative transition-transform active:scale-95"
+              onClick={() => {
+                console.log("Cart opened");
+                openCart();
+              }}
+              className="relative p-2 -mr-2 transition-transform active:scale-95 pointer-events-auto"
               aria-label="Cart"
             >
-              <ShoppingBag className="w-6 h-6" strokeWidth={1.5} />
+              <ShoppingBag className="w-5.5 h-5.5" strokeWidth={1.2} />
               {totalItems > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-white text-[9px] font-bold text-black">
+                <span className="absolute top-0.5 right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-black text-[8px] font-bold text-white border border-white">
                   {totalItems}
                 </span>
               )}
@@ -125,8 +131,8 @@ export function MobileNavbar() {
 
       {/* 3. FULL SCREEN MENU DRAWER */}
       <div
-        className={`fixed inset-0 z-[60] bg-white transition-transform duration-500 ease-in-out ${
-          isOpen ? "translate-x-0 flex flex-col" : "-translate-x-full hidden"
+        className={`fixed inset-0 z-[150] bg-white transition-transform duration-500 ease-in-out ${
+          isOpen ? "translate-x-0 flex flex-col pointer-events-auto" : "-translate-x-full hidden pointer-events-none"
         }`}
       >
         <div className="flex flex-col h-full relative">

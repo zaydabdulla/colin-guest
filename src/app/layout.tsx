@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartDrawer } from "@/components/cart-drawer";
+import { WishlistDrawer } from "@/components/mobile/mobile-wishlist-drawer";
 import { WishlistPopup } from "@/components/wishlist-popup";
 import { Navbar } from "@/components/navbar";
 import { MobileNavbar } from "@/components/mobile/mobile-navbar";
@@ -41,17 +42,17 @@ export default function RootLayout({
     >
       <body className="antialiased">
         <SessionProvider>
-          <SmoothScroll>
-            {/* Desktop Navbar - Strict Isolation */}
-            <div className="hidden md:block">
-              <Navbar />
-            </div>
-            
-            {/* Mobile Navbar - Strict Isolation */}
-            <div className="block md:hidden">
-              <MobileNavbar />
-            </div>
+          {/* Desktop Navbar - Strict Isolation */}
+          <div className="hidden md:block">
+            <Navbar />
+          </div>
+          
+          {/* Mobile Navbar - Strict Isolation */}
+          <div className="block md:hidden">
+            <MobileNavbar />
+          </div>
 
+          <SmoothScroll>
             {children}
             
             {/* Footer Isolation if needed, but for now wrap the desktop footer */}
@@ -61,6 +62,9 @@ export default function RootLayout({
           </SmoothScroll>
 
           <CartDrawer />
+          <div className="block md:hidden">
+            <WishlistDrawer />
+          </div>
           <WishlistPopup />
           <SyncManager />
         </SessionProvider>
