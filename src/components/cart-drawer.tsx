@@ -34,20 +34,24 @@ export function CartDrawer() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 h-full w-full sm:max-w-[420px] bg-[#e5e7eb] z-[401] flex flex-col shadow-2xl"
+            className="fixed top-[calc(64px+env(safe-area-inset-top,0px))] right-0 h-[calc(100%-64px-env(safe-area-inset-top,0px))] md:top-0 md:h-full w-[75%] md:w-[420px] bg-[#e5e7eb] z-[401] flex flex-col shadow-2xl rounded-l-[16px] overflow-hidden"
           >
-             {/* Header matches reference perfectly */}
-             <div className="flex items-center justify-between px-5 py-4 text-black bg-[#e5e7eb]">
-                <span className="text-[13px] font-medium tracking-wide leading-none">Your cart</span>
-                <button onClick={closeCart} className="hover:opacity-60 transition-opacity">
+             {/* Header matches desktop grey aesthetic */}
+             <div className="flex items-center gap-4 px-6 py-5 text-black bg-[#e5e7eb]">
+                <button 
+                  onClick={closeCart} 
+                  className="p-1 -ml-1 hover:opacity-60 transition-opacity flex items-center justify-center"
+                  aria-label="Close cart"
+                >
                   <X size={18} strokeWidth={1} />
                 </button>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.2em] leading-none">Your Cart</span>
              </div>
 
-             {/* Overflow floating card */}
-             <div className="flex-1 bg-white text-black rounded-t-xl overflow-hidden flex flex-col relative shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+             {/* White body area - straightened as requested */}
+             <div className="flex-1 bg-white text-black overflow-hidden flex flex-col relative">
                
-               <div className="flex-1 overflow-y-auto px-5 pt-5 pb-32">
+               <div className="flex-1 overflow-y-auto px-5 pt-6 pb-32">
                   {items.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-black/20">
                        <ShoppingBag size={48} strokeWidth={1} className="mb-4 drop-shadow-sm" />
