@@ -39,7 +39,7 @@ export function MobileProductClient({ product, suggestedProducts }: MobileProduc
   const isAllSoldOut = !product.variants || product.variants.length === 0 || product.variants.every(v => !v.availableForSale);
 
   return (
-    <div className="bg-white min-h-screen pb-[200px] pt-[75px] relative">
+    <div className="bg-white min-h-screen pb-[200px] pt-[75px] relative overflow-x-hidden w-full max-w-full">
       {/* 1. Image Slider */}
       <div className="w-full aspect-[4/5] bg-[#f4f4f4] overflow-hidden relative">
         <div 

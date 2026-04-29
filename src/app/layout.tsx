@@ -40,7 +40,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="antialiased">
+      <body className="antialiased overflow-x-hidden max-w-full w-full">
         <SessionProvider>
           {/* Desktop Navbar - Strict Isolation */}
           <div className="hidden md:block">

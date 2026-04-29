@@ -341,7 +341,7 @@ export function MobileNavbar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className={`w-full rounded-full py-2.5 px-6 text-[15px] outline-none border-none transition-all font-medium ${
+                className={`w-full rounded-full py-2.5 px-6 text-[16px] outline-none border-none transition-all font-medium ${
                   isAboutPage 
                     ? "bg-white/10 text-white placeholder:text-white/20 focus:bg-white/20" 
                     : "bg-[#f4f4f5] text-black placeholder:text-black/30"
