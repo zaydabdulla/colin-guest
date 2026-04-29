@@ -186,7 +186,14 @@ export function MobileCollectionClient({
                 {isDense && <circle cx="20" cy="6" r="1.5" fill="currentColor" />}
               </svg>
               {isDense && (
-                <div className="absolute top-1/2 -right-4 -translate-y-1/2 w-8 h-8 bg-yellow-400/30 rounded-full blur-xl pointer-events-none z-0 scale-x-150 animate-pulse" />
+                <div className="absolute top-1/2 -left-6 -translate-y-1/2 w-12 h-8 pointer-events-none z-0 overflow-visible">
+                  {/* Core white light */}
+                  <div className="absolute inset-0 bg-white/40 blur-md rounded-full scale-x-150" />
+                  {/* Vibrant color glow (Purple/Blue/Orange) */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/40 via-purple-500/40 to-orange-500/40 blur-xl rounded-full scale-x-200 animate-pulse" />
+                  {/* Beam effect */}
+                  <div className="absolute top-1/2 -left-4 -translate-y-1/2 w-16 h-10 bg-blue-400/20 blur-2xl rounded-full rotate-[-10deg]" />
+                </div>
               )}
             </div>
           </button>
