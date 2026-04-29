@@ -145,8 +145,7 @@ export function MobileCollectionClient({
   }, [displayProducts, selectedFilters, sortOption]);
 
   return (
-    <div className="min-h-screen bg-[#f4f4f4] pt-20 pb-32 w-full overflow-x-hidden font-sans">
-      
+    <div className="min-h-screen bg-white font-sans">
       <FilterDrawer 
         isOpen={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
@@ -161,54 +160,50 @@ export function MobileCollectionClient({
         onSortChange={setSortOption}
       />
 
-      {/* Top Row: Category Title & Controls */}
-      <div className="flex items-center justify-between px-4 mb-6">
-        {/* Category Title */}
-        <h1 className="text-[16px] font-semibold text-black">
-          {formattedCategory.charAt(0).toUpperCase() + formattedCategory.slice(1).toLowerCase()}
-        </h1>
-
-        {/* Torch & Filters */}
-        <div className="flex items-center gap-2 relative z-[110]">
-          <button 
-            type="button"
-            onClick={() => {
-              console.log("Torch clicked");
-              setIsDense(!isDense);
-            }}
-            className="flex items-center justify-center p-3 transition-opacity active:opacity-50 pointer-events-auto"
-            aria-label="Toggle grid density"
-          >
-            <div className="relative">
-              <svg width="20" height="10" viewBox="0 0 24 12" fill="none" className="text-black -scale-x-100 relative z-10">
-                <rect x="2" y="4" width="12" height="4" rx="1" stroke="currentColor" strokeWidth="2"/>
-                <path d="M14 3.5V8.5L20 10V2L14 3.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-                {isDense && <circle cx="20" cy="6" r="1.5" fill="currentColor" />}
-              </svg>
-              {isDense && (
-                <div className="absolute top-1/2 -right-4 -translate-y-1/2 w-8 h-8 bg-yellow-400/30 rounded-full blur-xl pointer-events-none z-0 scale-x-150 animate-pulse" />
-              )}
-            </div>
-          </button>
-
+      <div className="pt-[50px] bg-white">
+        <div className="bg-[#f4f4f4] rounded-t-[32px] min-h-[calc(100vh-50px)] w-full overflow-x-hidden pb-32 shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
           
-          <button 
-            type="button"
-            onClick={() => {
-              console.log("Filter clicked");
-              setIsFilterOpen(true);
-            }}
-            className="text-[11px] font-bold text-black px-3 py-2 transition-opacity active:opacity-40 pointer-events-auto bg-black/5 rounded-full"
-          >
-            Advance Filters
-          </button>
-        </div>
+          <div className="pt-10 flex flex-col gap-6">
+            
+            {/* Header Section - Maintaining padding for text */}
+            <div className="px-6 flex justify-between items-center w-full">
+              <h1 className="text-[12px] font-bold uppercase tracking-widest text-black/80">
+                {formattedCategory}
+              </h1>
 
-      </div>
+              {/* Torch and Filter Buttons */}
+              <div className="flex items-center gap-1.5 relative z-[110]">
+                <button 
+                  type="button"
+                  onClick={() => setIsDense(!isDense)}
+                  className="flex items-center justify-center p-2 transition-opacity active:opacity-50 pointer-events-auto"
+                  aria-label="Toggle grid density"
+                >
+                  <div className="relative">
+                    <svg width="18" height="9" viewBox="0 0 24 12" fill="none" className="text-black -scale-x-100 relative z-10">
+                      <rect x="2" y="4" width="12" height="4" rx="1" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M14 3.5V8.5L20 10V2L14 3.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+                      {isDense && <circle cx="20" cy="6" r="1.5" fill="currentColor" />}
+                    </svg>
+                    {isDense && (
+                      <div className="absolute top-1/2 -right-4 -translate-y-1/2 w-8 h-8 bg-yellow-400/30 rounded-full blur-xl pointer-events-none z-0 scale-x-150 animate-pulse" />
+                    )}
+                  </div>
+                </button>
+
+                <button 
+                  type="button"
+                  onClick={() => setIsFilterOpen(true)}
+                  className="text-[10px] font-bold uppercase tracking-wider text-black px-3.5 py-2 transition-opacity active:opacity-40 pointer-events-auto bg-black/5 rounded-full"
+                >
+                  Advance Filters
+                </button>
+              </div>
+            </div>
 
 
-      {/* Category Pills (Horizontal Scroll) */}
-      <div className="flex overflow-x-auto hide-scrollbar gap-1.5 px-4 mb-5">
+      {/* Category Pills (Horizontal Scroll) - Maintaining padding for alignment */}
+      <div className="flex overflow-x-auto hide-scrollbar gap-1.5 px-6 mb-5">
         {categories.map((c) => {
           const isActive = category.toLowerCase() === c.handle.toLowerCase();
           return (
@@ -228,8 +223,8 @@ export function MobileCollectionClient({
       </div>
 
 
-      {/* Dynamic Product Grid */}
-      <div className={`grid gap-1.5 px-1.5 w-full transition-all duration-500 ease-in-out ${isDense ? 'grid-cols-3' : 'grid-cols-2'}`}>
+      {/* Dynamic Product Grid - Edge-to-Edge */}
+      <div className={`grid gap-1 px-0 w-full transition-all duration-500 ease-in-out ${isDense ? 'grid-cols-4' : 'grid-cols-2'}`}>
         {filteredAndSortedProducts.map((product) => (
           <div key={`mobile-grid-${product.id}`} className="flex flex-col group relative">
             
@@ -246,36 +241,38 @@ export function MobileCollectionClient({
                 />
                 
                 {/* Bookmark Ribbon Icon */}
-                <button className="absolute top-2 right-2 z-10 text-white drop-shadow-sm transition-opacity">
-                  <Bookmark className="w-6 h-6 fill-white stroke-none" />
+                <button className="absolute top-1.5 right-1.5 z-10 text-white drop-shadow-sm transition-opacity">
+                  <Bookmark className={`${isDense ? 'w-4 h-4' : 'w-6 h-6'} fill-white stroke-none`} />
                 </button>
 
                 {/* Pagination Dots */}
-                <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10">
-                  <div className="w-1.5 h-1.5 rounded-full bg-white opacity-90"></div>
-                  <div className="w-1.5 h-1.5 rounded-full bg-white/40"></div>
-                  <div className="w-1.5 h-1.5 rounded-full bg-white/40"></div>
-                </div>
+                {!isDense && (
+                  <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10">
+                    <div className="w-1.5 h-1.5 rounded-full bg-white opacity-90"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-white/40"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-white/40"></div>
+                  </div>
+                )}
               </div>
             </Link>
 
-            {/* Product Details (Title, +, Price) */}
-            <div className={`flex flex-col px-1 ${isDense ? 'pb-2' : 'pb-4'}`}>
+            {!isDense && (
+              <div className="flex flex-col px-1 pb-4">
               <div className="flex justify-between items-start w-full">
                 <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full pr-1">
-                  <h3 className={`${isDense ? 'text-[8px]' : 'text-[11px]'} font-bold uppercase tracking-widest text-black/90 leading-tight line-clamp-2`}>
+                    <h3 className="text-[11px] font-bold uppercase tracking-widest text-black/90 leading-snug">
                     {product.title}
                   </h3>
                 </Link>
                 <button className="text-gray-500 hover:text-black shrink-0 mt-[-2px]">
-                  <Plus className={`${isDense ? 'w-3 h-3' : 'w-4 h-4'}`} strokeWidth={1.5} />
+                    <Plus className="w-4 h-4" strokeWidth={1.5} />
                 </button>
               </div>
-              <p className={`${isDense ? 'text-[7px]' : 'text-[10px]'} font-medium tracking-wider text-gray-500 mt-0.5`}>
-                {product.price}
-              </p>
-
-            </div>
+                <p className="text-[10px] font-medium tracking-wider text-gray-500 mt-1">
+                  {product.price}
+                </p>
+              </div>
+            )}
 
           </div>
         ))}
@@ -297,6 +294,9 @@ export function MobileCollectionClient({
           scrollbar-width: none;
         }
       `}} />
+        </div>
+      </div>
     </div>
+  </div>
   );
 }

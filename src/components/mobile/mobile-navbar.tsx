@@ -36,17 +36,20 @@ export function MobileNavbar() {
   return (
     <>
       {/* 1. TOP ICONS: Menu (Left), Logo (Center), Wishlist + Cart (Right) */}
-      <div className="fixed top-0 left-0 right-0 z-[500] bg-white shadow-sm h-[60px] safe-top px-5">
+      <div className="fixed top-0 left-0 right-0 z-[500] bg-white h-[50px] safe-top px-5">
         <div className="grid grid-cols-3 items-center h-full text-black w-full relative">
           
-          {/* Left: Hamburger Menu (1/3 width) */}
+          {/* Left: 2-Line Menu Icon */}
           <div className="flex justify-start">
             <button
               onClick={() => setIsOpen(true)}
               className="p-3 -ml-3 pointer-events-auto transition-transform active:scale-95"
               aria-label="Open Menu"
             >
-              <Menu className="w-6 h-6" strokeWidth={1.2} />
+              <div className="w-4.5 flex flex-col gap-[2.5px]">
+                <div className="h-[1.2px] w-full bg-black"></div>
+                <div className="h-[1.2px] w-2/3 bg-black"></div>
+              </div>
             </button>
           </div>
 
@@ -69,7 +72,7 @@ export function MobileNavbar() {
           </div>
 
           {/* Right: Wishlist & Cart (1/3 width) */}
-          <div className="flex justify-end items-center gap-3">
+          <div className="flex justify-end items-center gap-1">
             <button
               onClick={() => {
                 console.log("Wishlist opened");
@@ -80,7 +83,7 @@ export function MobileNavbar() {
             >
               <Bookmark className="w-5.5 h-5.5" strokeWidth={1.2} />
               {wishlistItems.length > 0 && (
-                <span className="absolute top-0.5 right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-black text-[8px] font-bold text-white border border-white">
+                <span className="absolute top-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-black text-[8px] font-bold text-white border border-white">
                   {wishlistItems.length}
                 </span>
               )}
@@ -90,12 +93,12 @@ export function MobileNavbar() {
                 console.log("Cart opened");
                 openCart();
               }}
-              className="relative p-2 -mr-2 transition-transform active:scale-95 pointer-events-auto"
+              className="relative p-2 transition-transform active:scale-95 pointer-events-auto"
               aria-label="Cart"
             >
               <ShoppingBag className="w-5.5 h-5.5" strokeWidth={1.2} />
               {totalItems > 0 && (
-                <span className="absolute top-0.5 right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-black text-[8px] font-bold text-white border border-white">
+                <span className="absolute top-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-black text-[8px] font-bold text-white border border-white">
                   {totalItems}
                 </span>
               )}
