@@ -234,7 +234,8 @@ export function MobileProductClient({ product, suggestedProducts }: MobileProduc
       {/* 6. You May Also Like */}
       <div className="mt-8 bg-white relative z-10">
         <h3 className="px-6 text-[10px] font-bold uppercase tracking-[0.3em] mb-6 text-black/30">You may also like</h3>
-        <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 no-scrollbar pb-8 -mx-6 px-6 scroll-smooth">
+        <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 no-scrollbar pb-8 -mx-6 scroll-smooth scroll-pl-6 scroll-pr-6">
+          <div className="flex-none w-6" /> {/* Leading spacer */}
           {suggestedProducts && suggestedProducts.length > 0 ? (
             suggestedProducts.map((suggested, i) => (
               <div key={suggested.id} className="min-w-[65vw] flex-shrink-0 snap-start">
@@ -246,6 +247,7 @@ export function MobileProductClient({ product, suggestedProducts }: MobileProduc
               No recommendations available
             </div>
           )}
+          <div className="flex-none w-6" /> {/* Trailing spacer */}
         </div>
       </div>
 
