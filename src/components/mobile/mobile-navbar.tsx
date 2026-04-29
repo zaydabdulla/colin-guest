@@ -109,8 +109,12 @@ export function MobileNavbar() {
   return (
     <>
       {/* 1. TOP ICONS: Menu (Left), Logo (Center), Wishlist + Cart (Right) */}
-      <div className="fixed top-0 left-0 right-0 z-[500] bg-white h-[64px] safe-top px-5">
-        <div className="grid grid-cols-3 items-center h-full text-black w-full relative">
+      <div className={`fixed top-0 left-0 right-0 z-[500] h-[64px] safe-top px-5 transition-colors duration-500 ${
+        isAboutPage ? "bg-transparent" : "bg-white"
+      }`}>
+        <div className={`grid grid-cols-3 items-center h-full w-full relative transition-colors duration-500 ${
+          isAboutPage ? "text-white" : "text-black"
+        }`}>
           
           {/* Left: 2-Line Menu Icon */}
           <div className="flex justify-start">
@@ -120,8 +124,8 @@ export function MobileNavbar() {
               aria-label="Open Menu"
             >
               <div className="w-4.5 flex flex-col gap-[2.5px]">
-                <div className="h-[1.2px] w-full bg-black"></div>
-                <div className="h-[1.2px] w-2/3 bg-black"></div>
+                <div className={`h-[1.2px] w-full ${isAboutPage ? "bg-white" : "bg-black"}`}></div>
+                <div className={`h-[1.2px] w-2/3 ${isAboutPage ? "bg-white" : "bg-black"}`}></div>
               </div>
             </button>
           </div>
@@ -132,7 +136,7 @@ export function MobileNavbar() {
               href="/"
               className="pointer-events-auto flex items-center justify-center h-[40px] w-full max-w-[100px] relative"
             >
-              <div className="relative w-full h-full overflow-visible">
+              <div className={`relative w-full h-full overflow-visible ${isAboutPage ? "invert brightness-[10]" : ""}`}>
                 <Image
                   src="/logo_cg.png"
                   alt="COLIN GUEST"
@@ -153,7 +157,9 @@ export function MobileNavbar() {
             >
               <Bookmark className="w-5.5 h-5.5" strokeWidth={1.2} />
               {wishlistItems.length > 0 && (
-                <span className="absolute top-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-black text-[8px] font-bold text-white border border-white">
+                <span className={`absolute top-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full text-[8px] font-bold border ${
+                  isAboutPage ? "bg-white text-black border-black" : "bg-black text-white border-white"
+                }`}>
                   {wishlistItems.length}
                 </span>
               )}
@@ -168,7 +174,9 @@ export function MobileNavbar() {
             >
               <ShoppingBag className="w-5.5 h-5.5" strokeWidth={1.2} />
               {totalItems > 0 && (
-                <span className="absolute top-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-black text-[8px] font-bold text-white border border-white">
+                <span className={`absolute top-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full text-[8px] font-bold border ${
+                  isAboutPage ? "bg-white text-black border-black" : "bg-black text-white border-white"
+                }`}>
                   {totalItems}
                 </span>
               )}
@@ -181,24 +189,24 @@ export function MobileNavbar() {
       {/* 2. BOTTOM FLOATING NAV AREA (Pill) */}
       <div className="fixed bottom-6 left-0 right-0 z-40 px-6 flex items-end justify-center pointer-events-none">
         {/* Glass Pill */}
-        <div className="pointer-events-auto flex items-center justify-between px-8 py-4 bg-white/20 backdrop-blur-lg backdrop-saturate-150 border border-white/20 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] w-full max-w-[280px] transition-all">
-          <Link href="/" className="text-black hover:opacity-70 transition-opacity">
-            <Home className="w-6 h-6" strokeWidth={1.5} />
+        <div className="pointer-events-auto flex items-center justify-between px-8 py-3.5 bg-white/25 backdrop-blur-xl backdrop-saturate-150 border border-white/50 rounded-full shadow-[0_0_0_1px_rgba(255,255,255,0.4),0_12px_40px_rgba(0,0,0,0.15)] w-full max-w-[280px] transition-all">
+          <Link href="/" className={`${pathname === "/" ? "text-black" : "text-black/40"} transition-colors active:scale-90`}>
+            <Home className="w-5.5 h-5.5" strokeWidth={1.5} />
           </Link>
 
-          <Link href="/collections/all" className="text-black hover:opacity-70 transition-opacity">
-            <Compass className="w-6 h-6" strokeWidth={1.5} />
+          <Link href="/collections/all" className={`${pathname.startsWith("/collections") ? "text-black" : "text-black/40"} transition-colors active:scale-90`}>
+            <Compass className="w-5.5 h-5.5" strokeWidth={1.5} />
           </Link>
 
           <button 
             onClick={() => setIsSearchOpen(true)}
-            className="text-black hover:opacity-70 transition-opacity"
+            className={`${isSearchOpen ? "text-black" : "text-black/40"} transition-colors active:scale-90`}
           >
-            <Search className="w-6 h-6" strokeWidth={1.5} />
+            <Search className="w-5.5 h-5.5" strokeWidth={1.5} />
           </button>
 
-          <Link href={isLoggedIn ? "/profile" : "/login"} className="text-black hover:opacity-70 transition-opacity">
-            <User className="w-6 h-6" strokeWidth={1.5} />
+          <Link href={isLoggedIn ? "/profile" : "/login"} className={`${pathname === "/profile" || pathname === "/login" ? "text-black" : "text-black/40"} transition-colors active:scale-90`}>
+            <User className="w-5.5 h-5.5" strokeWidth={1.5} />
           </Link>
         </div>
       </div>
@@ -253,7 +261,7 @@ export function MobileNavbar() {
 
       {/* 4. SEARCH OVERLAY */}
       {/* Backdrop */}
-      {isSearchOpen && (
+      {isSearchOpen && !isAboutPage && (
         <div 
           className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[590] transition-opacity duration-500"
           onClick={() => setIsSearchOpen(false)}
@@ -266,8 +274,10 @@ export function MobileNavbar() {
           y: isSearchOpen ? 0 : "-100%" 
         }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed top-0 left-0 right-0 z-[600] flex flex-col rounded-b-[24px] shadow-[0_10px_40px_rgba(0,0,0,0.12)] overflow-hidden ${
-          isAboutPage ? "bg-black/95 backdrop-blur-3xl" : "bg-white"
+        className={`fixed top-0 left-0 right-0 z-[600] flex flex-col rounded-b-[24px] overflow-hidden ${
+          isAboutPage 
+            ? "bg-transparent backdrop-blur-3xl border-none" 
+            : "bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)]"
         }`}
       >
         <div className="flex flex-col pt-[env(safe-area-inset-top,20px)] pb-10">
