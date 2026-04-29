@@ -270,15 +270,15 @@ export function MobileCollectionClient({
               <div className="flex flex-col px-1 pb-4">
               <div className="flex justify-between items-start w-full">
                 <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full pr-1">
-                    <h3 className="text-[10px] font-medium uppercase tracking-widest text-black/90 leading-snug">
+                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-black mb-0.5">
                     {product.title}
                   </h3>
                 </Link>
-                <button className="text-gray-500 hover:text-black shrink-0 mt-[-2px]">
+                <button className="text-black/40 hover:text-black shrink-0 mt-[-2px]">
                     <Plus className="w-4 h-4" strokeWidth={1.5} />
                 </button>
               </div>
-                <p className="text-[10px] font-medium tracking-wider text-gray-500 mt-1">
+                <p className="text-[10px] font-bold tracking-wider text-black/60">
                   {product.price}
                 </p>
               </div>

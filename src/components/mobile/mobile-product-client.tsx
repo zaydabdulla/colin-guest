@@ -70,34 +70,33 @@ export function MobileProductClient({ product, suggestedProducts }: MobileProduc
 
       {/* 2. Product Info Section */}
       <div className="px-6 pt-8 pb-6 bg-white relative z-10">
-        <div className="flex flex-col mb-2">
-          <h1 className="text-xl font-bold tracking-tight text-[#1a1a1a] mb-1">
+        <div className="flex justify-between items-start mb-1">
+          <h1 className="text-xl font-bold tracking-tight text-[#1a1a1a] flex-1 pr-4">
             {product.title}
           </h1>
-          <div className="flex justify-between items-center w-full">
-            <p className="text-sm font-semibold text-black/50 uppercase tracking-wide">
-              {product.price}
-            </p>
-            <div className="flex items-center gap-3">
-              <button 
-                type="button"
-                onClick={() => alert("Size Guide: " + (product.sizeGuide || "Standard fitting."))}
-                className="shrink-0 bg-[#f0f0f0] px-3 py-2 rounded-md text-[9px] font-extrabold text-black/60 uppercase tracking-wider active:bg-gray-200 transition-colors"
-              >
-                Size Guide
-              </button>
-              <button 
-                type="button"
-                onClick={() => toggleWishlist(product)}
-                className="p-1 active:opacity-50 transition-opacity"
-              >
-                <Bookmark 
-                  size={20} 
-                  className={`transition-colors pointer-events-none ${isWishlisted ? "fill-black text-black" : "text-black/20"}`} 
-                />
-              </button>
-            </div>
-          </div>
+          <button 
+            type="button"
+            onClick={() => alert("Size Guide: " + (product.sizeGuide || "Standard fitting."))}
+            className="text-[7px] font-black text-black/40 uppercase tracking-[0.2em] hover:text-black transition-colors pt-2 shrink-0"
+          >
+            Size Guide
+          </button>
+        </div>
+        
+        <div className="flex justify-between items-center mb-2">
+          <p className="text-sm font-semibold text-black/50 uppercase tracking-wide">
+            {product.price}
+          </p>
+          <button 
+            type="button"
+            onClick={() => toggleWishlist(product)}
+            className="active:opacity-50 transition-opacity"
+          >
+            <Bookmark 
+              size={18} 
+              className={`transition-colors pointer-events-none ${isWishlisted ? "fill-black text-black" : "text-black/20"}`} 
+            />
+          </button>
         </div>
 
         {/* 3. Size Selection */}
@@ -156,7 +155,7 @@ export function MobileProductClient({ product, suggestedProducts }: MobileProduc
             disabled={isAllSoldOut || !selectedSize}
             onClick={() => product && selectedSize && addToCart(product, selectedSize)}
             className={`w-full py-5 rounded-full border border-black text-[11px] font-black uppercase tracking-[0.2em] transition-all active:scale-[0.98] ${
-              isAllSoldOut || !selectedSize ? 'opacity-30 cursor-not-allowed' : 'bg-white text-black active:bg-gray-50'
+              isAllSoldOut || !selectedSize ? 'bg-black/5 text-black/40 border-black/10 cursor-not-allowed' : 'bg-white text-black active:bg-gray-50'
             }`}
           >
             {isAllSoldOut ? 'SOLD OUT' : 'ADD TO BAG'}
@@ -234,7 +233,7 @@ export function MobileProductClient({ product, suggestedProducts }: MobileProduc
 
       {/* 6. You May Also Like */}
       <div className="mt-8 bg-white relative z-10">
-        <h3 className="px-6 text-sm font-black uppercase tracking-widest mb-6">You may also like</h3>
+        <h3 className="px-6 text-[10px] font-bold uppercase tracking-[0.3em] mb-6 text-black/30">You may also like</h3>
         <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 no-scrollbar pb-8 -mx-6 px-6 scroll-smooth">
           {suggestedProducts && suggestedProducts.length > 0 ? (
             suggestedProducts.map((suggested, i) => (

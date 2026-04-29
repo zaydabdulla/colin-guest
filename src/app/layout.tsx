@@ -7,6 +7,7 @@ import { Navbar } from "@/components/navbar";
 import { MobileNavbar } from "@/components/mobile/mobile-navbar";
 
 import { Footer } from "@/components/footer";
+import { MobileFooter } from "@/components/mobile/mobile-footer";
 
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { SyncManager } from "@/components/sync-manager";
@@ -54,9 +55,14 @@ export default function RootLayout({
           <SmoothScroll>
             {children}
             
-            {/* Footer Isolation if needed, but for now wrap the desktop footer */}
+            {/* Desktop Footer */}
             <div className="hidden md:block">
               <Footer />
+            </div>
+
+            {/* Mobile Footer */}
+            <div className="block md:hidden">
+              <MobileFooter />
             </div>
           </SmoothScroll>
 

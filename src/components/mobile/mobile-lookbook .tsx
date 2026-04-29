@@ -6,17 +6,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/lib/data";
 
-interface MobileHomeClientProps {
+interface MobileLookbookProps {
   products: Product[];
 }
 
-export function MobileHomeClient({ products }: MobileHomeClientProps) {
+export default function MobileLookbook({ products }: MobileLookbookProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [vh, setVh] = useState("100vh");
 
   // Handle dynamic viewport height for mobile browsers
   useEffect(() => {
     const updateHeight = () => {
+      // Use dvh if supported, otherwise fallback to innerHeight
       if (window.CSS && window.CSS.supports("height", "100dvh")) {
         setVh("100dvh");
       } else {
@@ -36,18 +37,41 @@ export function MobileHomeClient({ products }: MobileHomeClientProps) {
   });
 
   // Responsive split: Tall screens get more image space, short screens preserve text space
+  // We use a CSS variable for consistency between the scroll layer and image layer
   const splitRatio = "min(65%, calc(100% - 180px))";
 
   return (
     <div 
-      className="fixed inset-0 bg-[#f9f9fa] flex flex-col overflow-hidden font-sans select-none z-0"
+      className="fixed inset-0 bg-[#f9f9fa] flex flex-col overflow-hidden font-sans select-none"
       style={{ height: vh }}
     >
-      {/* 
-        Note: The header is handled by the global MobileNavbar in layout.tsx.
-        We add a spacer to account for its 64px height.
-      */}
-      <div className="h-[64px] w-full shrink-0" />
+      {/* Header - Adaptive padding for notches */}
+      <header className="h-[64px] pt-[env(safe-area-inset-top,0px)] flex items-center justify-between px-6 shrink-0 bg-[#f9f9fa] border-b border-black/[0.03] z-30 box-content">
+        <div className="w-10 flex items-center justify-start">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+            <path d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+        </div>
+
+        <div className="relative h-5 w-28">
+          <Image
+            src="/logo_cg.png"
+            alt="COLIN GUEST"
+            fill
+            className="object-contain"
+            priority
+          />
+        </div>
+
+        <div className="flex items-center gap-5 w-20 justify-end">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+            <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+        </div>
+      </header>
 
       {/* Main Container - Refactored for global scroll and responsiveness */}
       <div className="flex-1 relative overflow-hidden">
@@ -109,7 +133,7 @@ export function MobileHomeClient({ products }: MobileHomeClientProps) {
         </div>
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style jsx global>{`
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
         }
@@ -117,10 +141,17 @@ export function MobileHomeClient({ products }: MobileHomeClientProps) {
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+        
         body {
+          font-family: 'Inter', sans-serif;
           overscroll-behavior-y: none;
+          background-color: #f9f9fa;
         }
-      `}} />
+        .font-serif {
+          font-family: 'Playfair Display', serif;
+        }
+      `}</style>
     </div>
   );
 }
@@ -142,7 +173,7 @@ function HeroModel({ product, index, total, progress }: { product: Product, inde
     [0, 0.4, 0.95, 1, 0.95, 0.4, 0]
   );
 
-  // Using vw for offsets
+  // Using vw for offsets makes it responsive to width, but we can also use dynamic logic
   const x = useTransform(
     relativeIndex,
     [-2, -1, 0, 1, 2],
@@ -174,7 +205,7 @@ function HeroModel({ product, index, total, progress }: { product: Product, inde
           alt={product.title}
           fill
           className="object-contain"
-          priority={index >= repeatedProductsLength / 3 - 2 && index <= repeatedProductsLength / 3 + 2}
+          priority={index >= 8 && index <= 12}
           sizes="(max-width: 768px) 75vw, 400px"
           quality={70}
         />
@@ -182,6 +213,3 @@ function HeroModel({ product, index, total, progress }: { product: Product, inde
     </motion.div>
   );
 }
-
-// Helper to avoid reference error in priority calc
-const repeatedProductsLength = 30; // Approximation for priority logic

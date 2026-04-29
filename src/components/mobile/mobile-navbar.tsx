@@ -1,29 +1,102 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 
 import { Search, ShoppingBag, Menu, X, User, Home, Bookmark, Compass } from "lucide-react";
 
 import { useCartStore } from "@/lib/store";
-import { usePathname } from "next/navigation";
+import { getAllCollections, searchProducts } from "@/lib/shopify";
+import { Collection, Product } from "@/lib/data";
 
 export function MobileNavbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { openCart, items, isLoggedIn, wishlistItems, openWishlist } = useCartStore();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<Product[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [collections, setCollections] = useState<Collection[]>([]);
+  
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
   const pathname = usePathname();
+  const { openCart, items, isLoggedIn, wishlistItems, openWishlist } = useCartStore();
 
+  const isAboutPage = pathname === "/about";
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
-  // Close menu when route changes
+  // Fetch collections for initial search state
+  useEffect(() => {
+    const fetchCollections = async () => {
+      const fetchedCollections = await getAllCollections();
+      setCollections(fetchedCollections.filter((c: Collection) => c.title.toLowerCase() !== 'landing page'));
+    };
+    fetchCollections();
+  }, []);
+
+  // Search logic (debounced)
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      if (searchQuery.trim().length > 0) {
+        setIsSearching(true);
+        try {
+          const results = await searchProducts(searchQuery);
+          const mappedResults: Product[] = results.map((p: any) => ({
+            id: p.id,
+            src: p.images[0]?.url || "/placeholder.jpg",
+            title: p.title,
+            price: `${p.priceRange.minVariantPrice.amount} ${p.priceRange.minVariantPrice.currencyCode}`,
+            amount: parseFloat(p.priceRange.minVariantPrice.amount),
+            desc: p.description || "",
+            category: p.category?.name || p.productType || "Result",
+            shopifyCategory: p.category?.name,
+            type: p.productType || "General"
+          }));
+          setSearchResults(mappedResults);
+        } catch (error) {
+          console.error("Search error:", error);
+        } finally {
+          setIsSearching(false);
+        }
+      } else {
+        setSearchResults([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
+
+  // Focus search input when overlay opens
+  useEffect(() => {
+    if (isSearchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isSearchOpen]);
+
+  const handleSearchSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (searchQuery.trim()) {
+      setIsSearchOpen(false);
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') handleSearchSubmit();
+  };
+
+  // Close menu/search when route changes
   useEffect(() => {
     setIsOpen(false);
+    setIsSearchOpen(false);
   }, [pathname]);
 
-  // Lock body scroll when menu is open
+  // Lock body scroll when menu/search is open
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen || isSearchOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -31,7 +104,7 @@ export function MobileNavbar() {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isOpen]);
+  }, [isOpen, isSearchOpen]);
 
   return (
     <>
@@ -117,7 +190,10 @@ export function MobileNavbar() {
             <Compass className="w-6 h-6" strokeWidth={1.5} />
           </Link>
 
-          <button className="text-black hover:opacity-70 transition-opacity">
+          <button 
+            onClick={() => setIsSearchOpen(true)}
+            className="text-black hover:opacity-70 transition-opacity"
+          >
             <Search className="w-6 h-6" strokeWidth={1.5} />
           </button>
 
@@ -128,10 +204,18 @@ export function MobileNavbar() {
       </div>
 
 
-      {/* 3. FULL SCREEN MENU DRAWER */}
+      {/* 3. COMPACT MENU DRAWER */}
+      {/* Overlay Backdrop */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-[505] transition-opacity duration-300"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
       <div
-        className={`fixed inset-0 z-[510] bg-white transition-transform duration-500 ease-in-out ${
-          isOpen ? "translate-x-0 flex flex-col pointer-events-auto" : "-translate-x-full hidden pointer-events-none"
+        className={`fixed top-0 left-0 bottom-0 w-[80%] max-w-[280px] z-[510] bg-white shadow-2xl transition-transform duration-500 ease-in-out ${
+          isOpen ? "translate-x-0 flex flex-col pointer-events-auto" : "-translate-x-full pointer-events-none"
         }`}
       >
         <div className="flex flex-col h-full relative">
@@ -139,33 +223,192 @@ export function MobileNavbar() {
           <div className="absolute top-6 right-6 z-10">
             <button
               onClick={() => setIsOpen(false)}
-              className="p-2 text-black transition-transform active:scale-95 bg-gray-100 rounded-full"
+              className="p-2 text-black transition-transform active:scale-95 bg-gray-50 rounded-full"
               aria-label="Close Menu"
             >
-              <X className="w-6 h-6" strokeWidth={1.5} />
+              <X className="w-5 h-5" strokeWidth={1.5} />
             </button>
           </div>
 
           {/* Menu Links */}
-          <nav className="flex-1 px-8 pt-32 pb-10 overflow-y-auto flex flex-col gap-10">
-            <Link href="/collections/all" className="block text-4xl font-black uppercase tracking-tight text-black">
+          <nav className="flex-1 px-8 pt-24 pb-10 overflow-y-auto flex flex-col gap-6">
+            <Link href="/collections/all" className="block text-sm font-bold uppercase tracking-[0.2em] text-black/90 hover:text-black transition-colors">
               Shop All
             </Link>
-            <Link href="/collections/new" className="block text-4xl font-black uppercase tracking-tight text-black">
+            <Link href="/collections/new" className="block text-sm font-bold uppercase tracking-[0.2em] text-black/90 hover:text-black transition-colors">
               New Arrivals
             </Link>
-            <Link href="/collections/tops" className="block text-4xl font-black uppercase tracking-tight text-black">
+            <Link href="/collections/tops" className="block text-sm font-bold uppercase tracking-[0.2em] text-black/90 hover:text-black transition-colors">
               Tops
             </Link>
-            <Link href="/collections/bottoms" className="block text-4xl font-black uppercase tracking-tight text-black">
+            <Link href="/collections/bottoms" className="block text-sm font-bold uppercase tracking-[0.2em] text-black/90 hover:text-black transition-colors">
               Bottoms
             </Link>
-            <Link href="/about" className="block text-4xl font-black uppercase tracking-tight text-black">
+            <Link href="/about" className="block text-sm font-bold uppercase tracking-[0.2em] text-black/90 hover:text-black transition-colors">
               About
             </Link>
           </nav>
         </div>
       </div>
+
+      {/* 4. SEARCH OVERLAY */}
+      {/* Backdrop */}
+      {isSearchOpen && (
+        <div 
+          className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[590] transition-opacity duration-500"
+          onClick={() => setIsSearchOpen(false)}
+        />
+      )}
+
+      <motion.div
+        initial={{ y: "-100%" }}
+        animate={{ 
+          y: isSearchOpen ? 0 : "-100%" 
+        }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className={`fixed top-0 left-0 right-0 z-[600] flex flex-col rounded-b-[24px] shadow-[0_10px_40px_rgba(0,0,0,0.12)] overflow-hidden ${
+          isAboutPage ? "bg-black/95 backdrop-blur-3xl" : "bg-white"
+        }`}
+      >
+        <div className="flex flex-col pt-[env(safe-area-inset-top,20px)] pb-10">
+          {/* Search Header */}
+          <div className="px-6 py-4 flex items-center gap-4 mt-2">
+            <div className="relative flex-1">
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className={`w-full rounded-full py-4 px-6 text-[14px] outline-none border-none transition-all font-medium ${
+                  isAboutPage 
+                    ? "bg-white/10 text-white placeholder:text-white/20 focus:bg-white/20" 
+                    : "bg-[#f4f4f5] text-black placeholder:text-black/30"
+                }`}
+              />
+              <Search
+                size={18}
+                onClick={() => handleSearchSubmit()}
+                className={`absolute right-5 top-1/2 -translate-y-1/2 ${
+                  isAboutPage ? "text-white/40" : "text-black/30"
+                }`}
+              />
+            </div>
+            <button
+              onClick={() => {
+                setIsSearchOpen(false);
+                setSearchQuery("");
+              }}
+              className={`p-2 rounded-full ${
+                isAboutPage ? "bg-white/10 text-white" : "bg-black/5 text-black"
+              }`}
+            >
+              <X size={20} strokeWidth={1.5} />
+            </button>
+          </div>
+
+          {/* Search Results / Categories */}
+          <div className="flex-1 overflow-y-auto pb-10">
+            <h3 className={`px-6 text-[9px] font-bold uppercase tracking-[0.3em] mb-4 mt-6 ${
+              isAboutPage ? "text-white/40" : "text-black/30"
+            }`}>
+              {searchQuery.trim() ? (isSearching ? "Searching..." : `Results for "${searchQuery}"`) : "Collections"}
+            </h3>
+
+            <div className={`mx-6 rounded-[32px] p-2 ${
+              isAboutPage ? "bg-white/5" : "bg-[#f4f4f5]"
+            }`}>
+              <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory py-2 px-1">
+                {searchQuery.trim() ? (
+                  searchResults.length > 0 ? (
+                    searchResults.map((product, idx) => (
+                      <motion.div
+                        key={product.id}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                        className="snap-start flex-shrink-0 w-[140px]"
+                      >
+                        <Link
+                          href={`/product/${encodeURIComponent(product.id)}`}
+                          onClick={() => setIsSearchOpen(false)}
+                          className={`flex flex-col h-full rounded-[24px] p-1.5 pb-4 transition-all ${
+                            isAboutPage 
+                              ? "bg-white/10 text-white" 
+                              : "bg-white text-black shadow-[0_2px_10px_rgba(0,0,0,0.04)]"
+                          }`}
+                        >
+                          <div className="aspect-square relative rounded-[18px] overflow-hidden mb-3">
+                            <Image
+                              src={product.src}
+                              alt={product.title}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <p className="text-[9px] font-bold uppercase tracking-widest px-2 line-clamp-1">
+                            {product.title}
+                          </p>
+                          <p className="text-[8px] font-medium opacity-40 uppercase tracking-widest px-2 mt-1">
+                            {product.price}
+                          </p>
+                        </Link>
+                      </motion.div>
+                    ))
+                  ) : (
+                    !isSearching && (
+                      <div className={`w-full py-10 text-center text-[10px] font-bold uppercase tracking-widest opacity-30 ${
+                        isAboutPage ? "text-white" : "text-black"
+                      }`}>
+                        No products found
+                      </div>
+                    )
+                  )
+                ) : (
+                  collections.map((collection, idx) => (
+                    <motion.div
+                      key={collection.id}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className="snap-start flex-shrink-0 w-[140px]"
+                    >
+                      <Link
+                        href={`/collections/${collection.handle}`}
+                        onClick={() => setIsSearchOpen(false)}
+                        className={`flex flex-col h-full rounded-[24px] p-1.5 pb-4 transition-all ${
+                          isAboutPage 
+                            ? "bg-white/10 text-white" 
+                            : "bg-white text-black shadow-[0_2px_10px_rgba(0,0,0,0.04)]"
+                        }`}
+                      >
+                        <div className="aspect-square relative rounded-[18px] overflow-hidden mb-3">
+                          {collection.image ? (
+                            <Image
+                              src={collection.image.url}
+                              alt={collection.title}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-black/5 flex items-center justify-center text-[8px] font-bold uppercase">
+                              {collection.title}
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-[9px] font-bold uppercase tracking-widest px-2 text-center truncate">
+                          {collection.title}
+                        </p>
+                      </Link>
+                    </motion.div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
     </>
   );
 }
