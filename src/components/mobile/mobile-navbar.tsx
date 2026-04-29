@@ -57,14 +57,14 @@ export function MobileNavbar() {
           <div className="flex justify-center items-center h-full">
             <Link
               href="/"
-              className="pointer-events-auto flex items-center justify-center h-[40px] w-full max-w-[80px] relative"
+              className="pointer-events-auto flex items-center justify-center h-[40px] w-full max-w-[100px] relative"
             >
               <div className="relative w-full h-full overflow-visible">
                 <Image
                   src="/logo_cg.png"
                   alt="COLIN GUEST"
                   fill
-                  className="object-contain object-center scale-[4.0] pointer-events-none"
+                  className="object-contain object-center scale-[4.8] pointer-events-none"
                   priority
                 />
               </div>
