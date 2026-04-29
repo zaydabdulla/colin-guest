@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Camera, Globe, Video, ArrowRight } from "lucide-react";
+import { Camera, Globe, Video, ArrowRight, Send } from "lucide-react";
 
 export function MobileFooter() {
   const pathname = usePathname();
@@ -43,9 +43,9 @@ export function MobileFooter() {
   ];
 
   const socialLinks = [
-    { icon: <Camera size={16} />, href: "#" },
-    { icon: <Video size={16} />, href: "#" },
-    { icon: <Globe size={16} />, href: "#" },
+    { icon: <Camera size={16} strokeWidth={1.5} />, href: "#" },
+    { icon: <Send size={16} strokeWidth={1.5} />, href: "#" },
+    { icon: <Globe size={16} strokeWidth={1.5} />, href: "#" },
   ];
 
   return (
@@ -87,13 +87,19 @@ export function MobileFooter() {
             
             <div className="flex gap-4 pb-1">
               {socialLinks.map((social, idx) => (
-                <Link 
+                <a 
                   key={idx} 
-                  href={social.href}
+                  href={idx === 0 ? "https://www.instagram.com/colin__guest/" : social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className={`transition-all duration-500 ${isAboutPage ? "opacity-30 hover:opacity-100" : "opacity-20 hover:opacity-100"}`}
                 >
-                  {social.icon}
-                </Link>
+                  {idx === 0 ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                      <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                    </svg>
+                  ) : social.icon}
+                </a>
               ))}
             </div>
           </div>

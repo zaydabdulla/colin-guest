@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
-import { Search, ShoppingBag, Menu, X, User, Home, Bookmark, Compass } from "lucide-react";
+import { Search, ShoppingBag, Menu, X, User, Home, Bookmark, Compass, Camera, Send } from "lucide-react";
 
 import { useCartStore } from "@/lib/store";
 import { getAllCollections, searchProducts } from "@/lib/shopify";
@@ -157,7 +157,7 @@ export function MobileNavbar() {
             >
               <Bookmark className="w-5.5 h-5.5" strokeWidth={1.2} />
               {wishlistItems.length > 0 && (
-                <span className={`absolute top-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full text-[8px] font-bold border ${
+                <span className={`absolute top-1.5 right-1.5 flex h-3 w-3 items-center justify-center rounded-full text-[7px] font-semibold border ${
                   isAboutPage ? "bg-white text-black border-black" : "bg-black text-white border-white"
                 }`}>
                   {wishlistItems.length}
@@ -174,7 +174,7 @@ export function MobileNavbar() {
             >
               <ShoppingBag className="w-5.5 h-5.5" strokeWidth={1.2} />
               {totalItems > 0 && (
-                <span className={`absolute top-1 right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full text-[8px] font-bold border ${
+                <span className={`absolute top-1.5 right-1.5 flex h-3 w-3 items-center justify-center rounded-full text-[7px] font-semibold border ${
                   isAboutPage ? "bg-white text-black border-black" : "bg-black text-white border-white"
                 }`}>
                   {totalItems}
@@ -189,7 +189,7 @@ export function MobileNavbar() {
       {/* 2. BOTTOM FLOATING NAV AREA (Pill) */}
       <div className="fixed bottom-6 left-0 right-0 z-40 px-6 flex items-end justify-center pointer-events-none">
         {/* Glass Pill */}
-        <div className="pointer-events-auto flex items-center justify-between px-8 py-3.5 bg-white/25 backdrop-blur-xl backdrop-saturate-150 border border-white/50 rounded-full shadow-[0_0_0_1px_rgba(255,255,255,0.4),0_12px_40px_rgba(0,0,0,0.15)] w-full max-w-[280px] transition-all">
+        <div className="pointer-events-auto flex items-center justify-between px-8 py-3.5 bg-white/[0.03] backdrop-blur-3xl backdrop-saturate-[1.8] border border-white/20 rounded-full shadow-[inset_0_0_20px_rgba(255,255,255,0.15),0_12px_40px_rgba(0,0,0,0.12)] w-full max-w-[280px] transition-all">
           <Link href="/" className={`${pathname === "/" ? "text-black" : "text-black/40"} transition-colors active:scale-90`}>
             <Home className="w-5.5 h-5.5" strokeWidth={1.5} />
           </Link>
@@ -221,41 +221,89 @@ export function MobileNavbar() {
         />
       )}
 
+      {/* 3. EDITORIAL SIDE MENU */}
+      {/* Overlay Backdrop */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/15 backdrop-blur-[2px] z-[505] transition-opacity duration-500"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
       <div
-        className={`fixed top-0 left-0 bottom-0 w-[80%] max-w-[280px] z-[510] bg-white shadow-2xl transition-transform duration-500 ease-in-out ${
+        className={`fixed top-0 left-0 bottom-0 w-[75%] max-w-[260px] z-[510] bg-white/90 backdrop-blur-3xl shadow-[20px_0_80px_rgba(0,0,0,0.05)] transition-transform duration-700 cubic-bezier(0.16, 1, 0.3, 1) rounded-r-[32px] border-r border-white/20 ${
           isOpen ? "translate-x-0 flex flex-col pointer-events-auto" : "-translate-x-full pointer-events-none"
         }`}
       >
-        <div className="flex flex-col h-full relative">
-          {/* Close Button Top Right */}
-          <div className="absolute top-6 right-6 z-10">
+        <div className="flex flex-col h-full relative pt-16 pb-12">
+          {/* Close Button - Minimalist */}
+          <div className="absolute top-8 right-8 z-10">
             <button
               onClick={() => setIsOpen(false)}
-              className="p-2 text-black transition-transform active:scale-95 bg-gray-50 rounded-full"
+              className="p-1.5 text-black/40 hover:text-black transition-colors"
               aria-label="Close Menu"
             >
-              <X className="w-5 h-5" strokeWidth={1.5} />
+              <X className="w-5 h-5" strokeWidth={1} />
             </button>
           </div>
 
-          {/* Menu Links */}
-          <nav className="flex-1 px-8 pt-24 pb-10 overflow-y-auto flex flex-col gap-6">
-            <Link href="/collections/all" className="block text-sm font-bold uppercase tracking-[0.2em] text-black/90 hover:text-black transition-colors">
-              Shop All
-            </Link>
-            <Link href="/collections/new" className="block text-sm font-bold uppercase tracking-[0.2em] text-black/90 hover:text-black transition-colors">
-              New Arrivals
-            </Link>
-            <Link href="/collections/tops" className="block text-sm font-bold uppercase tracking-[0.2em] text-black/90 hover:text-black transition-colors">
-              Tops
-            </Link>
-            <Link href="/collections/bottoms" className="block text-sm font-bold uppercase tracking-[0.2em] text-black/90 hover:text-black transition-colors">
-              Bottoms
-            </Link>
-            <Link href="/about" className="block text-sm font-bold uppercase tracking-[0.2em] text-black/90 hover:text-black transition-colors">
-              About
-            </Link>
+          {/* Menu Branding (Very Small) */}
+          <div className="px-10 mb-8">
+            <span className="text-[7px] font-semibold uppercase tracking-[0.5em] text-black/20">Index</span>
+          </div>
+
+          {/* Main Links - Editorial Style */}
+          <nav className="flex-1 px-10 flex flex-col gap-2 overflow-y-auto no-scrollbar">
+            {[
+              { name: "Shop All", href: "/collections/all", num: "01" },
+              { name: "New Arrivals", href: "/collections/new", num: "02" },
+              { name: "Tops", href: "/collections/tops", num: "03" },
+              { name: "Bottoms", href: "/collections/bottoms", num: "04" },
+              { name: "About", href: "/about", num: "05" },
+            ].map((link, i) => (
+              <motion.div
+                key={link.href}
+                initial={{ opacity: 0, x: -20 }}
+                animate={isOpen ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                transition={{ delay: 0.1 + i * 0.05, duration: 0.5 }}
+              >
+                <Link 
+                  href={link.href} 
+                  className="group flex items-baseline gap-4 py-1.5"
+                >
+                  <span className="text-[6px] font-medium text-black/20 group-hover:text-black transition-colors tabular-nums">{link.num}</span>
+                  <span className="text-[12px] font-medium uppercase tracking-[0.25em] text-black/60 group-hover:text-black transition-colors">
+                    {link.name}
+                  </span>
+                </Link>
+              </motion.div>
+            ))}
           </nav>
+
+          {/* Footer Contents - Compressed */}
+          <div className="px-10 space-y-8">
+            <div className="flex gap-6 items-center">
+              <a 
+                href="https://www.instagram.com/colin__guest/" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-black/30 hover:text-black transition-colors" 
+                aria-label="Instagram"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                </svg>
+              </a>
+              <Link href="#" className="text-black/30 hover:text-black transition-colors" aria-label="Twitter">
+                <Send size={14} strokeWidth={1.5} />
+              </Link>
+            </div>
+            
+            <div className="space-y-1.5">
+              <p className="text-[6px] font-semibold text-black/10 uppercase tracking-[0.3em]">© 2024 Colin Guest</p>
+              <p className="text-[6px] font-medium text-black/10 uppercase tracking-[0.3em]">Architectural Identity</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -357,10 +405,10 @@ export function MobileNavbar() {
                               className="object-cover"
                             />
                           </div>
-                          <p className="text-[9px] font-bold uppercase tracking-widest px-2 line-clamp-1">
+                          <p className="text-[9px] font-semibold uppercase tracking-[0.2em] px-2 line-clamp-1">
                             {product.title}
                           </p>
-                          <p className="text-[8px] font-medium opacity-40 uppercase tracking-widest px-2 mt-1">
+                          <p className="text-[8px] font-medium opacity-30 uppercase tracking-widest px-2 mt-0.5">
                             {product.price}
                           </p>
                         </Link>
