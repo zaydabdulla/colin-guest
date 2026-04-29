@@ -163,11 +163,11 @@ export function MobileCollectionClient({
       <div className="pt-[64px] bg-white">
         <div className="bg-[#f4f4f4] rounded-t-[32px] min-h-[calc(100vh-64px)] w-full overflow-x-hidden pb-32 shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
           
-          <div className="pt-3 flex flex-col gap-5">
+          <div className="pt-3 flex flex-col gap-3">
             
             {/* Header Section - Maintaining padding for text */}
             <div className="px-6 flex justify-between items-center w-full">
-              <h1 className="text-[9px] font-black uppercase tracking-widest text-black/80">
+              <h1 className="text-[9px] font-bold uppercase tracking-widest text-black/80">
                 {formattedCategory}
               </h1>
 
@@ -194,7 +194,7 @@ export function MobileCollectionClient({
                 <button 
                   type="button"
                   onClick={() => setIsFilterOpen(true)}
-                  className="text-[9px] font-black uppercase tracking-wider text-black px-3 py-1.5 transition-opacity active:opacity-40 pointer-events-auto bg-black/5 rounded-full"
+                  className="text-[9px] font-semibold uppercase tracking-wider text-black px-3 py-1.5 transition-opacity active:opacity-40 pointer-events-auto bg-black/5 rounded-full"
                 >
                   Advance Filters
                 </button>
@@ -203,14 +203,14 @@ export function MobileCollectionClient({
 
 
       {/* Category Pills (Horizontal Scroll) - Maintaining padding for alignment */}
-      <div className="flex overflow-x-auto hide-scrollbar gap-1.5 px-6 mb-5">
+      <div className="flex overflow-x-auto hide-scrollbar gap-1.5 px-6 mb-0">
         {categories.map((c) => {
           const isActive = category.toLowerCase() === c.handle.toLowerCase();
           return (
             <Link
               key={c.handle}
               href={`/collections/${c.handle}`}
-              className={`flex-none px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tight transition-all ${
+              className={`flex-none px-3 py-1 rounded-full text-[9px] font-medium uppercase tracking-tight transition-all ${
                 isActive 
                   ? "bg-white text-black shadow-sm" 
                   : "bg-white text-gray-500 shadow-sm opacity-90"
@@ -260,7 +260,7 @@ export function MobileCollectionClient({
               <div className="flex flex-col px-1 pb-4">
               <div className="flex justify-between items-start w-full">
                 <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full pr-1">
-                    <h3 className="text-[11px] font-bold uppercase tracking-widest text-black/90 leading-snug">
+                    <h3 className="text-[10px] font-medium uppercase tracking-widest text-black/90 leading-snug">
                     {product.title}
                   </h3>
                 </Link>
