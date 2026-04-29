@@ -160,14 +160,14 @@ export function MobileCollectionClient({
         onSortChange={setSortOption}
       />
 
-      <div className="pt-[50px] bg-white">
-        <div className="bg-[#f4f4f4] rounded-t-[32px] min-h-[calc(100vh-50px)] w-full overflow-x-hidden pb-32 shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
+      <div className="pt-[64px] bg-white">
+        <div className="bg-[#f4f4f4] rounded-t-[32px] min-h-[calc(100vh-64px)] w-full overflow-x-hidden pb-32 shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
           
-          <div className="pt-10 flex flex-col gap-6">
+          <div className="pt-3 flex flex-col gap-5">
             
             {/* Header Section - Maintaining padding for text */}
             <div className="px-6 flex justify-between items-center w-full">
-              <h1 className="text-[12px] font-bold uppercase tracking-widest text-black/80">
+              <h1 className="text-[9px] font-black uppercase tracking-widest text-black/80">
                 {formattedCategory}
               </h1>
 
@@ -194,7 +194,7 @@ export function MobileCollectionClient({
                 <button 
                   type="button"
                   onClick={() => setIsFilterOpen(true)}
-                  className="text-[10px] font-bold uppercase tracking-wider text-black px-3.5 py-2 transition-opacity active:opacity-40 pointer-events-auto bg-black/5 rounded-full"
+                  className="text-[9px] font-black uppercase tracking-wider text-black px-3 py-1.5 transition-opacity active:opacity-40 pointer-events-auto bg-black/5 rounded-full"
                 >
                   Advance Filters
                 </button>
@@ -210,7 +210,7 @@ export function MobileCollectionClient({
             <Link
               key={c.handle}
               href={`/collections/${c.handle}`}
-              className={`flex-none px-3.5 py-1.5 rounded-full text-[11px] font-medium transition-all ${
+              className={`flex-none px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tight transition-all ${
                 isActive 
                   ? "bg-white text-black shadow-sm" 
                   : "bg-white text-gray-500 shadow-sm opacity-90"

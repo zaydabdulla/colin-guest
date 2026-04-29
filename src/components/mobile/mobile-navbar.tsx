@@ -36,7 +36,7 @@ export function MobileNavbar() {
   return (
     <>
       {/* 1. TOP ICONS: Menu (Left), Logo (Center), Wishlist + Cart (Right) */}
-      <div className="fixed top-0 left-0 right-0 z-[500] bg-white h-[50px] safe-top px-5">
+      <div className="fixed top-0 left-0 right-0 z-[500] bg-white h-[64px] safe-top px-5">
         <div className="grid grid-cols-3 items-center h-full text-black w-full relative">
           
           {/* Left: 2-Line Menu Icon */}
