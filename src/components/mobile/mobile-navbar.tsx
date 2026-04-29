@@ -330,9 +330,9 @@ export function MobileNavbar() {
             : "bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)]"
         }`}
       >
-        <div className="flex flex-col pt-[env(safe-area-inset-top,20px)] pb-10">
+        <div className="flex flex-col pt-[env(safe-area-inset-top,20px)] pb-6">
           {/* Search Header */}
-          <div className="px-6 py-4 flex items-center gap-4 mt-2">
+          <div className="px-6 py-2.5 flex items-center gap-3 mt-1">
             <div className="relative flex-1">
               <input
                 ref={searchInputRef}
@@ -341,14 +341,14 @@ export function MobileNavbar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className={`w-full rounded-full py-3.5 px-6 text-[16px] outline-none border-none transition-all font-medium ${
+                className={`w-full rounded-full py-2.5 px-6 text-[15px] outline-none border-none transition-all font-medium ${
                   isAboutPage 
                     ? "bg-white/10 text-white placeholder:text-white/20 focus:bg-white/20" 
                     : "bg-[#f4f4f5] text-black placeholder:text-black/30"
                 }`}
               />
               <Search
-                size={18}
+                size={16}
                 onClick={() => handleSearchSubmit()}
                 className={`absolute right-5 top-1/2 -translate-y-1/2 ${
                   isAboutPage ? "text-white/40" : "text-black/30"
@@ -364,22 +364,22 @@ export function MobileNavbar() {
                 isAboutPage ? "bg-white/10 text-white" : "bg-black/5 text-black"
               }`}
             >
-              <X size={20} strokeWidth={1.5} />
+              <X size={18} strokeWidth={1.5} />
             </button>
           </div>
 
           {/* Search Results / Categories */}
-          <div className="flex-1 overflow-y-auto pb-10">
-            <h3 className={`px-6 text-[9px] font-bold uppercase tracking-[0.3em] mb-4 mt-6 ${
+          <div className="flex-1 overflow-y-auto pb-4">
+            <h3 className={`px-6 text-[8px] font-bold uppercase tracking-[0.3em] mb-2 mt-4 ${
               isAboutPage ? "text-white/40" : "text-black/30"
             }`}>
               {searchQuery.trim() ? (isSearching ? "Searching..." : `Results for "${searchQuery}"`) : "Collections"}
             </h3>
 
-            <div className={`mx-6 rounded-[32px] p-2 ${
+            <div className={`mx-6 rounded-[24px] p-1.5 ${
               isAboutPage ? "bg-white/5" : "bg-[#f4f4f5]"
             }`}>
-              <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory py-2 px-1">
+              <div className="flex gap-2.5 overflow-x-auto no-scrollbar snap-x snap-mandatory py-1 px-1">
                 {searchQuery.trim() ? (
                   searchResults.length > 0 ? (
                     searchResults.map((product, idx) => (
@@ -388,18 +388,18 @@ export function MobileNavbar() {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.05 }}
-                        className="snap-start flex-shrink-0 w-[140px]"
+                        className="snap-start flex-shrink-0 w-[110px]"
                       >
                         <Link
                           href={`/product/${encodeURIComponent(product.id)}`}
                           onClick={() => setIsSearchOpen(false)}
-                          className={`flex flex-col h-full rounded-[24px] p-1.5 pb-4 transition-all ${
+                          className={`flex flex-col h-full rounded-[16px] p-1 pb-3 transition-all ${
                             isAboutPage 
                               ? "bg-white/10 text-white" 
-                              : "bg-white text-black shadow-[0_2px_10px_rgba(0,0,0,0.04)]"
+                              : "bg-white text-black shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
                           }`}
                         >
-                          <div className="aspect-square relative rounded-[18px] overflow-hidden mb-3">
+                          <div className="aspect-square relative rounded-[12px] overflow-hidden mb-2">
                             <Image
                               src={product.src}
                               alt={product.title}
@@ -407,10 +407,10 @@ export function MobileNavbar() {
                               className="object-cover"
                             />
                           </div>
-                          <p className="text-[9px] font-semibold uppercase tracking-[0.2em] px-2 line-clamp-1">
+                          <p className="text-[8px] font-semibold uppercase tracking-[0.15em] px-2 line-clamp-1">
                             {product.title}
                           </p>
-                          <p className="text-[8px] font-medium opacity-30 uppercase tracking-widest px-2 mt-0.5">
+                          <p className="text-[7px] font-medium opacity-30 uppercase tracking-widest px-2 mt-0.5">
                             {product.price}
                           </p>
                         </Link>
@@ -418,7 +418,7 @@ export function MobileNavbar() {
                     ))
                   ) : (
                     !isSearching && (
-                      <div className={`w-full py-10 text-center text-[10px] font-bold uppercase tracking-widest opacity-30 ${
+                      <div className={`w-full py-6 text-center text-[9px] font-bold uppercase tracking-widest opacity-30 ${
                         isAboutPage ? "text-white" : "text-black"
                       }`}>
                         No products found
@@ -432,18 +432,18 @@ export function MobileNavbar() {
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.05 }}
-                      className="snap-start flex-shrink-0 w-[140px]"
+                      className="snap-start flex-shrink-0 w-[110px]"
                     >
                       <Link
                         href={`/collections/${collection.handle}`}
                         onClick={() => setIsSearchOpen(false)}
-                        className={`flex flex-col h-full rounded-[24px] p-1.5 pb-4 transition-all ${
+                        className={`flex flex-col h-full rounded-[16px] p-1 pb-3 transition-all ${
                           isAboutPage 
                             ? "bg-white/10 text-white" 
-                            : "bg-white text-black shadow-[0_2px_10px_rgba(0,0,0,0.04)]"
+                            : "bg-white text-black shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
                         }`}
                       >
-                        <div className="aspect-square relative rounded-[18px] overflow-hidden mb-3">
+                        <div className="aspect-square relative rounded-[12px] overflow-hidden mb-2">
                           {collection.image ? (
                             <Image
                               src={collection.image.url}
@@ -452,13 +452,16 @@ export function MobileNavbar() {
                               className="object-cover"
                             />
                           ) : (
-                            <div className="w-full h-full bg-black/5 flex items-center justify-center text-[8px] font-bold uppercase">
-                              {collection.title}
+                            <div className="w-full h-full bg-black/5 flex items-center justify-center">
+                              <Search size={14} className="opacity-10" />
                             </div>
                           )}
                         </div>
-                        <p className="text-[9px] font-bold uppercase tracking-widest px-2 text-center truncate">
+                        <p className="text-[8px] font-semibold uppercase tracking-[0.15em] px-2 line-clamp-1">
                           {collection.title}
+                        </p>
+                        <p className="text-[7px] font-medium opacity-30 uppercase tracking-widest px-2 mt-0.5">
+                          Discover
                         </p>
                       </Link>
                     </motion.div>
@@ -472,5 +475,3 @@ export function MobileNavbar() {
     </>
   );
 }
-
-
