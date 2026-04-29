@@ -229,7 +229,7 @@ export function MobileCollectionClient({
 
 
       {/* Dynamic Product Grid */}
-      <div className={`grid gap-2 px-2 w-full transition-all duration-300 ${isDense ? 'grid-cols-1' : 'grid-cols-2'}`}>
+      <div className={`grid gap-1.5 px-1.5 w-full transition-all duration-500 ease-in-out ${isDense ? 'grid-cols-3' : 'grid-cols-2'}`}>
         {filteredAndSortedProducts.map((product) => (
           <div key={`mobile-grid-${product.id}`} className="flex flex-col group relative">
             
@@ -260,18 +260,18 @@ export function MobileCollectionClient({
             </Link>
 
             {/* Product Details (Title, +, Price) */}
-            <div className="flex flex-col px-1 pb-4">
+            <div className={`flex flex-col px-1 ${isDense ? 'pb-2' : 'pb-4'}`}>
               <div className="flex justify-between items-start w-full">
                 <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full pr-1">
-                  <h3 className="text-[11px] font-bold uppercase tracking-widest text-black/90 leading-snug">
+                  <h3 className={`${isDense ? 'text-[8px]' : 'text-[11px]'} font-bold uppercase tracking-widest text-black/90 leading-tight line-clamp-2`}>
                     {product.title}
                   </h3>
                 </Link>
                 <button className="text-gray-500 hover:text-black shrink-0 mt-[-2px]">
-                  <Plus className="w-4 h-4" strokeWidth={1.5} />
+                  <Plus className={`${isDense ? 'w-3 h-3' : 'w-4 h-4'}`} strokeWidth={1.5} />
                 </button>
               </div>
-              <p className="text-[10px] font-medium tracking-wider text-gray-500 mt-1">
+              <p className={`${isDense ? 'text-[7px]' : 'text-[10px]'} font-medium tracking-wider text-gray-500 mt-0.5`}>
                 {product.price}
               </p>
 
