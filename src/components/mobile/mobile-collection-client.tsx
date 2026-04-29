@@ -203,7 +203,7 @@ export function MobileCollectionClient({
 
 
       {/* Category Pills (Horizontal Scroll) - Maintaining padding for alignment */}
-      <div className="flex overflow-x-auto hide-scrollbar gap-1.5 px-6 mb-3">
+      <div className="flex overflow-x-auto hide-scrollbar gap-1.5 px-6 mb-8">
         {categories.map((c) => {
           const isActive = category.toLowerCase() === c.handle.toLowerCase();
           return (

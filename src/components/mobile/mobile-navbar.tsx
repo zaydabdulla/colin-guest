@@ -69,12 +69,14 @@ export function MobileNavbar() {
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
 
-  // Focus search input when overlay opens
+  // Focus search input when overlay opens - REMOVED to prevent keyboard popping on icon touch
+  /*
   useEffect(() => {
     if (isSearchOpen && searchInputRef.current) {
       searchInputRef.current.focus();
     }
   }, [isSearchOpen]);
+  */
 
   const handleSearchSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
