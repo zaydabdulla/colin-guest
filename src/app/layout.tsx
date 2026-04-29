@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartDrawer } from "@/components/cart-drawer";
-import { WishlistDrawer } from "@/components/mobile/mobile-wishlist-drawer";
 import { WishlistPopup } from "@/components/wishlist-popup";
 import { Navbar } from "@/components/navbar";
 import { MobileNavbar } from "@/components/mobile/mobile-navbar";
@@ -62,9 +61,6 @@ export default function RootLayout({
           </SmoothScroll>
 
           <CartDrawer />
-          <div className="block md:hidden">
-            <WishlistDrawer />
-          </div>
           <WishlistPopup />
           <SyncManager />
         </SessionProvider>

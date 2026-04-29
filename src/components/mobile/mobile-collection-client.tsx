@@ -57,7 +57,7 @@ export function MobileCollectionClient({
   displayProducts,
   collections
 }: MobileCollectionClientProps) {
-  const { openWishlist, openCart } = useCartStore();
+  const { openWishlist, openCart, toggleWishlist, wishlistItems } = useCartStore();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isDense, setIsDense] = useState(false);
   const [sortOption, setSortOption] = useState("featured");
@@ -241,8 +241,18 @@ export function MobileCollectionClient({
                 />
                 
                 {/* Bookmark Ribbon Icon */}
-                <button className="absolute top-1.5 right-1.5 z-10 text-white drop-shadow-sm transition-opacity">
-                  <Bookmark className={`${isDense ? 'w-4 h-4' : 'w-6 h-6'} fill-white stroke-none`} />
+                <button 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleWishlist(product);
+                  }}
+                  className="absolute top-1.5 right-1.5 z-10 text-white drop-shadow-sm transition-opacity active:opacity-50"
+                >
+                  <Bookmark 
+                    className={`${isDense ? 'w-4 h-4' : 'w-6 h-6'} ${wishlistItems.some((item: any) => item.id === product.id) ? 'fill-white' : 'fill-none'} stroke-white`} 
+                    strokeWidth={1.5}
+                  />
                 </button>
 
                 {/* Pagination Dots */}

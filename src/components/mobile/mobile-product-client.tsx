@@ -70,33 +70,34 @@ export function MobileProductClient({ product, suggestedProducts }: MobileProduc
 
       {/* 2. Product Info Section */}
       <div className="px-6 pt-8 pb-6 bg-white relative z-10">
-        <div className="flex justify-between items-start mb-2">
-          <div className="flex-1 pr-4">
-            <h1 className="text-xl font-bold tracking-tight text-[#1a1a1a] flex items-center gap-2 flex-wrap">
-              {product.title}
+        <div className="flex flex-col mb-2">
+          <h1 className="text-xl font-bold tracking-tight text-[#1a1a1a] mb-1">
+            {product.title}
+          </h1>
+          <div className="flex justify-between items-center w-full">
+            <p className="text-sm font-semibold text-black/50 uppercase tracking-wide">
+              {product.price}
+            </p>
+            <div className="flex items-center gap-3">
+              <button 
+                type="button"
+                onClick={() => alert("Size Guide: " + (product.sizeGuide || "Standard fitting."))}
+                className="shrink-0 bg-[#f0f0f0] px-3 py-2 rounded-md text-[9px] font-extrabold text-black/60 uppercase tracking-wider active:bg-gray-200 transition-colors"
+              >
+                Size Guide
+              </button>
               <button 
                 type="button"
                 onClick={() => toggleWishlist(product)}
                 className="p-1 active:opacity-50 transition-opacity"
               >
                 <Bookmark 
-                  size={18} 
+                  size={20} 
                   className={`transition-colors pointer-events-none ${isWishlisted ? "fill-black text-black" : "text-black/20"}`} 
                 />
               </button>
-            </h1>
-            <p className="text-sm font-semibold text-black/50 mt-1 uppercase tracking-wide">
-              {product.price}
-            </p>
+            </div>
           </div>
-          
-          <button 
-            type="button"
-            onClick={() => alert("Size Guide: " + (product.sizeGuide || "Standard fitting."))}
-            className="shrink-0 bg-[#f0f0f0] px-3 py-2 rounded-md text-[9px] font-extrabold text-black/60 uppercase tracking-wider active:bg-gray-200 transition-colors"
-          >
-            Size Guide
-          </button>
         </div>
 
         {/* 3. Size Selection */}

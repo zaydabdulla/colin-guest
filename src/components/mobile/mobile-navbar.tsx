@@ -73,11 +73,8 @@ export function MobileNavbar() {
 
           {/* Right: Wishlist & Cart (1/3 width) */}
           <div className="flex justify-end items-center gap-1">
-            <button
-              onClick={() => {
-                console.log("Wishlist opened");
-                openWishlist();
-              }}
+            <Link
+              href="/wishlist"
               className="relative p-2 transition-transform active:scale-95 pointer-events-auto"
               aria-label="Wishlist"
             >
@@ -87,7 +84,7 @@ export function MobileNavbar() {
                   {wishlistItems.length}
                 </span>
               )}
-            </button>
+            </Link>
             <button
               onClick={() => {
                 console.log("Cart opened");
