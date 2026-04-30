@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Product } from "@/lib/data";
 import { useCartStore } from "@/lib/store";
 import { Bookmark, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 import { ProductCard } from "../product-card";
 
 interface MobileProductClientProps {
