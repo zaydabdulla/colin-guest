@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import { Product } from "@/lib/data";
 import { useCartStore } from "@/lib/store";
-import { Bookmark } from "lucide-react";
+import { Bookmark, ChevronRight } from "lucide-react";
 import { ProductCard } from "../product-card";
 
 interface MobileProductClientProps {
@@ -22,6 +22,19 @@ export function MobileProductClient({ product, suggestedProducts }: MobileProduc
 
   const { openCart, addToCart, wishlistItems, toggleWishlist } = useCartStore();
   const isWishlisted = wishlistItems.some((item: Product) => item.id === product.id);
+  const [showSuggestArrow, setShowSuggestArrow] = useState(false);
+  const suggestScrollRef = useRef<HTMLDivElement>(null);
+
+  const checkSuggestScroll = () => {
+    if (suggestScrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = suggestScrollRef.current;
+      setShowSuggestArrow(scrollLeft + clientWidth < scrollWidth - 5);
+    }
+  };
+
+  useEffect(() => {
+    checkSuggestScroll();
+  }, [suggestedProducts]);
 
   const displayImages = product.srcs && product.srcs.length > 0 ? product.srcs : [product.src];
 
@@ -234,20 +247,39 @@ export function MobileProductClient({ product, suggestedProducts }: MobileProduc
       {/* 6. You May Also Like */}
       <div className="mt-8 bg-white relative z-10">
         <h3 className="px-6 text-[10px] font-bold uppercase tracking-[0.3em] mb-6 text-black/30">You may also like</h3>
-        <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 no-scrollbar pb-8 -mx-6 scroll-smooth scroll-pl-8 scroll-pr-8">
-          <div className="flex-none w-8" /> {/* Leading spacer */}
-          {suggestedProducts && suggestedProducts.length > 0 ? (
-            suggestedProducts.map((suggested, i) => (
-              <div key={suggested.id} className="min-w-[65vw] flex-shrink-0 snap-start">
-                <ProductCard product={suggested} index={i} />
+        <div className="relative">
+          <div 
+            ref={suggestScrollRef}
+            onScroll={checkSuggestScroll}
+            className="flex overflow-x-auto snap-x snap-mandatory gap-4 no-scrollbar pb-8 -mx-6 scroll-smooth scroll-pl-8 scroll-pr-8"
+          >
+            <div className="flex-none w-8" /> {/* Leading spacer */}
+            {suggestedProducts && suggestedProducts.length > 0 ? (
+              suggestedProducts.map((suggested, i) => (
+                <div key={suggested.id} className="min-w-[65vw] flex-shrink-0 snap-start">
+                  <ProductCard product={suggested} index={i} />
+                </div>
+              ))
+            ) : (
+              <div className="w-full text-center py-12 text-black/20 text-xs uppercase tracking-widest px-6">
+                No recommendations available
               </div>
-            ))
-          ) : (
-            <div className="w-full text-center py-12 text-black/20 text-xs uppercase tracking-widest px-6">
-              No recommendations available
+            )}
+            <div className="flex-none w-8" /> {/* Trailing spacer */}
+          </div>
+
+          {/* Scroll Indicator Arrow */}
+          {showSuggestArrow && (
+            <div className="absolute right-0 top-0 bottom-8 w-16 flex items-center justify-end pr-4 pointer-events-none z-20 bg-gradient-to-l from-white via-white/80 to-transparent">
+              <motion.div
+                initial={{ opacity: 0, x: -5 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="p-2 rounded-full bg-white shadow-md border border-black/5"
+              >
+                <ChevronRight size={14} className="text-black/40" />
+              </motion.div>
             </div>
           )}
-          <div className="flex-none w-8" /> {/* Trailing spacer */}
         </div>
       </div>
 

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
-import { Search, ShoppingBag, Menu, X, User, Home, Bookmark, Compass, Camera, Send } from "lucide-react";
+import { Search, ShoppingBag, Menu, X, User, Home, Bookmark, Compass, Camera, Send, ChevronRight } from "lucide-react";
 
 import { useCartStore } from "@/lib/store";
 import { getAllCollections, searchProducts } from "@/lib/shopify";
@@ -27,6 +27,20 @@ export function MobileNavbar() {
 
   const isAboutPage = pathname === "/about";
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+
+  const [showScrollArrow, setShowScrollArrow] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const checkScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setShowScrollArrow(scrollLeft + clientWidth < scrollWidth - 5);
+    }
+  };
+
+  useEffect(() => {
+    checkScroll();
+  }, [searchResults, collections, isSearchOpen]);
 
   // Fetch collections for initial search state
   useEffect(() => {
@@ -376,10 +390,14 @@ export function MobileNavbar() {
               {searchQuery.trim() ? (isSearching ? "Searching..." : `Results for "${searchQuery}"`) : "Collections"}
             </h3>
 
-            <div className={`mx-6 rounded-[24px] p-1.5 ${
+            <div className={`mx-6 rounded-[24px] p-1.5 relative ${
               isAboutPage ? "bg-white/5" : "bg-[#f4f4f5]"
             }`}>
-              <div className="flex gap-2.5 overflow-x-auto no-scrollbar snap-x snap-mandatory py-1 px-1">
+              <div 
+                ref={scrollContainerRef}
+                onScroll={checkScroll}
+                className="flex gap-2.5 overflow-x-auto no-scrollbar snap-x snap-mandatory py-1 px-1"
+              >
                 {searchQuery.trim() ? (
                   searchResults.length > 0 ? (
                     searchResults.map((product, idx) => (
@@ -468,6 +486,19 @@ export function MobileNavbar() {
                   ))
                 )}
               </div>
+              
+              {/* Scroll Indicator Arrow */}
+              {showScrollArrow && (
+                <div className="absolute right-0 top-0 bottom-0 w-12 flex items-center justify-end pr-2 pointer-events-none z-10 bg-gradient-to-l from-[#f4f4f5] via-[#f4f4f5]/80 to-transparent rounded-r-[24px]">
+                  <motion.div
+                    initial={{ opacity: 0, x: -5 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="p-1.5 rounded-full bg-white shadow-sm"
+                  >
+                    <ChevronRight size={12} className="text-black/40" />
+                  </motion.div>
+                </div>
+              )}
             </div>
           </div>
         </div>

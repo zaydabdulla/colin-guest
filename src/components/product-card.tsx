@@ -60,44 +60,59 @@ export function ProductCard({
           </button>
         )}
 
-        {/* Dynamic Hover Arrows */}
+        {/* Image Slider / Swipe Area - Mobile Swipeable, Desktop Static */}
+        <div className="relative w-full h-full overflow-x-auto md:overflow-hidden snap-x snap-mandatory no-scrollbar flex items-center justify-center">
+          {srcs.map((src, i) => (
+            <div key={i} className="flex-none w-full h-full snap-center relative">
+              <Link 
+                href={`/product/${encodeURIComponent(product.id)}`} 
+                className="relative w-full h-full mix-blend-multiply drop-shadow-2xl flex items-center justify-center"
+              >
+                <Image 
+                  src={src}
+                  alt={`${product.title} - view ${i + 1}`}
+                  fill
+                  className="object-contain transition-transform duration-700 group-hover:scale-105"
+                  priority={i === 0}
+                />
+              </Link>
+            </div>
+          ))}
+          
+          {/* Pagination Dots Indicator - Only visible if multiple images */}
+          {srcs.length > 1 && (
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1 z-30 pointer-events-none md:hidden">
+              {srcs.map((_, i) => (
+                <div 
+                  key={i}
+                  className={`w-1 h-1 rounded-full transition-all duration-300 ${
+                    // This is a CSS-only approximation of active state since we use native scroll
+                    // We can use JS to track it if we want perfect dots, but CSS is lighter
+                    "bg-black/20"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Dynamic Hover Arrows (Desktop Only) */}
         {isHovered && srcs.length > 1 && !isDense && (
-          <div className="absolute inset-x-3 top-1/2 -translate-y-1/2 flex justify-between z-40">
-             <button onClick={handlePrev} className="bg-white/80 p-2.5 rounded-full shadow-sm hover:bg-white text-black transition-colors backdrop-blur-sm hover:scale-105 active:scale-95">
+          <div className="absolute inset-x-3 top-1/2 -translate-y-1/2 hidden md:flex justify-between z-40 pointer-events-none">
+             <button 
+               onClick={handlePrev} 
+               className="bg-white/80 p-2.5 rounded-full shadow-sm hover:bg-white text-black transition-colors backdrop-blur-sm hover:scale-105 active:scale-95 pointer-events-auto"
+             >
                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
              </button>
-             <button onClick={handleNext} className="bg-white/80 p-2.5 rounded-full shadow-sm hover:bg-white text-black transition-colors backdrop-blur-sm hover:scale-105 active:scale-95">
+             <button 
+               onClick={handleNext} 
+               className="bg-white/80 p-2.5 rounded-full shadow-sm hover:bg-white text-black transition-colors backdrop-blur-sm hover:scale-105 active:scale-95 pointer-events-auto"
+             >
                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
              </button>
           </div>
         )}
-        
-        {/* Link wraps the image so clicking the image goes to PDP, but buttons block propagation */}
-        <Link href={`/product/${encodeURIComponent(product.id)}`} className="relative w-full h-full mix-blend-multiply drop-shadow-2xl flex items-center justify-center">
-          <Image 
-            src={srcs[imgIndex]}
-            alt={product.title}
-            fill
-            className="object-contain transition-transform duration-700 group-hover:scale-105"
-          />
-          
-          {/* Secondary Hover Image (H&M style flip - only if on first image and NOT in dense view) */}
-          {srcs.length > 1 && imgIndex === 0 && !isDense && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isHovered ? 1 : 0 }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
-              className="absolute inset-0 z-10 bg-[#f8f8f8] pointer-events-none"
-            >
-              <Image 
-                src={product.secondarySrc || srcs[1]}
-                alt={`${product.title} view 2`}
-                fill
-                className="object-contain"
-              />
-            </motion.div>
-          )}
-        </Link>
       </motion.div>
       
       {/* Product Details - Hidden in Dense View */}

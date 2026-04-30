@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Search, ShoppingBag, Bookmark, User, ChevronDown, X } from "lucide-react";
+import { Search, ShoppingBag, Bookmark, User, ChevronDown, X, ChevronRight } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
@@ -22,7 +22,20 @@ export function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [showScrollArrow, setShowScrollArrow] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const checkScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setShowScrollArrow(scrollLeft + clientWidth < scrollWidth - 10);
+    }
+  };
+
+  useEffect(() => {
+    checkScroll();
+  }, [searchResults, collections, isSearchOpen]);
 
   useEffect(() => {
     const fetchCollections = async () => {
@@ -291,8 +304,12 @@ export function Navbar() {
               {searchQuery.trim() ? (isSearching ? "Searching..." : `Results for "${searchQuery}"`) : "Collections"}
             </h3>
 
-            <div className={`rounded-[38px] p-2 px-3 ${isAboutPage ? "bg-white/5" : "bg-[#f0f0f0]"}`}>
-              <div className="flex gap-2 overflow-x-auto no-scrollbar snap-x snap-mandatory min-h-[180px]">
+            <div className={`rounded-[38px] p-2 px-3 relative ${isAboutPage ? "bg-white/5" : "bg-[#f0f0f0]"}`}>
+              <div 
+                ref={scrollContainerRef}
+                onScroll={checkScroll}
+                className="flex gap-2 overflow-x-auto no-scrollbar snap-x snap-mandatory min-h-[180px]"
+              >
                 {searchQuery.trim() ? (
                   searchResults.length > 0 ? (
                     searchResults.map((product, idx) => (
@@ -384,6 +401,19 @@ export function Navbar() {
                   ))
                 )}
               </div>
+
+              {/* Scroll Indicator Arrow */}
+              {showScrollArrow && (
+                <div className={`absolute right-0 top-0 bottom-0 w-24 flex items-center justify-end pr-6 pointer-events-none z-10 bg-gradient-to-l from-[#f0f0f0] via-[#f0f0f0]/80 to-transparent rounded-r-[38px] ${isAboutPage ? "from-black/20 via-black/10" : ""}`}>
+                  <motion.div
+                    initial={{ opacity: 0, x: -5 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="p-2.5 rounded-full bg-white shadow-lg border border-black/5"
+                  >
+                    <ChevronRight size={18} className="text-black/40" />
+                  </motion.div>
+                </div>
+              )}
             </div>
           </div>
         </div>
