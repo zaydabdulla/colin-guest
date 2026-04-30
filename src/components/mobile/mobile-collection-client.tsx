@@ -8,6 +8,7 @@ import { Product, Collection } from "@/lib/data";
 import { Plus, Bookmark, ShoppingBag } from "lucide-react";
 import { FilterDrawer } from "../filter-drawer";
 import { useCartStore } from "@/lib/store";
+import { ProductCard } from "../product-card";
 
 // Helper function to extract colors (copied from desktop client)
 function parseColors(colorData: string | undefined, options: any[], tags: string[] = []): string[] {
@@ -224,67 +225,9 @@ export function MobileCollectionClient({
 
 
       {/* Dynamic Product Grid - Edge-to-Edge */}
-      <div className={`grid gap-1 px-0 w-full transition-all duration-500 ease-in-out ${isDense ? 'grid-cols-4' : 'grid-cols-2'}`}>
-        {filteredAndSortedProducts.map((product) => (
-          <div key={`mobile-grid-${product.id}`} className="flex flex-col group relative">
-            
-            {/* Product Image Container */}
-            <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full">
-              <div className="relative aspect-[2/3] w-full bg-[#e8e8e8] overflow-hidden rounded-xl mb-1.5">
-
-                <Image
-                  src={product.src}
-                  alt={product.title}
-                  fill
-                  className="object-cover"
-                  sizes="50vw"
-                />
-                
-                {/* Bookmark Ribbon Icon */}
-                <button 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    toggleWishlist(product);
-                  }}
-                  className="absolute top-1.5 right-1.5 z-10 text-white drop-shadow-sm transition-opacity active:opacity-50"
-                >
-                  <Bookmark 
-                    className={`${isDense ? 'w-4 h-4' : 'w-6 h-6'} ${wishlistItems.some((item: any) => item.id === product.id) ? 'fill-white' : 'fill-none'} stroke-white`} 
-                    strokeWidth={1.5}
-                  />
-                </button>
-
-                {/* Pagination Dots */}
-                {!isDense && (
-                  <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10">
-                    <div className="w-1.5 h-1.5 rounded-full bg-white opacity-90"></div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-white/40"></div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-white/40"></div>
-                  </div>
-                )}
-              </div>
-            </Link>
-
-            {!isDense && (
-              <div className="flex flex-col px-1 pb-4">
-              <div className="flex justify-between items-start w-full">
-                <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full pr-1">
-                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-black mb-0.5">
-                    {product.title}
-                  </h3>
-                </Link>
-                <button className="text-black/40 hover:text-black shrink-0 mt-[-2px]">
-                    <Plus className="w-4 h-4" strokeWidth={1.5} />
-                </button>
-              </div>
-                <p className="text-[10px] font-bold tracking-wider text-black/60">
-                  {product.price}
-                </p>
-              </div>
-            )}
-
-          </div>
+      <div className={`grid gap-x-2 gap-y-4 px-4 w-full transition-all duration-500 ease-in-out ${isDense ? 'grid-cols-4' : 'grid-cols-2'}`}>
+        {filteredAndSortedProducts.map((product, i) => (
+          <ProductCard key={`mobile-grid-${product.id}`} product={product} index={i} isDense={isDense} />
         ))}
       </div>
       
