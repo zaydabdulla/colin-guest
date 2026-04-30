@@ -8,7 +8,6 @@ import { Product, Collection } from "@/lib/data";
 import { Plus, Bookmark, ShoppingBag } from "lucide-react";
 import { FilterDrawer } from "../filter-drawer";
 import { useCartStore } from "@/lib/store";
-import { ProductCard } from "../product-card";
 
 // Helper function to extract colors (copied from desktop client)
 function parseColors(colorData: string | undefined, options: any[], tags: string[] = []): string[] {
@@ -225,9 +224,90 @@ export function MobileCollectionClient({
 
 
       {/* Dynamic Product Grid - Edge-to-Edge */}
-      <div className={`grid gap-x-2 gap-y-4 px-4 w-full transition-all duration-500 ease-in-out ${isDense ? 'grid-cols-4' : 'grid-cols-2'}`}>
-        {filteredAndSortedProducts.map((product, i) => (
-          <ProductCard key={`mobile-grid-${product.id}`} product={product} index={i} isDense={isDense} />
+      <div className={`grid gap-1 px-0 w-full transition-all duration-500 ease-in-out ${isDense ? 'grid-cols-4' : 'grid-cols-2'}`}>
+        {filteredAndSortedProducts.map((product) => (
+          <div key={`mobile-grid-${product.id}`} className="flex flex-col group relative">
+            
+            {/* Product Image Container */}
+            <div className="w-full">
+              <div className="relative aspect-[2/3] w-full bg-[#e8e8e8] overflow-hidden rounded-xl mb-1.5">
+                
+                {!isDense ? (
+                  /* Swipable Carousel for Standard View */
+                  <div className="w-full h-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar relative">
+                    {(product.srcs && product.srcs.length > 0 ? product.srcs : [product.src]).map((src, i) => (
+                      <div key={i} className="w-full h-full flex-none snap-center relative">
+                        <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full h-full block">
+                          <Image
+                            src={src}
+                            alt={`${product.title} - view ${i + 1}`}
+                            fill
+                            className="object-cover"
+                            sizes="50vw"
+                            priority={i === 0}
+                          />
+                        </Link>
+                      </div>
+                    ))}
+                    
+                    {/* Bookmark Ribbon Icon - Only in Standard View */}
+                    <button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleWishlist(product);
+                      }}
+                      className="absolute top-1.5 right-1.5 z-20 text-white drop-shadow-sm transition-opacity active:opacity-50"
+                    >
+                      <Bookmark 
+                        className={`w-6 h-6 ${wishlistItems.some((item: any) => item.id === product.id) ? 'fill-white' : 'fill-none'} stroke-white`} 
+                        strokeWidth={1.5}
+                      />
+                    </button>
+
+                    {/* Pagination Dots Indicator - Only in Standard View */}
+                    {(product.srcs && product.srcs.length > 1) && (
+                      <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10 pointer-events-none">
+                        {product.srcs.map((_, i) => (
+                          <div key={i} className="w-1.5 h-1.5 rounded-full bg-white shadow-sm opacity-60"></div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* Clean Static Card for Dense View */
+                  <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full h-full block">
+                    <Image
+                      src={product.src}
+                      alt={product.title}
+                      fill
+                      className="object-cover"
+                      sizes="25vw"
+                    />
+                  </Link>
+                )}
+              </div>
+            </div>
+
+            {!isDense && (
+              <div className="flex flex-col px-1 pb-4">
+              <div className="flex justify-between items-start w-full">
+                <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full pr-1">
+                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-black mb-0.5">
+                    {product.title}
+                  </h3>
+                </Link>
+                <button className="text-black/40 hover:text-black shrink-0 mt-[-2px]">
+                    <Plus className="w-4 h-4" strokeWidth={1.5} />
+                </button>
+              </div>
+                <p className="text-[10px] font-bold tracking-wider text-black/60">
+                  {product.price}
+                </p>
+              </div>
+            )}
+
+          </div>
         ))}
       </div>
       
