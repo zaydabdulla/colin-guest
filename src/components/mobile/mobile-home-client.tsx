@@ -179,8 +179,8 @@ export function MobileHomeClient({ products, collections }: MobileHomeClientProp
                     style={{ zIndex: 10 - Math.abs(pos) }}
                     initial={false}
                     animate={{
-                      scale: 1 - Math.abs(pos) * 0.15,
-                      x: pos * 85,
+                      scale: 1 - Math.abs(pos) * 0.1,
+                      x: pos * 50,
                       opacity: 1,
                     }}
                     transition={{ type: "spring", stiffness: 260, damping: 35 }}
