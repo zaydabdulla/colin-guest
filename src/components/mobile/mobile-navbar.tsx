@@ -207,7 +207,9 @@ export function MobileNavbar() {
       {/* 2. BOTTOM FLOATING NAV AREA (Pill) */}
       <div className="fixed bottom-6 left-0 right-0 z-40 px-6 flex items-end justify-center pointer-events-none">
         {/* Glass Pill */}
-        <div className="pointer-events-auto flex items-center justify-between px-8 py-3.5 bg-white/[0.03] backdrop-blur-3xl backdrop-saturate-[1.8] border border-white/20 rounded-full shadow-[inset_0_0_20px_rgba(255,255,255,0.15),0_12px_40px_rgba(0,0,0,0.12)] w-full max-w-[280px] transition-all">
+        <div className="pointer-events-auto flex items-center justify-between px-8 py-3.5 bg-white/[0.08] backdrop-blur-[40px] backdrop-saturate-[2.1] border border-white/20 border-t-white/40 border-l-white/30 rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),inset_0_-1px_1px_rgba(0,0,0,0.1),inset_0_0_20px_rgba(255,255,255,0.1),0_15px_35px_rgba(0,0,0,0.25)] w-full max-w-[280px] transition-all overflow-hidden relative group">
+          {/* Subtle Inner Gloss Shine */}
+          <div className="absolute top-0 left-0 right-0 h-[40%] bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
           <Link href="/" className={`${pathname === "/" ? "text-black" : "text-black/40"} transition-colors active:scale-90`}>
             <Home className="w-5.5 h-5.5" strokeWidth={1.5} />
           </Link>

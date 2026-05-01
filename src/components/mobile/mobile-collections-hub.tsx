@@ -192,7 +192,17 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
           {importedProducts.map((product) => (
             <div key={product.id} className="flex flex-col">
               <div className="relative aspect-[3/4] bg-white rounded-[28px] overflow-hidden mb-4 shadow-sm">
-                <Link href={`/product/${encodeURIComponent(product.id)}`}><Image src={product.images?.[0]?.url || "/placeholder.jpg"} alt={product.title} fill className="object-cover" /></Link>
+                <Link href={`/product/${encodeURIComponent(product.id)}`}>
+                  <Image src={product.images?.[0]?.url || "/placeholder.jpg"} alt={product.title} fill className="object-cover" />
+                </Link>
+                <button onClick={() => toggleWishlist(product)} className="absolute top-4 right-4 p-2 z-10">
+                  <Bookmark size={20} className={wishlistItems.some(item => item.id === product.id) ? "fill-black stroke-black" : "text-black/20"} strokeWidth={1.5} />
+                </button>
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 pointer-events-none">
+                  <div className="w-1.5 h-1.5 rounded-full bg-white shadow-sm" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-sm" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-sm" />
+                </div>
               </div>
               <div className="px-1 flex justify-between items-start">
                 <div className="max-w-[80%]">
