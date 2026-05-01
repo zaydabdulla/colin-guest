@@ -87,14 +87,14 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
       </section>
 
       {/* 2. LATEST DROP SECTION */}
-      <section className="pt-6 pb-12 px-6">
-        <div className="flex justify-between items-center mb-8 px-1">
+      <section className="pt-6 pb-12">
+        <div className="flex justify-between items-center mb-8 px-6">
           <h2 className="text-[10px] font-bold tracking-[0.3em] uppercase text-black/30">Latest drop</h2>
           <Link href="/collections/all" className="flex items-center gap-1.5 px-3 py-1.5 bg-black/5 rounded-full active:bg-black/10 transition-colors">
             <span className="text-[8px] font-bold uppercase tracking-widest text-black/40">Discover more</span>
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-x-1.5 gap-y-8">
+        <div className="grid grid-cols-2 gap-1 w-full">
           {latestProducts.map((product) => (
             <div key={product.id} className="flex flex-col">
               <div className="relative aspect-[2/3] bg-[#e8e8e8] rounded-xl overflow-hidden mb-1.5">
@@ -110,7 +110,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
                   <div className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-sm" />
                 </div>
               </div>
-              <div className="px-1 flex flex-col">
+              <div className="px-3 flex flex-col pb-6">
                 <div className="flex justify-between items-start w-full">
                   <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full pr-1">
                     <h3 className="text-[10px] font-bold uppercase tracking-widest text-black mb-0.5 truncate">{product.title}</h3>
@@ -183,14 +183,14 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
       </section>
 
       {/* 5. IMPORTED PIECES SECTION */}
-      <section className="py-12 px-6">
-        <div className="flex justify-between items-center mb-8 px-1">
+      <section className="py-12">
+        <div className="flex justify-between items-center mb-8 px-6">
           <h2 className="text-[10px] font-bold tracking-[0.3em] uppercase text-black/30">Imported Pieces</h2>
           <Link href="/collections/all" className="flex items-center gap-1.5 px-3 py-1.5 bg-black/5 rounded-full active:bg-black/10 transition-colors">
             <span className="text-[8px] font-bold uppercase tracking-widest text-black/40">Discover more</span>
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-x-1.5 gap-y-8">
+        <div className="grid grid-cols-2 gap-1 w-full">
           {importedProducts.map((product) => (
             <div key={product.id} className="flex flex-col">
               <div className="relative aspect-[2/3] bg-[#e8e8e8] rounded-xl overflow-hidden mb-1.5">
@@ -206,7 +206,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
                   <div className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-sm" />
                 </div>
               </div>
-              <div className="px-1 flex flex-col">
+              <div className="px-3 flex flex-col pb-6">
                 <div className="flex justify-between items-start w-full">
                   <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full pr-1">
                     <h3 className="text-[10px] font-bold uppercase tracking-widest text-black mb-0.5 truncate">{product.title}</h3>
