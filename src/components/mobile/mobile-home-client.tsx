@@ -89,7 +89,7 @@ export function MobileHomeClient({ products, collections }: MobileHomeClientProp
     <div className="bg-[#f4f4f4] min-h-screen font-sans overflow-x-hidden">
       
       {/* 1. LOOKBOOK MODELS CAROUSEL (Hero Section) */}
-      <section className="relative w-full overflow-hidden bg-[#f4f4f4]" style={{ height: '85vh' }}>
+      <section className="relative w-full overflow-hidden bg-[#f4f4f4]" style={{ height: '82vh' }}>
         <div className="flex-1 relative h-full overflow-hidden">
           {/* The Scrollable Layer - Touch Area for Swiping */}
           <div
@@ -101,7 +101,7 @@ export function MobileHomeClient({ products, collections }: MobileHomeClientProp
               {repeatedProducts.map((product, index) => (
                 <div
                   key={`scroll-item-${index}`}
-                  className="w-screen h-full flex flex-col snap-center flex-shrink-0 items-center justify-start pt-[78vh]"
+                  className="w-screen h-full flex flex-col snap-center flex-shrink-0 items-center justify-start pt-[74vh]"
                 >
                   <Link
                     href={`/product/${encodeURIComponent(product.id)}`}
@@ -118,7 +118,7 @@ export function MobileHomeClient({ products, collections }: MobileHomeClientProp
 
           {/* The Animated Images Layer */}
           <div 
-            className="absolute top-0 left-0 w-full h-full z-10 pointer-events-none flex items-start justify-center overflow-hidden bg-[#f4f4f4] pt-[50px]"
+            className="absolute top-0 left-0 w-full h-full z-10 pointer-events-none flex items-start justify-center overflow-hidden bg-[#f4f4f4] pt-0"
           >
             <div className="relative w-full h-full flex items-start justify-center">
               {repeatedProducts.map((product, index) => (
