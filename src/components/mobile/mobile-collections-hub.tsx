@@ -94,28 +94,30 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
             <span className="text-[8px] font-bold uppercase tracking-widest text-black/40">Discover more</span>
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-x-3 gap-y-8">
+        <div className="grid grid-cols-2 gap-x-1.5 gap-y-8">
           {latestProducts.map((product) => (
             <div key={product.id} className="flex flex-col">
-              <div className="relative aspect-[3/4] bg-white rounded-[28px] overflow-hidden mb-4 shadow-sm">
+              <div className="relative aspect-[2/3] bg-[#e8e8e8] rounded-xl overflow-hidden mb-1.5">
                 <Link href={`/product/${encodeURIComponent(product.id)}`}>
                   <Image src={product.images?.[0]?.url || "/placeholder.jpg"} alt={product.title} fill className="object-cover" />
                 </Link>
-                <button onClick={() => toggleWishlist(product)} className="absolute top-4 right-4 p-2 z-10">
-                  <Bookmark size={20} className={wishlistItems.some(item => item.id === product.id) ? "fill-black stroke-black" : "text-black/20"} strokeWidth={1.5} />
+                <button onClick={() => toggleWishlist(product)} className="absolute top-1.5 right-1.5 p-2 z-10 text-white transition-opacity active:opacity-50">
+                  <Bookmark size={24} className={wishlistItems.some(item => item.id === product.id) ? "fill-white" : "fill-none"} strokeWidth={1.5} />
                 </button>
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 pointer-events-none">
-                  <div className="w-1.5 h-1.5 rounded-full bg-white shadow-sm" />
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1 z-10 pointer-events-none">
+                  <div className="w-1.5 h-1.5 rounded-full bg-white/60 shadow-sm" />
                   <div className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-sm" />
                   <div className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-sm" />
                 </div>
               </div>
-              <div className="px-1 flex justify-between items-start">
-                <div className="max-w-[80%]">
-                  <h3 className="text-[10px] font-bold tracking-tight text-black truncate uppercase">{product.title}</h3>
-                  <p className="text-[10px] font-bold text-black/40 mt-1">{formatPrice(product)}</p>
+              <div className="px-1 flex flex-col">
+                <div className="flex justify-between items-start w-full">
+                  <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full pr-1">
+                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-black mb-0.5 truncate">{product.title}</h3>
+                  </Link>
+                  <button className="text-black/40 shrink-0 mt-[-2px]"><Plus size={16} strokeWidth={1.5} /></button>
                 </div>
-                <button className="p-2 bg-black/5 rounded-full"><Plus size={12} className="text-black/60" /></button>
+                <p className="text-[10px] font-bold tracking-wider text-black/60">{formatPrice(product)}</p>
               </div>
             </div>
           ))}
@@ -188,28 +190,30 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
             <span className="text-[8px] font-bold uppercase tracking-widest text-black/40">Discover more</span>
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-x-3 gap-y-8">
+        <div className="grid grid-cols-2 gap-x-1.5 gap-y-8">
           {importedProducts.map((product) => (
             <div key={product.id} className="flex flex-col">
-              <div className="relative aspect-[3/4] bg-white rounded-[28px] overflow-hidden mb-4 shadow-sm">
+              <div className="relative aspect-[2/3] bg-[#e8e8e8] rounded-xl overflow-hidden mb-1.5">
                 <Link href={`/product/${encodeURIComponent(product.id)}`}>
                   <Image src={product.images?.[0]?.url || "/placeholder.jpg"} alt={product.title} fill className="object-cover" />
                 </Link>
-                <button onClick={() => toggleWishlist(product)} className="absolute top-4 right-4 p-2 z-10">
-                  <Bookmark size={20} className={wishlistItems.some(item => item.id === product.id) ? "fill-black stroke-black" : "text-black/20"} strokeWidth={1.5} />
+                <button onClick={() => toggleWishlist(product)} className="absolute top-1.5 right-1.5 p-2 z-10 text-white transition-opacity active:opacity-50">
+                  <Bookmark size={24} className={wishlistItems.some(item => item.id === product.id) ? "fill-white" : "fill-none"} strokeWidth={1.5} />
                 </button>
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 pointer-events-none">
-                  <div className="w-1.5 h-1.5 rounded-full bg-white shadow-sm" />
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1 z-10 pointer-events-none">
+                  <div className="w-1.5 h-1.5 rounded-full bg-white/60 shadow-sm" />
                   <div className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-sm" />
                   <div className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-sm" />
                 </div>
               </div>
-              <div className="px-1 flex justify-between items-start">
-                <div className="max-w-[80%]">
-                  <h3 className="text-[10px] font-bold tracking-tight text-black truncate uppercase">{product.title}</h3>
-                  <p className="text-[10px] font-bold text-black/40 mt-1">{formatPrice(product)}</p>
+              <div className="px-1 flex flex-col">
+                <div className="flex justify-between items-start w-full">
+                  <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full pr-1">
+                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-black mb-0.5 truncate">{product.title}</h3>
+                  </Link>
+                  <button className="text-black/40 shrink-0 mt-[-2px]"><Plus size={16} strokeWidth={1.5} /></button>
                 </div>
-                <button className="p-2 bg-black/5 rounded-full"><Plus size={12} className="text-black/60" /></button>
+                <p className="text-[10px] font-bold tracking-wider text-black/60">{formatPrice(product)}</p>
               </div>
             </div>
           ))}
