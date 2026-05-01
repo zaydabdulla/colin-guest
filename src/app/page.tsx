@@ -1,6 +1,6 @@
-import { getCollectionProducts, getAllProducts } from "@/lib/shopify";
+import { getCollectionProducts, getAllProducts, getAllCollections } from "@/lib/shopify";
 // Force Redeploy: 2026-04-24T00:50:12Z
-import { Product } from "@/lib/data";
+import { Product, Collection } from "@/lib/data";
 import LookbookClient from "@/components/lookbook-client";
 import { MobileHomeClient } from "@/components/mobile/mobile-home-client";
 
@@ -28,6 +28,10 @@ export default async function Home() {
     type: p.productType || "General"
   }));
 
+  // Fetch collections for mobile integration
+  const allCollections = await getAllCollections();
+  const filteredCollections = allCollections.filter((c: Collection) => c.title.toLowerCase() !== 'landing page');
+
   return (
     <>
       {/* Desktop View - Strict Isolation */}
@@ -37,7 +41,10 @@ export default async function Home() {
 
       {/* Mobile View - Strict Isolation */}
       <div className="block md:hidden">
-        <MobileHomeClient products={displayProducts} />
+        <MobileHomeClient 
+          products={displayProducts} 
+          collections={filteredCollections}
+        />
       </div>
     </>
   );

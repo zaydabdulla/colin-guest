@@ -60,8 +60,13 @@ export function ProductCard({
           </button>
         )}
 
-        {/* Image Slider / Swipe Area - Mobile Swipeable, Desktop Static */}
-        <div className="relative w-full h-full overflow-x-auto md:overflow-hidden snap-x snap-mandatory no-scrollbar flex items-center justify-center">
+        {/* Image Slider / Swipe Area - Mobile Swipeable, Desktop Hover-Swap */}
+        <div 
+          className="relative w-full h-full overflow-x-auto md:overflow-hidden snap-x snap-mandatory no-scrollbar flex items-center justify-start transition-transform duration-700 ease-in-out"
+          style={{ 
+            transform: isHovered && srcs.length > 1 ? 'translateX(-100%)' : 'translateX(0%)'
+          }}
+        >
           {srcs.map((src, i) => (
             <div key={i} className="flex-none w-full h-full snap-center relative">
               <Link 
@@ -78,22 +83,6 @@ export function ProductCard({
               </Link>
             </div>
           ))}
-          
-          {/* Pagination Dots Indicator - Only visible if multiple images */}
-          {srcs.length > 1 && (
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1 z-30 pointer-events-none md:hidden">
-              {srcs.map((_, i) => (
-                <div 
-                  key={i}
-                  className={`w-1 h-1 rounded-full transition-all duration-300 ${
-                    // This is a CSS-only approximation of active state since we use native scroll
-                    // We can use JS to track it if we want perfect dots, but CSS is lighter
-                    "bg-black/20"
-                  }`}
-                />
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Dynamic Hover Arrows (Desktop Only) */}
