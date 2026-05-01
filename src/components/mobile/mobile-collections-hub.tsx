@@ -125,7 +125,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
       </section>
 
       {/* 4. REFINED STACKED COLLECTION SWIPER */}
-      <section className="py-24 relative overflow-hidden h-[580px] flex flex-col items-center">
+      <section className="py-24 relative overflow-hidden h-[620px] flex flex-col items-center">
         <div className="px-6 mb-12 text-center">
           <h2 className="text-[9px] font-bold tracking-[0.6em] uppercase text-black/20">Featured Series</h2>
         </div>
@@ -143,12 +143,12 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
                     style={{ zIndex: 10 - Math.abs(pos) }}
                     initial={false}
                     animate={{
-                      scale: 1 - Math.abs(pos) * 0.1,
-                      x: pos * 50,
+                      scale: 1 - Math.abs(pos) * 0.12,
+                      x: pos * 65,
                       opacity: 1,
                     }}
                     transition={{ type: "spring", stiffness: 260, damping: 35 }}
-                    className="absolute w-full aspect-[1/1.75] rounded-xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.15)] bg-white cursor-pointer"
+                    className="absolute w-full aspect-[2/3] rounded-xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.15)] bg-white cursor-pointer"
                     onClick={() => {
                       if (pos !== 0) setActiveIndex(index);
                     }}
