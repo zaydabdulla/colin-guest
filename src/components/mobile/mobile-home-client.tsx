@@ -118,7 +118,7 @@ export function MobileHomeClient({ products, collections }: MobileHomeClientProp
 
           {/* The Animated Images Layer */}
           <div 
-            className="absolute top-0 left-0 w-full h-full z-10 pointer-events-none flex items-start justify-center overflow-hidden bg-[#f4f4f4] pt-[80px]"
+            className="absolute top-0 left-0 w-full h-full z-10 pointer-events-none flex items-start justify-center overflow-hidden bg-[#f4f4f4] pt-[50px]"
           >
             <div className="relative w-full h-full flex items-start justify-center">
               {repeatedProducts.map((product, index) => (
