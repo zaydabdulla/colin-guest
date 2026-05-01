@@ -98,11 +98,20 @@ export function MobileHomeClient({ products, collections }: MobileHomeClientProp
             style={{ WebkitOverflowScrolling: 'touch' }}
           >
             <div className="flex h-full" style={{ width: `${repeatedProducts.length * 100}vw` }}>
-              {repeatedProducts.map((_, index) => (
+              {repeatedProducts.map((product, index) => (
                 <div
                   key={`scroll-item-${index}`}
-                  className="w-screen h-full flex flex-col snap-center flex-shrink-0"
-                />
+                  className="w-screen h-full flex flex-col snap-center flex-shrink-0 items-center justify-start pt-[72vh]"
+                >
+                  <Link
+                    href={`/product/${encodeURIComponent(product.id)}`}
+                    className="relative z-30 px-6 py-2 active:opacity-50 transition-opacity"
+                  >
+                    <span className="text-black/60 text-[9px] font-bold uppercase tracking-[0.3em] border-b border-black/20 pb-0.5">
+                      Shop the fit
+                    </span>
+                  </Link>
+                </div>
               ))}
             </div>
           </div>
