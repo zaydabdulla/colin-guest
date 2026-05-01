@@ -89,7 +89,7 @@ export function MobileHomeClient({ products, collections }: MobileHomeClientProp
     <div className="bg-[#f4f4f4] min-h-screen font-sans overflow-x-hidden">
       
       {/* 1. LOOKBOOK MODELS CAROUSEL (Hero Section) */}
-      <section className="relative w-full overflow-hidden bg-[#f4f4f4]" style={{ height: '75vh' }}>
+      <section className="relative w-full overflow-hidden bg-[#f4f4f4]" style={{ height: '85vh' }}>
         <div className="flex-1 relative h-full overflow-hidden">
           {/* The Scrollable Layer - Touch Area for Swiping */}
           <div
@@ -101,7 +101,7 @@ export function MobileHomeClient({ products, collections }: MobileHomeClientProp
               {repeatedProducts.map((product, index) => (
                 <div
                   key={`scroll-item-${index}`}
-                  className="w-screen h-full flex flex-col snap-center flex-shrink-0 items-center justify-start pt-[72vh]"
+                  className="w-screen h-full flex flex-col snap-center flex-shrink-0 items-center justify-start pt-[78vh]"
                 >
                   <Link
                     href={`/product/${encodeURIComponent(product.id)}`}
@@ -289,7 +289,7 @@ function HeroModel({ product, index, total, progress }: { product: Product, inde
       style={{ scale, opacity, x, zIndex, position: "absolute", transformOrigin: "center center", willChange: "transform, opacity", translateZ: 0 }}
       className="w-[75vw] max-w-[360px] h-full flex items-center justify-center pointer-events-none"
     >
-      <div className="relative w-full h-full max-h-[92%] pt-8">
+      <div className="relative w-full h-full max-h-[80%] pt-8">
         <Image src={product.src} alt={product.title} fill className="object-contain" sizes="(max-width: 768px) 75vw, 400px" quality={70} />
       </div>
     </motion.div>
