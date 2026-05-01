@@ -25,7 +25,9 @@ export function MobileNavbar() {
   const pathname = usePathname();
   const { openCart, items, isLoggedIn, wishlistItems, openWishlist } = useCartStore();
 
-  const isAboutPage = pathname === "/about";
+  const isAboutPage = pathname === "/about" || pathname === "/about/";
+  const isCollectionsHub = pathname === "/collections" || pathname === "/collections/";
+  const isTransparentPage = isAboutPage || isCollectionsHub;
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const [showScrollArrow, setShowScrollArrow] = useState(false);
@@ -126,10 +128,10 @@ export function MobileNavbar() {
     <>
       {/* 1. TOP ICONS: Menu (Left), Logo (Center), Wishlist + Cart (Right) */}
       <div className={`fixed top-0 left-0 right-0 z-[500] h-[64px] safe-top px-5 transition-colors duration-500 ${
-        isAboutPage ? "bg-transparent" : "bg-white"
+        isTransparentPage ? "bg-transparent" : "bg-white"
       }`}>
         <div className={`grid grid-cols-3 items-center h-full w-full relative transition-colors duration-500 ${
-          isAboutPage ? "text-white" : "text-black"
+          isTransparentPage ? "text-white" : "text-black"
         }`}>
           
           {/* Left: 2-Line Menu Icon */}
@@ -140,8 +142,8 @@ export function MobileNavbar() {
               aria-label="Open Menu"
             >
               <div className="w-4.5 flex flex-col gap-[2.5px]">
-                <div className={`h-[1.2px] w-full ${isAboutPage ? "bg-white" : "bg-black"}`}></div>
-                <div className={`h-[1.2px] w-2/3 ${isAboutPage ? "bg-white" : "bg-black"}`}></div>
+                <div className={`h-[1.2px] w-full ${isTransparentPage ? "bg-white" : "bg-black"}`}></div>
+                <div className={`h-[1.2px] w-2/3 ${isTransparentPage ? "bg-white" : "bg-black"}`}></div>
               </div>
             </button>
           </div>
@@ -152,7 +154,7 @@ export function MobileNavbar() {
               href="/"
               className="pointer-events-auto flex items-center justify-center h-[40px] w-full max-w-[100px] relative"
             >
-              <div className={`relative w-full h-full overflow-visible ${isAboutPage ? "invert brightness-[10]" : ""}`}>
+              <div className={`relative w-full h-full overflow-visible ${isTransparentPage ? "invert brightness-[10]" : ""}`}>
                 <Image
                   src="/logo_cg.png"
                   alt="COLIN GUEST"
@@ -174,7 +176,7 @@ export function MobileNavbar() {
               <Bookmark className="w-5.5 h-5.5" strokeWidth={1.2} />
               {wishlistItems.length > 0 && (
                 <span className={`absolute top-1.5 right-1.5 flex h-3 w-3 items-center justify-center rounded-full text-[7px] font-semibold border ${
-                  isAboutPage ? "bg-white text-black border-black" : "bg-black text-white border-white"
+                  isTransparentPage ? "bg-white text-black border-black" : "bg-black text-white border-white"
                 }`}>
                   {wishlistItems.length}
                 </span>
@@ -191,7 +193,7 @@ export function MobileNavbar() {
               <ShoppingBag className="w-5.5 h-5.5" strokeWidth={1.2} />
               {totalItems > 0 && (
                 <span className={`absolute top-1.5 right-1.5 flex h-3 w-3 items-center justify-center rounded-full text-[7px] font-semibold border ${
-                  isAboutPage ? "bg-white text-black border-black" : "bg-black text-white border-white"
+                  isTransparentPage ? "bg-white text-black border-black" : "bg-black text-white border-white"
                 }`}>
                   {totalItems}
                 </span>
@@ -325,7 +327,7 @@ export function MobileNavbar() {
 
       {/* 4. SEARCH OVERLAY */}
       {/* Backdrop */}
-      {isSearchOpen && !isAboutPage && (
+      {isSearchOpen && !isTransparentPage && (
         <div 
           className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[590] transition-opacity duration-500"
           onClick={() => setIsSearchOpen(false)}
@@ -339,7 +341,7 @@ export function MobileNavbar() {
         }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className={`fixed top-0 left-0 right-0 z-[600] flex flex-col rounded-b-[24px] overflow-hidden ${
-          isAboutPage 
+          isTransparentPage 
             ? "bg-transparent backdrop-blur-3xl border-none" 
             : "bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)]"
         }`}
@@ -356,7 +358,7 @@ export function MobileNavbar() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
                 className={`w-full rounded-full py-2.5 px-6 text-[16px] outline-none border-none transition-all font-medium ${
-                  isAboutPage 
+                  isTransparentPage 
                     ? "bg-white/10 text-white placeholder:text-white/20 focus:bg-white/20" 
                     : "bg-[#f4f4f5] text-black placeholder:text-black/30"
                 }`}
@@ -365,7 +367,7 @@ export function MobileNavbar() {
                 size={16}
                 onClick={() => handleSearchSubmit()}
                 className={`absolute right-5 top-1/2 -translate-y-1/2 ${
-                  isAboutPage ? "text-white/40" : "text-black/30"
+                  isTransparentPage ? "text-white/40" : "text-black/30"
                 }`}
               />
             </div>
@@ -375,7 +377,7 @@ export function MobileNavbar() {
                 setSearchQuery("");
               }}
               className={`p-2 rounded-full ${
-                isAboutPage ? "bg-white/10 text-white" : "bg-black/5 text-black"
+                isTransparentPage ? "bg-white/10 text-white" : "bg-black/5 text-black"
               }`}
             >
               <X size={18} strokeWidth={1.5} />
@@ -385,13 +387,13 @@ export function MobileNavbar() {
           {/* Search Results / Categories */}
           <div className="flex-1 overflow-y-auto pb-4">
             <h3 className={`px-6 text-[8px] font-bold uppercase tracking-[0.3em] mb-2 mt-4 ${
-              isAboutPage ? "text-white/40" : "text-black/30"
+              isTransparentPage ? "text-white/40" : "text-black/30"
             }`}>
               {searchQuery.trim() ? (isSearching ? "Searching..." : `Results for "${searchQuery}"`) : "Collections"}
             </h3>
 
             <div className={`mx-6 rounded-[24px] p-1.5 relative ${
-              isAboutPage ? "bg-white/5" : "bg-[#f4f4f5]"
+              isTransparentPage ? "bg-white/5" : "bg-[#f4f4f5]"
             }`}>
               <div 
                 ref={scrollContainerRef}
@@ -412,7 +414,7 @@ export function MobileNavbar() {
                           href={`/product/${encodeURIComponent(product.id)}`}
                           onClick={() => setIsSearchOpen(false)}
                           className={`flex flex-col h-full rounded-[16px] p-1 pb-3 transition-all ${
-                            isAboutPage 
+                            isTransparentPage 
                               ? "bg-white/10 text-white" 
                               : "bg-white text-black shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
                           }`}
@@ -437,7 +439,7 @@ export function MobileNavbar() {
                   ) : (
                     !isSearching && (
                       <div className={`w-full py-6 text-center text-[9px] font-bold uppercase tracking-widest opacity-30 ${
-                        isAboutPage ? "text-white" : "text-black"
+                        isTransparentPage ? "text-white" : "text-black"
                       }`}>
                         No products found
                       </div>
