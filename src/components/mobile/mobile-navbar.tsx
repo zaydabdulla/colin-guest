@@ -207,17 +207,17 @@ export function MobileNavbar() {
 
       {/* 2. iOS-STYLE GLIDING BOTTOM NAV (Mobile Only) */}
       <div className="fixed bottom-6 left-0 right-0 z-40 px-6 flex justify-center pointer-events-none">
-        <div className="pointer-events-auto relative flex items-center justify-between px-8 py-3.5 bg-white/[0.08] backdrop-blur-[40px] backdrop-saturate-[2.1] border border-white/20 border-t-white/40 border-l-white/30 rounded-full shadow-[0_15px_35px_rgba(0,0,0,0.25)] w-full max-w-[280px] overflow-hidden">
+        <div className="pointer-events-auto relative flex items-center justify-between px-7 py-2.5 bg-white/[0.08] backdrop-blur-[40px] backdrop-saturate-[2.1] border border-white/20 border-t-white/40 border-l-white/30 rounded-full shadow-[0_15px_35px_rgba(0,0,0,0.25)] w-full max-w-[260px] overflow-hidden">
           {/* Active Gliding Pill Background */}
-          <div className="absolute inset-y-1.5 left-4 right-4 flex pointer-events-none">
-            {["/lookbook", "/collections/all", "search", isLoggedIn ? "/profile" : "/login"].map((tab, idx) => {
+          <div className="absolute inset-y-1.5 left-2 right-2 flex pointer-events-none">
+            {["/collections/all", "search", isLoggedIn ? "/profile" : "/login", "/lookbook"].map((tab, idx) => {
               const isActive = tab === "search" ? isSearchOpen : (tab === "/collections/all" ? pathname.startsWith("/collections") : pathname === tab);
               return (
                 <div key={idx} className="flex-1 relative h-full">
                   {isActive && (
                     <motion.div
                       layoutId="activePill"
-                      className="absolute inset-0 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] rounded-full z-0"
+                      className="absolute inset-0 bg-white/15 rounded-full z-0"
                       transition={{ type: "spring", stiffness: 400, damping: 32, mass: 0.8 }}
                     />
                   )}
@@ -228,27 +228,10 @@ export function MobileNavbar() {
 
           {/* Navigation Icons Area */}
           <div className="flex w-full h-full relative z-10 justify-between items-center">
-            {/* Tab 1: Lookbook */}
-            <Link 
-              href="/lookbook" 
-              className="flex items-center justify-center relative transition-colors"
-            >
-              <motion.div 
-                whileTap={{ scale: 0.9 }}
-                animate={{ 
-                  scale: pathname === "/lookbook" ? 1.1 : 1,
-                  color: pathname === "/lookbook" ? "#000" : "rgba(0,0,0,0.4)"
-                }}
-                className="p-1"
-              >
-                <Home className="w-5.5 h-5.5" strokeWidth={1.5} />
-              </motion.div>
-            </Link>
-
-            {/* Tab 2: All Products */}
+            {/* Tab 1: All Products (Compass) */}
             <Link 
               href="/collections/all" 
-              className="flex items-center justify-center relative transition-colors"
+              className="flex-1 flex items-center justify-center relative transition-colors"
             >
               <motion.div 
                 whileTap={{ scale: 0.9 }}
@@ -262,10 +245,10 @@ export function MobileNavbar() {
               </motion.div>
             </Link>
 
-            {/* Tab 3: Search */}
+            {/* Tab 2: Search */}
             <button 
               onClick={() => setIsSearchOpen(true)}
-              className="flex items-center justify-center relative transition-colors"
+              className="flex-1 flex items-center justify-center relative transition-colors"
             >
               <motion.div 
                 whileTap={{ scale: 0.9 }}
@@ -279,10 +262,10 @@ export function MobileNavbar() {
               </motion.div>
             </button>
 
-            {/* Tab 4: Profile */}
+            {/* Tab 3: Profile (User) */}
             <Link 
               href={isLoggedIn ? "/profile" : "/login"} 
-              className="flex items-center justify-center relative transition-colors"
+              className="flex-1 flex items-center justify-center relative transition-colors"
             >
               <motion.div 
                 whileTap={{ scale: 0.9 }}
@@ -293,6 +276,23 @@ export function MobileNavbar() {
                 className="p-1"
               >
                 <User className="w-5.5 h-5.5" strokeWidth={1.5} />
+              </motion.div>
+            </Link>
+
+            {/* Tab 4: Lookbook (Home) */}
+            <Link 
+              href="/lookbook" 
+              className="flex-1 flex items-center justify-center relative transition-colors"
+            >
+              <motion.div 
+                whileTap={{ scale: 0.9 }}
+                animate={{ 
+                  scale: pathname === "/lookbook" ? 1.1 : 1,
+                  color: pathname === "/lookbook" ? "#000" : "rgba(0,0,0,0.4)"
+                }}
+                className="p-1"
+              >
+                <Home className="w-5.5 h-5.5" strokeWidth={1.5} />
               </motion.div>
             </Link>
           </div>

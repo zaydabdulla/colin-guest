@@ -79,9 +79,19 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent flex flex-col justify-end items-center p-16 pb-24">
           <Link 
             href="/collections/all"
-            className="text-white/40 text-[9px] font-medium uppercase tracking-[0.4em] border-b border-white/10 pb-2 active:opacity-50 transition-opacity"
+            className="relative group p-[1.2px] overflow-hidden rounded-full active:scale-95 transition-transform"
           >
-            Shop now
+            {/* Continuous White Neon Light Border */}
+            <motion.div 
+              animate={{ rotate: 360 }}
+              transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-[-250%] bg-[conic-gradient(from_0deg,transparent_0deg,transparent_330deg,#fff_360deg)] opacity-60"
+            />
+            
+            {/* Glossy/Watery Button Surface */}
+            <div className="relative px-5 py-2 bg-white/10 backdrop-blur-[15px] rounded-full border border-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.3),0_5px_15px_rgba(0,0,0,0.1)] flex items-center justify-center">
+              <span className="text-white text-[8px] font-bold uppercase tracking-[0.4em] whitespace-nowrap">Shop now</span>
+            </div>
           </Link>
         </div>
       </section>

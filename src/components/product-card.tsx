@@ -38,7 +38,17 @@ export function ProductCard({
   };
 
   return (
-    <div className="group flex flex-col relative" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+    <div 
+      className="group flex flex-col relative" 
+      onMouseEnter={() => {
+        setIsHovered(true);
+        if (imgIndex === 0 && srcs.length > 1) setImgIndex(1);
+      }} 
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setImgIndex(0);
+      }}
+    >
       <motion.div 
         initial={{ opacity: 1, y: 0 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -61,12 +71,14 @@ export function ProductCard({
         )}
 
         {/* Image Slider / Swipe Area - Mobile Swipeable, Desktop Hover-Swap */}
-        <motion.div 
-          className="relative w-full h-full md:flex md:overflow-hidden snap-x snap-mandatory no-scrollbar"
-          animate={{ x: `-${imgIndex * 100}%` }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          onMouseEnter={() => srcs.length > 1 && setImgIndex(1)}
-          onMouseLeave={() => setImgIndex(0)}
+        <div 
+          className={`relative w-full h-full flex flex-nowrap overflow-x-auto md:overflow-visible snap-x snap-mandatory no-scrollbar ${
+            imgIndex === 0 ? "" : "transition-transform duration-500 ease-out"
+          }`}
+          style={{ 
+            transform: `translateX(-${imgIndex * 100}%)`,
+            transition: imgIndex === 0 ? "none" : undefined
+          }}
         >
           {srcs.map((src, i) => (
             <div key={i} className="flex-none w-full h-full snap-center relative">
@@ -75,7 +87,7 @@ export function ProductCard({
                 className="relative w-full h-full mix-blend-multiply drop-shadow-2xl flex items-center justify-center"
               >
                 <Image 
-                  src={src}
+                  src={src || "/placeholder.jpg"}
                   alt={`${product.title} - view ${i + 1}`}
                   fill
                   className="object-contain transition-transform duration-700 group-hover:scale-105"
@@ -84,7 +96,7 @@ export function ProductCard({
               </Link>
             </div>
           ))}
-        </motion.div>
+        </div>
 
         {/* Dynamic Hover Arrows (Desktop Only) */}
         {srcs.length > 1 && !isDense && (
