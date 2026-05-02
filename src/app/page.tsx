@@ -2,8 +2,7 @@ import { getCollectionProducts, getAllProducts, getAllCollections } from "@/lib/
 // Force Redeploy: 2026-04-24T00:50:12Z
 import { Product, Collection } from "@/lib/data";
 import LookbookClient from "@/components/lookbook-client";
-import { MobileHomeClient } from "@/components/mobile/mobile-home-client";
-
+import { MobileCollectionsHub } from "@/components/mobile/mobile-collections-hub";
 
 export default async function Home() {
   let shopifyProducts = await getCollectionProducts("Landing Page");
@@ -31,6 +30,10 @@ export default async function Home() {
   // Fetch collections for mobile integration
   const allCollections = await getAllCollections();
   const filteredCollections = allCollections.filter((c: Collection) => c.title.toLowerCase() !== 'landing page');
+  
+  // For Collections Hub
+  const landingPageCollection = allCollections.find(c => c.title.toLowerCase() === 'landing page');
+  const allProductsImage = landingPageCollection?.image?.url || "/collections_hero.jpg";
 
   return (
     <>
@@ -41,9 +44,9 @@ export default async function Home() {
 
       {/* Mobile View - Strict Isolation */}
       <div className="block md:hidden">
-        <MobileHomeClient 
-          products={displayProducts} 
+        <MobileCollectionsHub 
           collections={filteredCollections}
+          allProductsImage={allProductsImage}
         />
       </div>
     </>

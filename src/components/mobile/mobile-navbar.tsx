@@ -27,7 +27,8 @@ export function MobileNavbar() {
 
   const isAboutPage = pathname === "/about" || pathname === "/about/";
   const isCollectionsHub = pathname === "/collections" || pathname === "/collections/";
-  const isTransparentPage = isAboutPage || isCollectionsHub;
+  const isHome = pathname === "/";
+  const isTransparentPage = isAboutPage || isCollectionsHub || isHome;
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const [showScrollArrow, setShowScrollArrow] = useState(false);
@@ -204,30 +205,97 @@ export function MobileNavbar() {
       </div>
 
 
-      {/* 2. BOTTOM FLOATING NAV AREA (Pill) */}
-      <div className="fixed bottom-6 left-0 right-0 z-40 px-6 flex items-end justify-center pointer-events-none">
-        {/* Glass Pill */}
-        <div className="pointer-events-auto flex items-center justify-between px-8 py-3.5 bg-white/[0.08] backdrop-blur-[40px] backdrop-saturate-[2.1] border border-white/20 border-t-white/40 border-l-white/30 rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),inset_0_-1px_1px_rgba(0,0,0,0.1),inset_0_0_20px_rgba(255,255,255,0.1),0_15px_35px_rgba(0,0,0,0.25)] w-full max-w-[280px] transition-all overflow-hidden relative group">
-          {/* Subtle Inner Gloss Shine */}
-          <div className="absolute top-0 left-0 right-0 h-[40%] bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
-          <Link href="/" className={`${pathname === "/" ? "text-black" : "text-black/40"} transition-colors active:scale-90`}>
-            <Home className="w-5.5 h-5.5" strokeWidth={1.5} />
-          </Link>
+      {/* 2. iOS-STYLE GLIDING BOTTOM NAV (Mobile Only) */}
+      <div className="fixed bottom-6 left-0 right-0 z-40 px-6 flex justify-center pointer-events-none">
+        <div className="pointer-events-auto relative flex items-center justify-between px-8 py-3.5 bg-white/[0.08] backdrop-blur-[40px] backdrop-saturate-[2.1] border border-white/20 border-t-white/40 border-l-white/30 rounded-full shadow-[0_15px_35px_rgba(0,0,0,0.25)] w-full max-w-[280px] overflow-hidden">
+          {/* Active Gliding Pill Background */}
+          <div className="absolute inset-y-1.5 left-4 right-4 flex pointer-events-none">
+            {["/lookbook", "/collections/all", "search", isLoggedIn ? "/profile" : "/login"].map((tab, idx) => {
+              const isActive = tab === "search" ? isSearchOpen : (tab === "/collections/all" ? pathname.startsWith("/collections") : pathname === tab);
+              return (
+                <div key={idx} className="flex-1 relative h-full">
+                  {isActive && (
+                    <motion.div
+                      layoutId="activePill"
+                      className="absolute inset-0 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] rounded-full z-0"
+                      transition={{ type: "spring", stiffness: 400, damping: 32, mass: 0.8 }}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
 
-          <Link href="/collections/all" className={`${pathname.startsWith("/collections") ? "text-black" : "text-black/40"} transition-colors active:scale-90`}>
-            <Compass className="w-5.5 h-5.5" strokeWidth={1.5} />
-          </Link>
+          {/* Navigation Icons Area */}
+          <div className="flex w-full h-full relative z-10 justify-between items-center">
+            {/* Tab 1: Lookbook */}
+            <Link 
+              href="/lookbook" 
+              className="flex items-center justify-center relative transition-colors"
+            >
+              <motion.div 
+                whileTap={{ scale: 0.9 }}
+                animate={{ 
+                  scale: pathname === "/lookbook" ? 1.1 : 1,
+                  color: pathname === "/lookbook" ? "#000" : "rgba(0,0,0,0.4)"
+                }}
+                className="p-1"
+              >
+                <Home className="w-5.5 h-5.5" strokeWidth={1.5} />
+              </motion.div>
+            </Link>
 
-          <button 
-            onClick={() => setIsSearchOpen(true)}
-            className={`${isSearchOpen ? "text-black" : "text-black/40"} transition-colors active:scale-90`}
-          >
-            <Search className="w-5.5 h-5.5" strokeWidth={1.5} />
-          </button>
+            {/* Tab 2: All Products */}
+            <Link 
+              href="/collections/all" 
+              className="flex items-center justify-center relative transition-colors"
+            >
+              <motion.div 
+                whileTap={{ scale: 0.9 }}
+                animate={{ 
+                  scale: pathname.startsWith("/collections") ? 1.1 : 1,
+                  color: pathname.startsWith("/collections") ? "#000" : "rgba(0,0,0,0.4)"
+                }}
+                className="p-1"
+              >
+                <Compass className="w-5.5 h-5.5" strokeWidth={1.5} />
+              </motion.div>
+            </Link>
 
-          <Link href={isLoggedIn ? "/profile" : "/login"} className={`${pathname === "/profile" || pathname === "/login" ? "text-black" : "text-black/40"} transition-colors active:scale-90`}>
-            <User className="w-5.5 h-5.5" strokeWidth={1.5} />
-          </Link>
+            {/* Tab 3: Search */}
+            <button 
+              onClick={() => setIsSearchOpen(true)}
+              className="flex items-center justify-center relative transition-colors"
+            >
+              <motion.div 
+                whileTap={{ scale: 0.9 }}
+                animate={{ 
+                  scale: isSearchOpen ? 1.1 : 1,
+                  color: isSearchOpen ? "#000" : "rgba(0,0,0,0.4)"
+                }}
+                className="p-1"
+              >
+                <Search className="w-5.5 h-5.5" strokeWidth={1.5} />
+              </motion.div>
+            </button>
+
+            {/* Tab 4: Profile */}
+            <Link 
+              href={isLoggedIn ? "/profile" : "/login"} 
+              className="flex items-center justify-center relative transition-colors"
+            >
+              <motion.div 
+                whileTap={{ scale: 0.9 }}
+                animate={{ 
+                  scale: (pathname === "/profile" || pathname === "/login") ? 1.1 : 1,
+                  color: (pathname === "/profile" || pathname === "/login") ? "#000" : "rgba(0,0,0,0.4)"
+                }}
+                className="p-1"
+              >
+                <User className="w-5.5 h-5.5" strokeWidth={1.5} />
+              </motion.div>
+            </Link>
+          </div>
         </div>
       </div>
 
