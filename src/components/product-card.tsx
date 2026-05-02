@@ -61,11 +61,12 @@ export function ProductCard({
         )}
 
         {/* Image Slider / Swipe Area - Mobile Swipeable, Desktop Hover-Swap */}
-        <div 
-          className="relative w-full h-full overflow-x-auto md:overflow-hidden snap-x snap-mandatory no-scrollbar flex items-center justify-start transition-transform duration-700 ease-in-out"
-          style={{ 
-            transform: isHovered && srcs.length > 1 ? 'translateX(-100%)' : 'translateX(0%)'
-          }}
+        <motion.div 
+          className="relative w-full h-full md:flex md:overflow-hidden snap-x snap-mandatory no-scrollbar"
+          animate={{ x: `-${imgIndex * 100}%` }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          onMouseEnter={() => srcs.length > 1 && setImgIndex(1)}
+          onMouseLeave={() => setImgIndex(0)}
         >
           {srcs.map((src, i) => (
             <div key={i} className="flex-none w-full h-full snap-center relative">
@@ -83,20 +84,20 @@ export function ProductCard({
               </Link>
             </div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Dynamic Hover Arrows (Desktop Only) */}
-        {isHovered && srcs.length > 1 && !isDense && (
-          <div className="absolute inset-x-3 top-1/2 -translate-y-1/2 hidden md:flex justify-between z-40 pointer-events-none">
+        {srcs.length > 1 && !isDense && (
+          <div className="absolute inset-x-3 top-1/2 -translate-y-1/2 hidden md:flex justify-between z-40 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
              <button 
                onClick={handlePrev} 
-               className="bg-white/80 p-2.5 rounded-full shadow-sm hover:bg-white text-black transition-colors backdrop-blur-sm hover:scale-105 active:scale-95 pointer-events-auto"
+               className="bg-white/90 p-2.5 rounded-full shadow-sm hover:bg-white text-black transition-colors backdrop-blur-sm hover:scale-105 active:scale-95 pointer-events-auto"
              >
                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
              </button>
              <button 
                onClick={handleNext} 
-               className="bg-white/80 p-2.5 rounded-full shadow-sm hover:bg-white text-black transition-colors backdrop-blur-sm hover:scale-105 active:scale-95 pointer-events-auto"
+               className="bg-white/90 p-2.5 rounded-full shadow-sm hover:bg-white text-black transition-colors backdrop-blur-sm hover:scale-105 active:scale-95 pointer-events-auto"
              >
                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
              </button>
