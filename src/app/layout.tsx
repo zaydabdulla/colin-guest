@@ -29,6 +29,8 @@ export const metadata: Metadata = {
 
 import { SessionProvider } from "next-auth/react";
 
+import { ScrollToTop } from "@/components/scroll-to-top";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -69,6 +71,7 @@ export default function RootLayout({
           <CartDrawer />
           <WishlistPopup />
           <SyncManager />
+          <ScrollToTop />
         </SessionProvider>
       </body>
     </html>
