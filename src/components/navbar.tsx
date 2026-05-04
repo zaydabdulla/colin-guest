@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Search, ShoppingBag, Bookmark, User, ChevronDown, X, ChevronRight } from "lucide-react";
+import { Search, ShoppingBag, Bookmark, User, ChevronDown, X, ChevronRight, Menu } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 import { useCartStore } from "@/lib/store";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
@@ -15,8 +16,7 @@ export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { items, openCart, wishlistItems, isLoggedIn, user, logout } = useCartStore();
-  const [isAccountOpen, setIsAccountOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -126,8 +126,14 @@ export function Navbar() {
   return (
     <nav className={`fixed top-0 w-full z-50 transition-all duration-700 ease-out hidden md:block ${getNavStyles()}`}>
       <div className={`grid grid-cols-3 items-center px-8 h-[72px] ${isSearchOpen && !isAboutPage ? "bg-white" : ""} ${isAboutPage ? "text-white" : "text-black"}`}>
-        {/* LEFT: Branding */}
-        <div className="flex justify-start">
+        {/* LEFT: Menu & Branding */}
+        <div className="flex justify-start items-center gap-4">
+          <button 
+            onClick={() => setIsMenuOpen(true)}
+            className={`p-2 transition-transform active:scale-95 ${isAboutPage ? "text-white" : "text-black"}`}
+          >
+            <Menu size={20} />
+          </button>
           <Link href="/" className={`relative h-[72px] w-64 transition-opacity flex items-center overflow-hidden ml-[-24px] ${isAboutPage ? "invert brightness-200" : "hover:opacity-60"}`}>
             <Image
               src="/logo_cg.png"
@@ -418,6 +424,82 @@ export function Navbar() {
           </div>
         </div>
       </motion.div>
+      {/* Desktop Menu Drawer */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMenuOpen(false)}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[200]"
+            />
+            
+            {/* Drawer Content */}
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed top-0 left-0 bottom-0 w-[400px] bg-white z-[201] flex flex-col shadow-2xl"
+            >
+              <div className="p-8 flex justify-between items-center">
+                <span className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-30">Menu</span>
+                <button 
+                  onClick={() => setIsMenuOpen(false)}
+                  className="p-2 hover:bg-black/5 rounded-full transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <nav className="flex-1 px-12 py-12 flex flex-col gap-8">
+                {[
+                  { name: "Shop All", href: "/collections/all" },
+                  { name: "Bestsellers", href: "/collections/bestsellers" },
+                  { name: "New Arrival", href: "/collections/new-arrivals" },
+                  { name: "Login", href: "/login" },
+                  { name: "About", href: "/about" },
+                ].map((link, idx) => (
+                  <motion.div
+                    key={link.href}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 + idx * 0.05 }}
+                  >
+                    <Link 
+                      href={link.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="text-2xl font-bold uppercase tracking-[0.15em] hover:text-black/40 transition-colors"
+                    >
+                      {link.name}
+                    </Link>
+                  </motion.div>
+                ))}
+              </nav>
+
+              <div className="p-12 border-t border-black/5 space-y-8">
+                <div className="flex gap-8">
+                  <a href="https://www.instagram.com/colin__guest/" target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity">
+                    <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                      <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                    </svg>
+                  </a>
+                  <a href="https://wa.me/yourwhatsappnumber" target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity">
+                    <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+                      <path d="M17 8c.3 1.5-1.5 3-4 3s-4.3-1.5-4-3c.3-1.5 1.5-3 4-3s4 1.5 4 3Z" />
+                    </svg>
+                  </a>
+                </div>
+                <p className="text-[8px] font-bold uppercase tracking-[0.4em] opacity-20">Architectural Integrity</p>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

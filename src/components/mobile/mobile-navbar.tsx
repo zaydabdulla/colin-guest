@@ -344,9 +344,9 @@ export function MobileNavbar() {
           <nav className="flex-1 px-10 flex flex-col gap-2 overflow-y-auto no-scrollbar">
             {[
               { name: "Shop All", href: "/collections/all", num: "01" },
-              { name: "New Arrivals", href: "/collections/new", num: "02" },
-              { name: "Tops", href: "/collections/tops", num: "03" },
-              { name: "Bottoms", href: "/collections/bottoms", num: "04" },
+              { name: "Bestsellers", href: "/collections/bestsellers", num: "02" },
+              { name: "New Arrival", href: "/collections/new-arrivals", num: "03" },
+              { name: "Login", href: "/login", num: "04" },
               { name: "About", href: "/about", num: "05" },
             ].map((link, i) => (
               <motion.div
@@ -378,13 +378,22 @@ export function MobileNavbar() {
                 className="text-black/30 hover:text-black transition-colors" 
                 aria-label="Instagram"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
                   <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
                 </svg>
               </a>
-              <Link href="#" className="text-black/30 hover:text-black transition-colors" aria-label="Twitter">
-                <Send size={14} strokeWidth={1.5} />
-              </Link>
+              <a 
+                href="https://wa.me/yourwhatsappnumber" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-black/30 hover:text-black transition-colors" 
+                aria-label="WhatsApp"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+                  <path d="M17 8c.3 1.5-1.5 3-4 3s-4.3-1.5-4-3c.3-1.5 1.5-3 4-3s4 1.5 4 3Z" />
+                </svg>
+              </a>
             </div>
             
             <div className="space-y-1.5">
