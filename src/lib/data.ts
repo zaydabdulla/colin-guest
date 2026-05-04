@@ -29,6 +29,7 @@ export type Product = {
   colorMetafield?: string;
   metafieldKeys?: string;
   tags?: string[];
+  handle?: string;
 };
 
 export type Collection = {
