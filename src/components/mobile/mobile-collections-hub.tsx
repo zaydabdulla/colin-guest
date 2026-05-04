@@ -98,7 +98,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
 
       {/* 2. LATEST DROP SECTION */}
       <section className="pt-6 pb-12">
-        <div className="flex justify-between items-center mb-8 px-6">
+        <div className="flex justify-between items-center mb-3 px-6">
           <h2 className="text-[10px] font-bold tracking-[0.3em] uppercase text-black/30">Latest drop</h2>
           <Link href="/collections/all" className="flex items-center gap-1.5 px-3 py-1.5 bg-black/5 rounded-full active:bg-black/10 transition-colors">
             <span className="text-[8px] font-bold uppercase tracking-widest text-black/40">Discover more</span>
@@ -190,7 +190,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
 
       {/* 5. IMPORTED PIECES SECTION */}
       <section className="py-12">
-        <div className="flex justify-between items-center mb-8 px-6">
+        <div className="flex justify-between items-center mb-3 px-6">
           <h2 className="text-[10px] font-bold tracking-[0.3em] uppercase text-black/30">Imported Pieces</h2>
           <Link href="/collections/all" className="flex items-center gap-1.5 px-3 py-1.5 bg-black/5 rounded-full active:bg-black/10 transition-colors">
             <span className="text-[8px] font-bold uppercase tracking-widest text-black/40">Discover more</span>
