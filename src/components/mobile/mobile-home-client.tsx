@@ -174,7 +174,7 @@ function HeroModel({ product, index, total, progress }: { product: Product, inde
       className="w-[75vw] max-w-[360px] h-full flex items-center justify-center pointer-events-none"
     >
       <div className="relative w-full h-full max-h-[80%] pt-8">
-        <Image src={product.src} alt={product.title} fill className="object-contain" sizes="(max-width: 768px) 75vw, 400px" quality={70} />
+        <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-contain" sizes="(max-width: 768px) 75vw, 400px" quality={70} />
       </div>
     </motion.div>
   );

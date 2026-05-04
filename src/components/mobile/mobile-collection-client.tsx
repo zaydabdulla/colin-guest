@@ -162,7 +162,7 @@ export function MobileCollectionClient({
       />
 
       <div className="pt-[64px] bg-white">
-        <div className="bg-[#f4f4f4] rounded-t-[32px] w-full overflow-x-hidden pb-12 shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
+        <div className="bg-[#f4f4f4] rounded-t-[32px] w-full overflow-x-hidden pb-40 shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
 
           <div className="pt-3 flex flex-col gap-3">
 
@@ -242,7 +242,7 @@ export function MobileCollectionClient({
                             <div key={i} className="w-full h-full flex-none snap-center relative">
                               <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full h-full block">
                                 <Image
-                                  src={src}
+                                  src={src || "/placeholder.jpg"}
                                   alt={`${product.title} - view ${i + 1}`}
                                   fill
                                   className="object-cover"
@@ -281,7 +281,7 @@ export function MobileCollectionClient({
                         /* Clean Static Card for Dense View */
                         <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full h-full block">
                           <Image
-                            src={product.src}
+                            src={product.src || "/placeholder.jpg"}
                             alt={product.title}
                             fill
                             className="object-cover"

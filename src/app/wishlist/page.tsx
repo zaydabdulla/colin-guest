@@ -48,7 +48,7 @@ export default function WishlistDashboard() {
                         <div onClick={(e) => { e.stopPropagation(); toggleWishlist(product); }} className="absolute top-4 right-6 z-20 hover:scale-110 transition-transform cursor-pointer">
                           <Bookmark size={36} className="fill-[#3272e6] text-[#3272e6] stroke-none" />
                         </div>
-                        <Image src={product.src} alt={product.title} fill className="object-contain p-6 mix-blend-multiply group-hover:scale-105 transition-transform duration-700" />
+                        <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-contain p-6 mix-blend-multiply group-hover:scale-105 transition-transform duration-700" />
                       </div>
                       
                       <div className="flex justify-between items-start px-2">

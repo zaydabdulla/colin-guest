@@ -82,7 +82,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
   };
 
   return (
-    <div className="bg-[#f4f4f4] min-h-screen pb-32 font-sans overflow-x-hidden">
+    <div className="bg-[#f4f4f4] min-h-screen pb-40 font-sans overflow-x-hidden">
 
       {/* 1. LARGE HERO PHOTO */}
       <section className="relative w-full h-[95vh] overflow-hidden bg-transparent">

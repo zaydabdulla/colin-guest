@@ -30,7 +30,7 @@ export function MobileWishlistClient() {
 
       {/* Grid rendering (Visible for Condition 2 & Condition 3) */}
       {wishlistItems.length > 0 && (
-         <div className="max-w-[1500px] mx-auto px-4 pt-8 pb-24">
+         <div className="max-w-[1500px] mx-auto px-4 pt-8 pb-40">
             {/* 2 columns on mobile for optimal scanning */}
             <div className="grid grid-cols-2 gap-x-4 gap-y-10">
                {wishlistItems.map((product: Product) => (
@@ -45,7 +45,7 @@ export function MobileWishlistClient() {
                         <Bookmark size={24} className="fill-[#3272e6] text-[#3272e6] stroke-none" />
                       </div>
                       <Link href={`/product/${encodeURIComponent(product.id)}`}>
-                        <Image src={product.src} alt={product.title} fill className="object-contain p-4 mix-blend-multiply transition-transform duration-700" />
+                        <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-contain p-4 mix-blend-multiply transition-transform duration-700" />
                       </Link>
                     </div>
                     
