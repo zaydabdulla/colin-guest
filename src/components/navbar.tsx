@@ -16,7 +16,9 @@ export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { items, openCart, wishlistItems, isLoggedIn, user, logout } = useCartStore();
+  const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
