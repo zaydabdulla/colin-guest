@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Search, ShoppingBag, Bookmark, User, ChevronDown, X, ChevronRight, Menu } from "lucide-react";
+import { Search, ShoppingBag, Bookmark, User, ChevronDown, X, ChevronRight } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import { useCartStore } from "@/lib/store";
 import { usePathname, useRouter } from "next/navigation";
@@ -17,7 +17,6 @@ export function Navbar() {
   const router = useRouter();
   const { items, openCart, wishlistItems, isLoggedIn, user, logout } = useCartStore();
   const [isAccountOpen, setIsAccountOpen] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [collections, setCollections] = useState<Collection[]>([]);
@@ -128,14 +127,8 @@ export function Navbar() {
   return (
     <nav className={`fixed top-0 w-full z-50 transition-all duration-700 ease-out hidden md:block ${getNavStyles()}`}>
       <div className={`grid grid-cols-3 items-center px-8 h-[72px] ${isSearchOpen && !isAboutPage ? "bg-white" : ""} ${isAboutPage ? "text-white" : "text-black"}`}>
-        {/* LEFT: Menu & Branding */}
-        <div className="flex justify-start items-center gap-4">
-          <button 
-            onClick={() => setIsMenuOpen(true)}
-            className={`p-2 transition-transform active:scale-95 ${isAboutPage ? "text-white" : "text-black"}`}
-          >
-            <Menu size={20} />
-          </button>
+        {/* LEFT: Branding */}
+        <div className="flex justify-start">
           <Link href="/" className={`relative h-[72px] w-64 transition-opacity flex items-center overflow-hidden ml-[-24px] ${isAboutPage ? "invert brightness-200" : "hover:opacity-60"}`}>
             <Image
               src="/logo_cg.png"
@@ -426,81 +419,6 @@ export function Navbar() {
           </div>
         </div>
       </motion.div>
-      {/* Desktop Menu Drawer */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsMenuOpen(false)}
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[200]"
-            />
-            
-            {/* Drawer Content */}
-            <motion.div
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 bottom-0 w-[400px] bg-white z-[201] flex flex-col shadow-2xl"
-            >
-              <div className="p-8 flex justify-between items-center">
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-30">Menu</span>
-                <button 
-                  onClick={() => setIsMenuOpen(false)}
-                  className="p-2 hover:bg-black/5 rounded-full transition-colors"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              <nav className="flex-1 px-12 py-12 flex flex-col gap-8">
-                {[
-                  { name: "Shop All", href: "/collections/all" },
-                  { name: "Bestsellers", href: "/collections/bestsellers" },
-                  { name: "New Arrival", href: "/collections/new-arrivals" },
-                  { name: "Login", href: "/login" },
-                  { name: "About", href: "/about" },
-                ].map((link, idx) => (
-                  <motion.div
-                    key={link.href}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 + idx * 0.05 }}
-                  >
-                    <Link 
-                      href={link.href}
-                      onClick={() => setIsMenuOpen(false)}
-                      className="text-2xl font-bold uppercase tracking-[0.15em] hover:text-black/40 transition-colors"
-                    >
-                      {link.name}
-                    </Link>
-                  </motion.div>
-                ))}
-              </nav>
-
-              <div className="p-12 border-t border-black/5 space-y-8">
-                <div className="flex gap-8">
-                  <a href="https://www.instagram.com/colin__guest/" target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity">
-                    <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-                      <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
-                    </svg>
-                  </a>
-                  <a href="https://wa.me/yourwhatsappnumber" target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity">
-                <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 11.08c0 4.84-3.87 8.77-8.64 8.77-1.54 0-3.05-.41-4.37-1.21l-4.27 1.12 1.13-4.16c-.86-1.28-1.32-2.78-1.32-4.52C4.54 6.24 8.4 2.31 13.17 2.31c4.77 0 8.83 3.93 8.83 8.77zM17.48 14.19c-.26-.14-1.54-.76-1.78-.85-.24-.09-.42-.14-.59.14-.17.28-.68.85-.83 1.03-.15.19-.3.21-.56.07-.26-.14-1.1-.4-2.1-1.3-.77-.69-1.3-1.53-1.45-1.8-.15-.26-.01-.41.12-.54.12-.13.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.32-.02-.45-.06-.13-.59-1.42-.81-1.95-.21-.51-.43-.44-.59-.45-.15-.01-.32-.01-.49-.01-.17 0-.45.06-.68.32-.24.25-.9.88-.9 2.15s.92 2.5 1.05 2.68c.13.17 1.8 2.76 4.36 3.86.61.26 1.09.42 1.46.54.61.2 1.17.17 1.6.11.49-.07 1.54-.63 1.76-1.24.21-.61.21-1.13.15-1.24-.07-.12-.24-.19-.5-.33z"/>
-                </svg>
-                  </a>
-                </div>
-                <p className="text-[8px] font-bold uppercase tracking-[0.4em] opacity-20">Architectural Integrity</p>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </nav>
   );
 }

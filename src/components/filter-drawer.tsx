@@ -100,10 +100,10 @@ export function FilterDrawer({
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed right-0 top-[60px] h-[calc(100vh-60px)] w-full sm:w-[450px] bg-white/60 backdrop-blur-3xl z-[401] shadow-2xl flex flex-col border-l border-black/5"
+            className="fixed right-0 top-[64px] md:top-[72px] h-[calc(100vh-64px)] md:h-[calc(100vh-72px)] w-[75%] md:w-[340px] bg-white/60 backdrop-blur-3xl z-[401] shadow-2xl flex flex-col border-l border-black/5 rounded-l-xl"
           >
             {/* Header */}
-            <div className="px-8 py-4 border-b border-black/5 flex justify-between items-center bg-transparent sticky top-0 z-10">
+            <div className="px-6 py-3 border-b border-black/5 flex justify-between items-center bg-transparent sticky top-0 z-10">
               <div className="flex flex-col">
                 <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/90">Filter</h2>
                 <p className="text-[8px] font-medium uppercase tracking-widest text-black/40">
@@ -117,11 +117,11 @@ export function FilterDrawer({
 
             {/* Scrollable Content */}
             <div
-              className="flex-1 overflow-y-auto px-8 py-6 space-y-8 pb-32 overscroll-contain"
+              className="flex-1 overflow-y-auto px-6 py-5 space-y-6 pb-24 overscroll-contain"
               onWheel={(e) => e.stopPropagation()}
             >
               {/* Size Filter */}
-              <section className="space-y-4">
+              <section className="space-y-3">
                 <h3 className="text-[9px] font-bold uppercase tracking-widest text-black/80">Size</h3>
                 <div className="flex flex-wrap gap-2">
                   {filterOptions.sizes.map(({ value, count }) => {
@@ -130,7 +130,7 @@ export function FilterDrawer({
                       <button
                         key={value}
                         onClick={() => onFilterChange("sizes", value)}
-                        className={`px-4 py-2 rounded-full text-[8px] font-bold uppercase tracking-widest transition-all duration-300 border flex items-center gap-2 ${isSelected
+                        className={`px-3 py-1.5 rounded-full text-[8px] font-bold uppercase tracking-widest transition-all duration-300 border flex items-center gap-1.5 ${isSelected
                             ? "bg-black text-white border-black"
                             : "bg-black/5 text-black/60 border-transparent hover:bg-black/10"
                           }`}
@@ -144,7 +144,7 @@ export function FilterDrawer({
               </section>
 
               {/* Availability Filter */}
-              <section className="space-y-4">
+              <section className="space-y-3">
                 <h3 className="text-[9px] font-bold uppercase tracking-widest text-black/80">Availability</h3>
                 <div className="flex flex-wrap gap-2">
                   {["In stock", "Out of stock"].map((status) => {
@@ -153,7 +153,7 @@ export function FilterDrawer({
                       <button
                         key={status}
                         onClick={() => onFilterChange("availability", status)}
-                        className={`px-5 py-2 rounded-full text-[8px] font-bold uppercase tracking-widest transition-all duration-300 border ${isSelected
+                        className={`px-4 py-1.5 rounded-full text-[8px] font-bold uppercase tracking-widest transition-all duration-300 border ${isSelected
                             ? "bg-black/40 text-white border-transparent"
                             : "bg-black/5 text-black/60 border-transparent hover:bg-black/10"
                           }`}
@@ -166,7 +166,7 @@ export function FilterDrawer({
               </section>
 
               {/* Type Filter */}
-              <section className="space-y-4">
+              <section className="space-y-3">
                 <h3 className="text-[9px] font-bold uppercase tracking-widest text-black/80">Type</h3>
                 <div className="flex flex-wrap gap-2">
                   {filterOptions.types.map(({ value, count }) => {
@@ -175,7 +175,7 @@ export function FilterDrawer({
                       <button
                         key={value}
                         onClick={() => onFilterChange("types", value)}
-                        className={`px-4 py-2 rounded-full text-[8px] font-bold uppercase tracking-widest transition-all duration-300 border flex items-center gap-2 ${isSelected
+                        className={`px-3 py-1.5 rounded-full text-[8px] font-bold uppercase tracking-widest transition-all duration-300 border flex items-center gap-1.5 ${isSelected
                             ? "bg-black/40 text-white border-transparent"
                             : "bg-black/5 text-black/60 border-transparent hover:bg-black/10"
                           }`}
@@ -189,7 +189,7 @@ export function FilterDrawer({
               </section>
 
               {/* Color Filter */}
-              <section className="space-y-4">
+              <section className="space-y-3">
                 <h3 className="text-[9px] font-bold uppercase tracking-widest text-black/80">Color</h3>
                 <div className="flex flex-wrap gap-2">
                   {filterOptions.colors.length > 0 ? (
@@ -201,13 +201,13 @@ export function FilterDrawer({
                         <button
                           key={value}
                           onClick={() => onFilterChange("colors", value)}
-                          className={`flex items-center gap-2 px-4 py-2 rounded-full text-[8px] font-bold uppercase tracking-widest transition-all duration-300 border ${isSelected
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[8px] font-bold uppercase tracking-widest transition-all duration-300 border ${isSelected
                               ? "bg-black text-white border-black"
                               : "bg-black/5 text-black/60 border-transparent hover:bg-black/10"
                             }`}
                         >
                           <div
-                            className="w-2.5 h-2.5 rounded-full border border-black/10 shadow-sm"
+                            className="w-2 h-2 rounded-full border border-black/10 shadow-sm"
                             style={{ backgroundColor: swatchColor }}
                           />
                           <span className="flex items-center gap-1">
@@ -269,16 +269,16 @@ export function FilterDrawer({
             </div>
 
             {/* Footer Actions */}
-            <div className="p-8 border-t border-black/5 bg-transparent grid grid-cols-2 gap-4 sticky bottom-0">
+            <div className="p-6 border-t border-black/5 bg-transparent grid grid-cols-2 gap-3 sticky bottom-0">
               <button
                 onClick={onClearAll}
-                className="w-full py-4 rounded-full border border-black/10 text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-black/5 transition-all"
+                className="w-full py-3 rounded-full border border-black/10 text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-black/5 transition-all"
               >
                 Remove All
               </button>
               <button
                 onClick={onApply}
-                className="w-full py-4 rounded-full bg-black text-white text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-black/90 transition-all shadow-lg shadow-black/10"
+                className="w-full py-3 rounded-full bg-black text-white text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-black/90 transition-all shadow-lg shadow-black/10"
               >
                 Apply
               </button>
