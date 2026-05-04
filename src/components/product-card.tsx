@@ -119,10 +119,10 @@ export function ProductCard({
       {!isDense && (
         <Link href={`/product/${encodeURIComponent(product.id)}`} className="flex justify-between items-end px-2 z-10">
           <div>
-            <h4 className="text-[10px] font-bold tracking-wide mb-0.5 truncate max-w-[200px] hover:underline cursor-pointer text-black">{product.title}</h4>
-            <p className="text-[9px] font-medium tracking-widest text-black/80 uppercase">{product.price}</p>
+            <h4 className="md:text-[10px] text-[7px] font-bold tracking-wide mb-0.5 truncate max-w-[200px] hover:underline cursor-pointer text-black">{product.title}</h4>
+            <p className="md:text-[9px] text-[6.5px] font-medium tracking-widest text-black/80 uppercase">{product.price}</p>
           </div>
-          <span className="text-xs font-light text-black/60">+</span>
+          <span className="md:text-xs text-[9px] font-light text-black/60">+</span>
         </Link>
       )}
     </div>
