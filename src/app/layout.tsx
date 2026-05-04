@@ -48,23 +48,26 @@ export default function RootLayout({
           <div className="hidden md:block">
             <Navbar />
           </div>
-          
+
           {/* Mobile Navbar - Strict Isolation */}
           <div className="block md:hidden">
             <MobileNavbar />
           </div>
 
           <SmoothScroll>
-            {children}
-            
-            {/* Desktop Footer */}
-            <div className="hidden md:block">
-              <Footer />
-            </div>
+            <div className="flex flex-col min-h-screen relative">
+              {/* Footers - Rendered before children for layering priority */}
+              <div className="block md:hidden order-last relative z-50">
+                <MobileFooter />
+              </div>
+              <div className="hidden md:block order-last relative z-50">
+                <Footer />
+              </div>
 
-            {/* Mobile Footer */}
-            <div className="block md:hidden">
-              <MobileFooter />
+              {/* Main content wrapper */}
+              <main className="flex-1 order-first">
+                {children}
+              </main>
             </div>
           </SmoothScroll>
 

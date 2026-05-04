@@ -19,7 +19,7 @@ export function MobileNavbar() {
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [collections, setCollections] = useState<Collection[]>([]);
-  
+
   const searchInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const pathname = usePathname();
@@ -128,13 +128,11 @@ export function MobileNavbar() {
   return (
     <>
       {/* 1. TOP ICONS: Menu (Left), Logo (Center), Wishlist + Cart (Right) */}
-      <div className={`fixed top-0 left-0 right-0 z-[500] h-[64px] safe-top px-5 transition-colors duration-500 ${
-        isTransparentPage ? "bg-transparent" : "bg-white"
-      }`}>
-        <div className={`grid grid-cols-3 items-center h-full w-full relative transition-colors duration-500 ${
-          isTransparentPage ? "text-white" : "text-black"
+      <div className={`fixed top-0 left-0 right-0 z-[500] h-[64px] safe-top px-5 transition-colors duration-500 ${isTransparentPage ? "bg-transparent" : "bg-white"
         }`}>
-          
+        <div className={`grid grid-cols-3 items-center h-full w-full relative transition-colors duration-500 ${isTransparentPage ? "text-white" : "text-black"
+          }`}>
+
           {/* Left: 2-Line Menu Icon */}
           <div className="flex justify-start">
             <button
@@ -176,9 +174,8 @@ export function MobileNavbar() {
             >
               <Bookmark className="w-5.5 h-5.5" strokeWidth={1.2} />
               {wishlistItems.length > 0 && (
-                <span className={`absolute top-1.5 right-1.5 flex h-3 w-3 items-center justify-center rounded-full text-[7px] font-semibold border ${
-                  isTransparentPage ? "bg-white text-black border-black" : "bg-black text-white border-white"
-                }`}>
+                <span className={`absolute top-1.5 right-1.5 flex h-3 w-3 items-center justify-center rounded-full text-[7px] font-semibold border ${isTransparentPage ? "bg-white text-black border-black" : "bg-black text-white border-white"
+                  }`}>
                   {wishlistItems.length}
                 </span>
               )}
@@ -193,9 +190,8 @@ export function MobileNavbar() {
             >
               <ShoppingBag className="w-5.5 h-5.5" strokeWidth={1.2} />
               {totalItems > 0 && (
-                <span className={`absolute top-1.5 right-1.5 flex h-3 w-3 items-center justify-center rounded-full text-[7px] font-semibold border ${
-                  isTransparentPage ? "bg-white text-black border-black" : "bg-black text-white border-white"
-                }`}>
+                <span className={`absolute top-1.5 right-1.5 flex h-3 w-3 items-center justify-center rounded-full text-[7px] font-semibold border ${isTransparentPage ? "bg-white text-black border-black" : "bg-black text-white border-white"
+                  }`}>
                   {totalItems}
                 </span>
               )}
@@ -229,13 +225,13 @@ export function MobileNavbar() {
           {/* Navigation Icons Area */}
           <div className="flex w-full h-full relative z-10 justify-between items-center">
             {/* Tab 1: All Products (Compass) */}
-            <Link 
-              href="/collections/all" 
+            <Link
+              href="/collections/all"
               className="flex-1 flex items-center justify-center relative transition-colors"
             >
-              <motion.div 
+              <motion.div
                 whileTap={{ scale: 0.9 }}
-                animate={{ 
+                animate={{
                   scale: pathname.startsWith("/collections") ? 1.1 : 1,
                   color: pathname.startsWith("/collections") ? "#000" : "rgba(0,0,0,0.4)"
                 }}
@@ -246,13 +242,13 @@ export function MobileNavbar() {
             </Link>
 
             {/* Tab 2: Search */}
-            <button 
+            <button
               onClick={() => setIsSearchOpen(true)}
               className="flex-1 flex items-center justify-center relative transition-colors"
             >
-              <motion.div 
+              <motion.div
                 whileTap={{ scale: 0.9 }}
-                animate={{ 
+                animate={{
                   scale: isSearchOpen ? 1.1 : 1,
                   color: isSearchOpen ? "#000" : "rgba(0,0,0,0.4)"
                 }}
@@ -263,13 +259,13 @@ export function MobileNavbar() {
             </button>
 
             {/* Tab 3: Profile (User) */}
-            <Link 
-              href={isLoggedIn ? "/profile" : "/login"} 
+            <Link
+              href={isLoggedIn ? "/profile" : "/login"}
               className="flex-1 flex items-center justify-center relative transition-colors"
             >
-              <motion.div 
+              <motion.div
                 whileTap={{ scale: 0.9 }}
-                animate={{ 
+                animate={{
                   scale: (pathname === "/profile" || pathname === "/login") ? 1.1 : 1,
                   color: (pathname === "/profile" || pathname === "/login") ? "#000" : "rgba(0,0,0,0.4)"
                 }}
@@ -280,13 +276,13 @@ export function MobileNavbar() {
             </Link>
 
             {/* Tab 4: Lookbook (Home) */}
-            <Link 
-              href="/lookbook" 
+            <Link
+              href="/lookbook"
               className="flex-1 flex items-center justify-center relative transition-colors"
             >
-              <motion.div 
+              <motion.div
                 whileTap={{ scale: 0.9 }}
-                animate={{ 
+                animate={{
                   scale: pathname === "/lookbook" ? 1.1 : 1,
                   color: pathname === "/lookbook" ? "#000" : "rgba(0,0,0,0.4)"
                 }}
@@ -303,7 +299,7 @@ export function MobileNavbar() {
       {/* 3. COMPACT MENU DRAWER */}
       {/* Overlay Backdrop */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-[505] transition-opacity duration-300"
           onClick={() => setIsOpen(false)}
         />
@@ -312,16 +308,15 @@ export function MobileNavbar() {
       {/* 3. EDITORIAL SIDE MENU */}
       {/* Overlay Backdrop */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/15 backdrop-blur-[2px] z-[505] transition-opacity duration-500"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       <div
-        className={`fixed top-0 left-0 bottom-0 w-[75%] max-w-[260px] z-[510] bg-white/90 backdrop-blur-3xl shadow-[20px_0_80px_rgba(0,0,0,0.05)] transition-transform duration-700 cubic-bezier(0.16, 1, 0.3, 1) rounded-r-[32px] border-r border-white/20 ${
-          isOpen ? "translate-x-0 flex flex-col pointer-events-auto" : "-translate-x-full pointer-events-none"
-        }`}
+        className={`fixed top-0 left-0 bottom-0 w-[75%] max-w-[260px] z-[510] bg-white/90 backdrop-blur-3xl shadow-[20px_0_80px_rgba(0,0,0,0.05)] transition-transform duration-700 cubic-bezier(0.16, 1, 0.3, 1) rounded-r-[32px] border-r border-white/20 ${isOpen ? "translate-x-0 flex flex-col pointer-events-auto" : "-translate-x-full pointer-events-none"
+          }`}
       >
         <div className="flex flex-col h-full relative pt-16 pb-12">
           {/* Close Button - Minimalist */}
@@ -355,8 +350,8 @@ export function MobileNavbar() {
                 animate={isOpen ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
                 transition={{ delay: 0.1 + i * 0.05, duration: 0.5 }}
               >
-                <Link 
-                  href={link.href} 
+                <Link
+                  href={link.href}
                   className="group flex items-baseline gap-4 py-1.5"
                 >
                   <span className="text-[6px] font-medium text-black/20 group-hover:text-black transition-colors tabular-nums">{link.num}</span>
@@ -371,30 +366,30 @@ export function MobileNavbar() {
           {/* Footer Contents - Compressed */}
           <div className="px-10 space-y-8">
             <div className="flex gap-6 items-center">
-              <a 
-                href="https://www.instagram.com/colin__guest/" 
+              <a
+                href="https://www.instagram.com/colin__guest/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-black/30 hover:text-black transition-colors" 
+                className="text-black/30 hover:text-black transition-colors"
                 aria-label="Instagram"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
                 </svg>
               </a>
-              <a 
-                href="https://wa.me/yourwhatsappnumber" 
+              <a
+                href="https://wa.me/yourwhatsappnumber"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-black/30 hover:text-black transition-colors" 
+                className="text-black/30 hover:text-black transition-colors"
                 aria-label="WhatsApp"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 11.08c0 4.84-3.87 8.77-8.64 8.77-1.54 0-3.05-.41-4.37-1.21l-4.27 1.12 1.13-4.16c-.86-1.28-1.32-2.78-1.32-4.52C4.54 6.24 8.4 2.31 13.17 2.31c4.77 0 8.83 3.93 8.83 8.77zM17.48 14.19c-.26-.14-1.54-.76-1.78-.85-.24-.09-.42-.14-.59.14-.17.28-.68.85-.83 1.03-.15.19-.3.21-.56.07-.26-.14-1.1-.4-2.1-1.3-.77-.69-1.3-1.53-1.45-1.8-.15-.26-.01-.41.12-.54.12-.13.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.32-.02-.45-.06-.13-.59-1.42-.81-1.95-.21-.51-.43-.44-.59-.45-.15-.01-.32-.01-.49-.01-.17 0-.45.06-.68.32-.24.25-.9.88-.9 2.15s.92 2.5 1.05 2.68c.13.17 1.8 2.76 4.36 3.86.61.26 1.09.42 1.46.54.61.2 1.17.17 1.6.11.49-.07 1.54-.63 1.76-1.24.21-.61.21-1.13.15-1.24-.07-.12-.24-.19-.5-.33z"/>
+                  <path d="M22 11.08c0 4.84-3.87 8.77-8.64 8.77-1.54 0-3.05-.41-4.37-1.21l-4.27 1.12 1.13-4.16c-.86-1.28-1.32-2.78-1.32-4.52C4.54 6.24 8.4 2.31 13.17 2.31c4.77 0 8.83 3.93 8.83 8.77zM17.48 14.19c-.26-.14-1.54-.76-1.78-.85-.24-.09-.42-.14-.59.14-.17.28-.68.85-.83 1.03-.15.19-.3.21-.56.07-.26-.14-1.1-.4-2.1-1.3-.77-.69-1.3-1.53-1.45-1.8-.15-.26-.01-.41.12-.54.12-.13.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.32-.02-.45-.06-.13-.59-1.42-.81-1.95-.21-.51-.43-.44-.59-.45-.15-.01-.32-.01-.49-.01-.17 0-.45.06-.68.32-.24.25-.9.88-.9 2.15s.92 2.5 1.05 2.68c.13.17 1.8 2.76 4.36 3.86.61.26 1.09.42 1.46.54.61.2 1.17.17 1.6.11.49-.07 1.54-.63 1.76-1.24.21-.61.21-1.13.15-1.24-.07-.12-.24-.19-.5-.33z" />
                 </svg>
               </a>
             </div>
-            
+
             <div className="space-y-1.5">
               <p className="text-[6px] font-semibold text-black/10 uppercase tracking-[0.3em]">© 2024 Colin Guest</p>
               <p className="text-[6px] font-medium text-black/10 uppercase tracking-[0.3em]">Architectural Identity</p>
@@ -406,7 +401,7 @@ export function MobileNavbar() {
       {/* 4. SEARCH OVERLAY */}
       {/* Backdrop */}
       {isSearchOpen && !isTransparentPage && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[590] transition-opacity duration-500"
           onClick={() => setIsSearchOpen(false)}
         />
@@ -414,15 +409,14 @@ export function MobileNavbar() {
 
       <motion.div
         initial={{ y: "-100%" }}
-        animate={{ 
-          y: isSearchOpen ? 0 : "-100%" 
+        animate={{
+          y: isSearchOpen ? 0 : "-100%"
         }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed top-0 left-0 right-0 z-[600] flex flex-col rounded-b-[24px] overflow-hidden ${
-          isTransparentPage 
-            ? "bg-transparent backdrop-blur-3xl border-none" 
+        className={`fixed top-0 left-0 right-0 z-[600] flex flex-col rounded-b-[24px] overflow-hidden ${isTransparentPage
+            ? "bg-transparent backdrop-blur-3xl border-none"
             : "bg-white shadow-[0_10px_40px_rgba(0,0,0,0.12)]"
-        }`}
+          }`}
       >
         <div className="flex flex-col pt-[env(safe-area-inset-top,20px)] pb-6">
           {/* Search Header */}
@@ -435,18 +429,16 @@ export function MobileNavbar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className={`w-full rounded-full py-2.5 px-6 text-[16px] outline-none border-none transition-all font-medium ${
-                  isTransparentPage 
-                    ? "bg-white/10 text-white placeholder:text-white/20 focus:bg-white/20" 
+                className={`w-full rounded-full py-2.5 px-6 text-[16px] outline-none border-none transition-all font-medium ${isTransparentPage
+                    ? "bg-white/10 text-white placeholder:text-white/20 focus:bg-white/20"
                     : "bg-[#f4f4f5] text-black placeholder:text-black/30"
-                }`}
+                  }`}
               />
               <Search
                 size={16}
                 onClick={() => handleSearchSubmit()}
-                className={`absolute right-5 top-1/2 -translate-y-1/2 ${
-                  isTransparentPage ? "text-white/40" : "text-black/30"
-                }`}
+                className={`absolute right-5 top-1/2 -translate-y-1/2 ${isTransparentPage ? "text-white/40" : "text-black/30"
+                  }`}
               />
             </div>
             <button
@@ -454,9 +446,8 @@ export function MobileNavbar() {
                 setIsSearchOpen(false);
                 setSearchQuery("");
               }}
-              className={`p-2 rounded-full ${
-                isTransparentPage ? "bg-white/10 text-white" : "bg-black/5 text-black"
-              }`}
+              className={`p-2 rounded-full ${isTransparentPage ? "bg-white/10 text-white" : "bg-black/5 text-black"
+                }`}
             >
               <X size={18} strokeWidth={1.5} />
             </button>
@@ -464,16 +455,14 @@ export function MobileNavbar() {
 
           {/* Search Results / Categories */}
           <div className="flex-1 overflow-y-auto pb-4">
-            <h3 className={`px-6 text-[8px] font-bold uppercase tracking-[0.3em] mb-2 mt-4 ${
-              isTransparentPage ? "text-white/40" : "text-black/30"
-            }`}>
+            <h3 className={`px-6 text-[8px] font-bold uppercase tracking-[0.3em] mb-2 mt-4 ${isTransparentPage ? "text-white/40" : "text-black/30"
+              }`}>
               {searchQuery.trim() ? (isSearching ? "Searching..." : `Results for "${searchQuery}"`) : "Collections"}
             </h3>
 
-            <div className={`mx-6 rounded-[24px] p-1.5 relative ${
-              isTransparentPage ? "bg-white/5" : "bg-[#f4f4f5]"
-            }`}>
-              <div 
+            <div className={`mx-6 rounded-[24px] p-1.5 relative ${isTransparentPage ? "bg-white/5" : "bg-[#f4f4f5]"
+              }`}>
+              <div
                 ref={scrollContainerRef}
                 onScroll={checkScroll}
                 className="flex gap-2.5 overflow-x-auto no-scrollbar snap-x snap-mandatory py-1 px-1"
@@ -491,11 +480,10 @@ export function MobileNavbar() {
                         <Link
                           href={`/product/${encodeURIComponent(product.id)}`}
                           onClick={() => setIsSearchOpen(false)}
-                          className={`flex flex-col h-full rounded-[16px] p-1 pb-3 transition-all ${
-                            isTransparentPage 
-                              ? "bg-white/10 text-white" 
+                          className={`flex flex-col h-full rounded-[16px] p-1 pb-3 transition-all ${isTransparentPage
+                              ? "bg-white/10 text-white"
                               : "bg-white text-black shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
-                          }`}
+                            }`}
                         >
                           <div className="aspect-square relative rounded-[12px] overflow-hidden mb-2">
                             <Image
@@ -516,9 +504,8 @@ export function MobileNavbar() {
                     ))
                   ) : (
                     !isSearching && (
-                      <div className={`w-full py-6 text-center text-[9px] font-bold uppercase tracking-widest opacity-30 ${
-                        isTransparentPage ? "text-white" : "text-black"
-                      }`}>
+                      <div className={`w-full py-6 text-center text-[9px] font-bold uppercase tracking-widest opacity-30 ${isTransparentPage ? "text-white" : "text-black"
+                        }`}>
                         No products found
                       </div>
                     )
@@ -535,11 +522,10 @@ export function MobileNavbar() {
                       <Link
                         href={`/collections/${collection.handle}`}
                         onClick={() => setIsSearchOpen(false)}
-                        className={`flex flex-col h-full rounded-[16px] p-1 pb-3 transition-all ${
-                          isAboutPage 
-                            ? "bg-white/10 text-white" 
+                        className={`flex flex-col h-full rounded-[16px] p-1 pb-3 transition-all ${isAboutPage
+                            ? "bg-white/10 text-white"
                             : "bg-white text-black shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
-                        }`}
+                          }`}
                       >
                         <div className="aspect-square relative rounded-[12px] overflow-hidden mb-2">
                           {collection.image ? (
@@ -566,7 +552,7 @@ export function MobileNavbar() {
                   ))
                 )}
               </div>
-              
+
               {/* Scroll Indicator Arrow */}
               {showScrollArrow && (
                 <div className="absolute right-0 top-0 bottom-0 w-12 flex items-center justify-end pr-2 pointer-events-none z-10 bg-gradient-to-l from-[#f4f4f5] via-[#f4f4f5]/80 to-transparent rounded-r-[24px]">

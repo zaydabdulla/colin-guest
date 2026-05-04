@@ -215,7 +215,7 @@ export default function ProductClient({ product, suggestedProducts }: ProductCli
           </div>
         </div>
 
-        <section className="bg-[#fcfcfc] w-full pt-12 pb-24 px-12 border-t border-black/5 z-20 relative">
+        <section className="bg-[#fcfcfc] w-full pt-12 pb-52 px-12 border-t border-black/5 z-20 relative">
           <h2 className="text-xl font-bold tracking-tight mb-8">You may also like</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
              {suggestedProducts.map((suggested, i) => (

@@ -105,20 +105,15 @@ export function CartDrawer() {
                  <div className="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-white via-white to-white/60 pointer-events-none">
                     <button 
                       onClick={() => {
-                        if (!isLoggedIn) {
-                          closeCart();
-                          router.push("/login");
-                        } else {
-                          // Handle real checkout
-                          alert("Redirecting to Shopify Checkout...");
-                        }
+                        closeCart();
+                        router.push("/checkout");
                       }}
                       className="w-full pointer-events-auto bg-black text-white px-6 py-[18px] rounded-[2rem] flex justify-between items-center shadow-lg hover:scale-[1.02] transition-transform"
                     >
-                       <span className="text-[13px] font-medium">{isLoggedIn ? "Check out" : "Login to Checkout"}</span>
+                       <span className="text-[13px] font-medium">Check out</span>
                        <span className="text-[10px] font-bold tracking-wide flex items-center gap-2">
                          {formattedTotal}
-                         {!isLoggedIn && <ArrowRight size={14} />}
+                         <ArrowRight size={14} />
                        </span>
                     </button>
                  </div>

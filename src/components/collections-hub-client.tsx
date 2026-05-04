@@ -59,7 +59,7 @@ export function CollectionsHubClient({ collections, allProductsImage }: Collecti
   };
 
   return (
-    <div id="categories" className="py-12 px-8 max-w-[1800px] mx-auto">
+    <div id="categories" className="pt-12 pb-60 px-8 max-w-[1800px] mx-auto">
       <h3 className="text-xs font-bold tracking-[0.3em] uppercase mb-12 opacity-40">Browse Categories</h3>
       <motion.div 
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"

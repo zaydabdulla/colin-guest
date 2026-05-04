@@ -45,8 +45,8 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
     return items.slice(0, 6);
   }, [collections]);
 
-  const [activeIndex, setActiveIndex] = useState(2); 
-  
+  const [activeIndex, setActiveIndex] = useState(2);
+
   const moveCarousel = (direction: 'left' | 'right') => {
     if (direction === 'left') {
       setActiveIndex(prev => (prev === 0 ? carouselCollections.length - 1 : prev - 1));
@@ -66,7 +66,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
 
   return (
     <div className="bg-[#f4f4f4] min-h-screen pb-32 font-sans overflow-x-hidden">
-      
+
       {/* 1. LARGE HERO PHOTO */}
       <section className="relative w-full h-[95vh] overflow-hidden bg-transparent">
         <Image
@@ -77,17 +77,17 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent flex flex-col justify-end items-center p-16 pb-24">
-          <Link 
+          <Link
             href="/collections/all"
             className="relative group p-[1.2px] overflow-hidden rounded-full active:scale-95 transition-transform"
           >
             {/* Continuous White Neon Light Border */}
-            <motion.div 
+            <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
               className="absolute inset-[-250%] bg-[conic-gradient(from_0deg,transparent_0deg,transparent_330deg,#fff_360deg)] opacity-60"
             />
-            
+
             {/* Glossy/Watery Button Surface */}
             <div className="relative px-5 py-2 bg-white/10 backdrop-blur-[15px] rounded-full border border-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.3),0_5px_15px_rgba(0,0,0,0.1)] flex items-center justify-center">
               <span className="text-white text-[8px] font-bold uppercase tracking-[0.4em] whitespace-nowrap">Shop now</span>
@@ -180,8 +180,8 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
 
         <div className="flex justify-center gap-1.5 mt-12">
           {carouselCollections.map((_, i) => (
-            <div 
-              key={i} 
+            <div
+              key={i}
               className={`h-0.5 transition-all duration-700 rounded-full ${activeIndex === i ? "w-8 bg-black" : "w-1.5 bg-black/10"}`}
             />
           ))}
@@ -226,7 +226,6 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
         </div>
       </section>
 
-      <div className="py-24 flex flex-col items-center opacity-5"><p className="text-[10px] font-bold uppercase tracking-[1.4em] text-black">COLIN GUEST</p></div>
     </div>
   );
 }

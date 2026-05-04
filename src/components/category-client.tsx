@@ -240,7 +240,7 @@ export default function CategoryClient({ category, formattedCategory, displayPro
   }, [displayProducts, selectedFilters, sortOption]);
 
   return (
-    <div className="pt-20 px-8 max-w-[1800px] mx-auto pb-24 transition-all duration-700">
+    <div className="pt-20 px-8 max-w-[1800px] mx-auto pb-52 transition-all duration-700">
       
       {/* Filter Drawer Component */}
       <FilterDrawer 

@@ -42,7 +42,7 @@ export default function AboutPage() {
       transition={{ duration: 1, ease: "easeOut" }}
     >
       <link rel="preload" href="/about_bg.MP4" as="video" type="video/mp4" />
-      <main ref={containerRef} className="relative h-[240vh] bg-black">
+      <main ref={containerRef} className="relative h-[240vh] bg-transparent">
         
         {/* FIXED VIDEO BACKGROUND */}
         <div className="fixed inset-0 w-full h-screen z-0 overflow-hidden">
