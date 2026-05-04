@@ -262,13 +262,13 @@ export function Navbar() {
           opacity: isSearchOpen ? 1 : 0
         }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className={`overflow-hidden rounded-b-[50px] transition-colors duration-500 border-none ${isAboutPage
+        className={`overflow-hidden rounded-b-[40px] transition-colors duration-500 border-none ${isAboutPage
           ? "bg-black/20 backdrop-blur-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]"
           : "bg-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)]"
           }`}
       >
-        <div className="px-10 py-8 max-w-[1600px] mx-auto">
-          <div className="flex items-center gap-6 mb-4 relative">
+        <div className="px-10 py-5 max-w-[1600px] mx-auto">
+          <div className="flex items-center gap-6 mb-3 relative">
             <div className="relative flex-1">
               <input
                 ref={searchInputRef}
@@ -277,15 +277,15 @@ export function Navbar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className={`w-full rounded-[20px] py-5 px-10 text-[15px] outline-none border-none transition-all font-medium ${isAboutPage
+                className={`w-full rounded-[16px] py-3 px-8 text-[14px] outline-none border-none transition-all font-medium ${isAboutPage
                   ? "bg-white/10 text-white placeholder:text-white/20 focus:bg-white/20"
                   : "bg-[#f4f4f5] text-black placeholder:text-black/20"
                   }`}
               />
               <Search
-                size={22}
+                size={18}
                 onClick={() => handleSearchSubmit()}
-                className={`absolute right-8 top-1/2 -translate-y-1/2 cursor-pointer transition-opacity hover:opacity-60 ${isAboutPage ? "text-white/40" : "text-black/20"}`}
+                className={`absolute right-6 top-1/2 -translate-y-1/2 cursor-pointer transition-opacity hover:opacity-60 ${isAboutPage ? "text-white/40" : "text-black/20"}`}
               />
             </div>
             <button
@@ -293,22 +293,22 @@ export function Navbar() {
                 setIsSearchOpen(false);
                 setSearchQuery("");
               }}
-              className={`p-3 rounded-full transition-all duration-300 ${isAboutPage ? "hover:bg-white/10" : "hover:bg-black/5"}`}
+              className={`p-2 rounded-full transition-all duration-300 ${isAboutPage ? "hover:bg-white/10" : "hover:bg-black/5"}`}
             >
-              <X size={28} strokeWidth={1} className={isAboutPage ? "text-white/80" : "text-black/80"} />
+              <X size={24} strokeWidth={1} className={isAboutPage ? "text-white/80" : "text-black/80"} />
             </button>
           </div>
-
-          <div className="mb-2">
-            <h3 className={`text-[10px] font-sans font-bold uppercase tracking-[0.2em] mb-4 ml-2 ${isAboutPage ? "text-white/60" : "text-black"}`}>
+ 
+          <div className="mb-1">
+            <h3 className={`text-[9px] font-sans font-bold uppercase tracking-[0.2em] mb-2 ml-2 ${isAboutPage ? "text-white/60" : "text-black"}`}>
               {searchQuery.trim() ? (isSearching ? "Searching..." : `Results for "${searchQuery}"`) : "Collections"}
             </h3>
-
-            <div className={`rounded-[38px] p-2 px-3 relative ${isAboutPage ? "bg-white/5" : "bg-[#f0f0f0]"}`}>
+ 
+            <div className={`rounded-[32px] p-1.5 px-2 relative ${isAboutPage ? "bg-white/5" : "bg-[#f0f0f0]"}`}>
               <div 
                 ref={scrollContainerRef}
                 onScroll={checkScroll}
-                className="flex gap-2 overflow-x-auto no-scrollbar snap-x snap-mandatory min-h-[180px]"
+                className="flex gap-2 overflow-x-auto no-scrollbar snap-x snap-mandatory min-h-[160px]"
               >
                 {searchQuery.trim() ? (
                   searchResults.length > 0 ? (
@@ -323,13 +323,13 @@ export function Navbar() {
                         <Link
                           href={`/product/${encodeURIComponent(product.id)}`}
                           onClick={() => setIsSearchOpen(false)}
-                          className="group flex-shrink-0 w-[160px] block"
+                          className="group flex-shrink-0 w-[140px] block"
                         >
-                          <div className={`rounded-[28px] p-1.5 pb-4 flex flex-col h-full transition-all duration-500 border-none ${isAboutPage
+                          <div className={`rounded-[24px] p-1 pb-3 flex flex-col h-full transition-all duration-500 border-none ${isAboutPage
                             ? "bg-white/10 shadow-[0_2px_8px_rgba(255,255,255,0.02)] hover:bg-white/20 hover:shadow-[0_4px_15px_rgba(255,255,255,0.05)]"
                             : "bg-white shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.04)]"
                             }`}>
-                            <div className="aspect-[1/1] relative rounded-[22px] overflow-hidden mb-3">
+                            <div className="aspect-[1/1] relative rounded-[20px] overflow-hidden mb-2">
                               {product.src ? (
                                 <Image
                                   src={product.src}
@@ -343,10 +343,10 @@ export function Navbar() {
                                 </div>
                               )}
                             </div>
-                            <p className={`text-[10px] font-sans font-bold text-center px-2 line-clamp-1 uppercase tracking-[0.2em] mb-1 ${isAboutPage ? "text-white" : "text-black"}`}>
+                            <p className={`text-[9px] font-sans font-bold text-center px-2 line-clamp-1 uppercase tracking-[0.2em] mb-0.5 ${isAboutPage ? "text-white" : "text-black"}`}>
                               {product.title}
                             </p>
-                            <p className={`text-[9px] font-sans font-medium text-center opacity-40 uppercase tracking-widest ${isAboutPage ? "text-white" : "text-black"}`}>
+                            <p className={`text-[8px] font-sans font-medium text-center opacity-40 uppercase tracking-widest ${isAboutPage ? "text-white" : "text-black"}`}>
                               {product.price}
                             </p>
                           </div>

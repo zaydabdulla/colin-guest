@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { SlidersHorizontal, Flashlight } from "lucide-react";
+import { SlidersHorizontal, LayoutGrid, Grid3X3 } from "lucide-react";
 import { ProductCard } from "./product-card";
 import { Product, Collection } from "@/lib/data";
 import Link from "next/link";
@@ -263,24 +263,28 @@ export default function CategoryClient({ category, formattedCategory, displayPro
             <h1 className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">{formattedCategory}</h1>
             
             <div className="flex items-center gap-4">
-              {/* Custom Horizontal Torch Toggle */}
+              {/* Architectural Grid Toggle */}
               <button 
                 onClick={() => setIsDense(!isDense)}
-                className={`transition-all duration-500 opacity-40 hover:opacity-100 ${isDense ? 'opacity-100' : ''}`}
-                title="Toggle Dense View (Torch)"
+                className="p-2 transition-all duration-300 hover:bg-black/5 rounded-full relative group"
+                title={isDense ? "Switch to Standard View" : "Switch to Dense View"}
               >
-                <div className="relative">
-                  <svg width="28" height="14" viewBox="0 0 24 12" fill="none" xmlns="http://www.w3.org/2000/svg" className={`${isDense ? "text-black" : "text-black/60"} -scale-x-100 relative z-10`}>
-                    <rect x="2" y="4" width="12" height="4" rx="1" stroke="currentColor" strokeWidth="1.5"/>
-                    <path d="M14 3.5V8.5L20 10V2L14 3.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
-                    {isDense && <circle cx="20" cy="6" r="1" fill="currentColor" />}
-                  </svg>
-                  
-                  {/* Subtle Light Beam Effect */}
-                  {isDense && (
-                    <div className="absolute top-1/2 -right-4 -translate-y-1/2 w-8 h-8 bg-yellow-400/40 rounded-full blur-xl pointer-events-none z-0 scale-x-150 animate-pulse" />
+                <motion.div
+                  key={isDense ? "dense" : "standard"}
+                  initial={{ opacity: 0, rotate: -90, scale: 0.8 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  className="relative flex items-center justify-center text-black"
+                >
+                  {isDense ? (
+                    <Grid3X3 size={20} strokeWidth={1.5} />
+                  ) : (
+                    <LayoutGrid size={20} strokeWidth={1.5} />
                   )}
-                </div>
+                </motion.div>
+                
+                {/* Subtle tool-tip style highlight */}
+                <div className={`absolute inset-0 rounded-full border border-black/10 transition-opacity ${isDense ? 'opacity-100' : 'opacity-0'}`} />
               </button>
 
               <button 

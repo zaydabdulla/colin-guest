@@ -72,13 +72,11 @@ export function ProductCard({
 
         {/* Image Slider / Swipe Area - Mobile Swipeable, Desktop Hover-Swap */}
         <div 
-          className={`relative w-full h-full flex flex-nowrap overflow-x-auto md:overflow-visible snap-x snap-mandatory no-scrollbar ${
-            imgIndex === 0 ? "" : "transition-transform duration-500 ease-out"
-          }`}
+          className="relative w-full h-full flex flex-nowrap overflow-x-auto md:overflow-visible snap-x snap-mandatory no-scrollbar md:[transform:translateX(var(--tx))] md:transition-transform md:duration-500 md:ease-out"
           style={{ 
-            transform: `translateX(-${imgIndex * 100}%)`,
-            transition: imgIndex === 0 ? "none" : undefined
-          }}
+            '--tx': `-${imgIndex * 100}%`,
+            transition: (imgIndex === 0) ? 'none' : undefined
+          } as any}
         >
           {srcs.map((src, i) => (
             <div key={i} className="flex-none w-full h-full snap-center relative">
@@ -121,10 +119,10 @@ export function ProductCard({
       {!isDense && (
         <Link href={`/product/${encodeURIComponent(product.id)}`} className="flex justify-between items-end px-2 z-10">
           <div>
-            <h4 className="text-xs font-bold tracking-wide mb-1 truncate max-w-[200px] hover:underline cursor-pointer text-black">{product.title}</h4>
-            <p className="text-[10px] font-medium tracking-widest text-black/80">{product.price}</p>
+            <h4 className="text-[10px] font-bold tracking-wide mb-0.5 truncate max-w-[200px] hover:underline cursor-pointer text-black">{product.title}</h4>
+            <p className="text-[9px] font-medium tracking-widest text-black/80 uppercase">{product.price}</p>
           </div>
-          <span className="text-sm font-light text-black/60">+</span>
+          <span className="text-xs font-light text-black/60">+</span>
         </Link>
       )}
     </div>

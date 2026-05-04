@@ -5,7 +5,8 @@ import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Product, Collection } from "@/lib/data";
-import { Plus, Bookmark, ShoppingBag } from "lucide-react";
+import { Plus, Bookmark, ShoppingBag, LayoutGrid, Grid3X3 } from "lucide-react";
+import { motion } from "framer-motion";
 import { FilterDrawer } from "../filter-drawer";
 import { useCartStore } from "@/lib/store";
 
@@ -176,19 +177,22 @@ export function MobileCollectionClient({
                 <button 
                   type="button"
                   onClick={() => setIsDense(!isDense)}
-                  className="flex items-center justify-center p-2 transition-opacity active:opacity-50 pointer-events-auto"
+                  className="flex items-center justify-center p-2 transition-all active:scale-90 pointer-events-auto"
                   aria-label="Toggle grid density"
                 >
-                  <div className="relative">
-                    <svg width="18" height="9" viewBox="0 0 24 12" fill="none" className="text-black -scale-x-100 relative z-10">
-                      <rect x="2" y="4" width="12" height="4" rx="1" stroke="currentColor" strokeWidth="2"/>
-                      <path d="M14 3.5V8.5L20 10V2L14 3.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-                      {isDense && <circle cx="20" cy="6" r="1.5" fill="currentColor" />}
-                    </svg>
-                    {isDense && (
-                      <div className="absolute top-1/2 -right-4 -translate-y-1/2 w-8 h-8 bg-yellow-400/30 rounded-full blur-xl pointer-events-none z-0 scale-x-150 animate-pulse" />
+                  <motion.div
+                    key={isDense ? "dense" : "standard"}
+                    initial={{ opacity: 0, rotate: -90, scale: 0.8 }}
+                    animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    className="relative flex items-center justify-center text-black"
+                  >
+                    {isDense ? (
+                      <Grid3X3 size={18} strokeWidth={1.5} />
+                    ) : (
+                      <LayoutGrid size={18} strokeWidth={1.5} />
                     )}
-                  </div>
+                  </motion.div>
                 </button>
 
                 <button 
