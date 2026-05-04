@@ -63,13 +63,19 @@ export function MobileProductClient({ product, suggestedProducts }: MobileProduc
         >
           {displayImages.map((src, i) => (
             <div key={i} className="flex-none w-full h-full snap-center relative">
-              <Image
-                src={src}
-                alt={`${product.title} - Image ${i + 1}`}
-                fill
-                className="object-cover"
-                priority={i === 0}
-              />
+              {src ? (
+                <Image
+                  src={src}
+                  alt={`${product.title} - Image ${i + 1}`}
+                  fill
+                  className="object-cover"
+                  priority={i === 0}
+                />
+              ) : (
+                <div className="w-full h-full bg-[#f4f4f4] flex items-center justify-center text-black/10 text-[10px] uppercase font-bold tracking-widest">
+                  No Image
+                </div>
+              )}
             </div>
           ))}
         </div>

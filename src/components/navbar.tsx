@@ -380,7 +380,7 @@ export function Navbar() {
                           : "bg-white shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.04)]"
                           }`}>
                           <div className="aspect-[1/1] relative rounded-[22px] overflow-hidden mb-3">
-                            {collection.image ? (
+                            {collection.image && collection.image.url ? (
                               <Image
                                 src={collection.image.url}
                                 alt={collection.image.altText || collection.title}

@@ -43,12 +43,18 @@ export function WishlistPopup() {
           {/* Left Block: Bounded Thumbnail */}
           <div className="w-[84px] h-[84px] bg-[#ebebeb] rounded-[16px] relative flex-shrink-0 overflow-hidden">
              {/* Note Object.contain to safely respect specific PNG cuts without morphing dimensions */}
-            <Image 
-              src={wishlistPopupProduct.src} 
-              alt={wishlistPopupProduct.title} 
-              fill 
-              className="object-contain p-2 mix-blend-multiply"
-            />
+            {wishlistPopupProduct.src ? (
+              <Image 
+                src={wishlistPopupProduct.src} 
+                alt={wishlistPopupProduct.title} 
+                fill 
+                className="object-contain p-2 mix-blend-multiply"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <span className="text-[8px] font-bold text-black/20 uppercase tracking-widest">No Image</span>
+              </div>
+            )}
           </div>
 
           {/* Right Block: Liquid Logic Framer Module */}

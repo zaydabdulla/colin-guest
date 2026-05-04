@@ -20,13 +20,30 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
   const [accessoryProducts, setAccessoryProducts] = useState<any[]>([]);
   const { toggleWishlist, wishlistItems } = useCartStore();
 
+  const mapShopifyProduct = (p: any): Product => ({
+    id: p.id,
+    src: p.images?.[0]?.url || "",
+    secondarySrc: p.images?.[1]?.url,
+    srcs: p.images?.map((img: any) => img.url) || [],
+    title: p.title,
+    price: formatPrice(p),
+    amount: parseFloat(p.priceRange?.minVariantPrice?.amount || "0"),
+    desc: p.teaser?.value || p.description || "",
+    category: p.productType || "Collection",
+    type: p.productType || "General",
+    variants: p.variants || [],
+    handle: p.handle
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       const all = await getAllProducts();
-      setLatestProducts(all.slice(0, 4));
-      setImportedProducts(all.slice(4, 8));
+      const mappedAll = all.map(mapShopifyProduct);
+      setLatestProducts(mappedAll.slice(0, 4));
+      setImportedProducts(mappedAll.slice(4, 8));
       const acc = await getCollectionProducts('accessories');
-      setAccessoryProducts(acc.length > 0 ? acc : all.slice(8, 12));
+      const mappedAcc = acc.map(mapShopifyProduct);
+      setAccessoryProducts(mappedAcc.length > 0 ? mappedAcc : mappedAll.slice(8, 12));
     };
     fetchData();
   }, []);
@@ -109,7 +126,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
             <div key={product.id} className="flex flex-col">
               <div className="relative aspect-[2/3] bg-[#e8e8e8] rounded-xl overflow-hidden mb-1.5">
                 <Link href={`/product/${encodeURIComponent(product.id)}`}>
-                  <Image src={product.images?.[0]?.url || "/placeholder.jpg"} alt={product.title} fill className="object-cover" />
+                  <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-cover" />
                 </Link>
                 <button onClick={() => toggleWishlist(product)} className="absolute top-1.5 right-1.5 p-2 z-10 text-white transition-opacity active:opacity-50">
                   <Bookmark size={24} className={wishlistItems.some(item => item.id === product.id) ? "fill-white" : "fill-none"} strokeWidth={1.5} />
@@ -127,7 +144,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
                   </Link>
                   <button className="text-black/40 shrink-0 mt-[-4px]"><Plus size={12} strokeWidth={1.5} /></button>
                 </div>
-                <p className="text-[6.5px] font-bold tracking-wider text-black/60">{formatPrice(product)}</p>
+                <p className="text-[6.5px] font-bold tracking-wider text-black/60">{product.price}</p>
               </div>
             </div>
           ))}
@@ -201,7 +218,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
             <div key={product.id} className="flex flex-col">
               <div className="relative aspect-[2/3] bg-[#e8e8e8] rounded-xl overflow-hidden mb-1.5">
                 <Link href={`/product/${encodeURIComponent(product.id)}`}>
-                  <Image src={product.images?.[0]?.url || "/placeholder.jpg"} alt={product.title} fill className="object-cover" />
+                  <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-cover" />
                 </Link>
                 <button onClick={() => toggleWishlist(product)} className="absolute top-1.5 right-1.5 p-2 z-10 text-white transition-opacity active:opacity-50">
                   <Bookmark size={24} className={wishlistItems.some(item => item.id === product.id) ? "fill-white" : "fill-none"} strokeWidth={1.5} />
@@ -219,7 +236,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
                   </Link>
                   <button className="text-black/40 shrink-0 mt-[-4px]"><Plus size={12} strokeWidth={1.5} /></button>
                 </div>
-                <p className="text-[6.5px] font-bold tracking-wider text-black/60">{formatPrice(product)}</p>
+                <p className="text-[6.5px] font-bold tracking-wider text-black/60">{product.price}</p>
               </div>
             </div>
           ))}

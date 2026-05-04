@@ -486,12 +486,18 @@ export function MobileNavbar() {
                             }`}
                         >
                           <div className="aspect-square relative rounded-[12px] overflow-hidden mb-2">
-                            <Image
-                              src={product.src}
-                              alt={product.title}
-                              fill
-                              className="object-cover"
-                            />
+                            {product.src ? (
+                              <Image
+                                src={product.src}
+                                alt={product.title}
+                                fill
+                                className="object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-black/5 flex items-center justify-center">
+                                <span className="text-[6px] font-bold opacity-10">NO IMAGE</span>
+                              </div>
+                            )}
                           </div>
                           <p className="text-[8px] font-semibold uppercase tracking-[0.15em] px-2 line-clamp-1">
                             {product.title}
@@ -528,7 +534,7 @@ export function MobileNavbar() {
                           }`}
                       >
                         <div className="aspect-square relative rounded-[12px] overflow-hidden mb-2">
-                          {collection.image ? (
+                          {collection.image && collection.image.url ? (
                             <Image
                               src={collection.image.url}
                               alt={collection.title}

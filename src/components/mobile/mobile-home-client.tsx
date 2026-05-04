@@ -23,11 +23,27 @@ export function MobileHomeClient({ products, collections }: MobileHomeClientProp
   const [importedProducts, setImportedProducts] = useState<any[]>([]);
   const { toggleWishlist, wishlistItems } = useCartStore();
 
+  const mapShopifyProduct = (p: any): Product => ({
+    id: p.id,
+    src: p.images?.[0]?.url || "",
+    secondarySrc: p.images?.[1]?.url,
+    srcs: p.images?.map((img: any) => img.url) || [],
+    title: p.title,
+    price: formatPrice(p),
+    amount: parseFloat(p.priceRange?.minVariantPrice?.amount || "0"),
+    desc: p.teaser?.value || p.description || "",
+    category: p.productType || "Collection",
+    type: p.productType || "General",
+    variants: p.variants || [],
+    handle: p.handle
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       const all = await getAllProducts();
-      setLatestProducts(all.slice(0, 4));
-      setImportedProducts(all.slice(4, 8));
+      const mapped = all.map(mapShopifyProduct);
+      setLatestProducts(mapped.slice(0, 4));
+      setImportedProducts(mapped.slice(4, 8));
     };
     fetchData();
   }, []);

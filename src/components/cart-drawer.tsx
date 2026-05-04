@@ -61,9 +61,13 @@ export function CartDrawer() {
                     items.map((item: CartItem, index: number) => (
                       <div key={item.id} className="flex gap-4 mb-6 group">
                          {/* Product Image Square (Tightened sizing) */}
-                         <div className="relative w-[72px] h-[72px] rounded-lg bg-gradient-to-br from-[#161616] to-[#252525] overflow-hidden shrink-0 border border-black/10 shadow-sm">
+                         <div className="relative w-[72px] h-[72px] rounded-lg bg-gradient-to-br from-[#161616] to-[#252525] overflow-hidden shrink-0 border border-black/10 shadow-sm flex items-center justify-center">
                            {/* Priority layout to avoid popping */}
-                           <Image src={item.product.src} alt={item.product.title} fill className="object-contain hover:scale-105 transition-transform duration-500 p-1" priority={index === 0} />
+                           {item.product.src ? (
+                             <Image src={item.product.src} alt={item.product.title} fill className="object-contain hover:scale-105 transition-transform duration-500 p-1" priority={index === 0} />
+                           ) : (
+                             <ShoppingBag size={20} className="text-white/20" />
+                           )}
                          </div>
 
                          <div className="flex-1 flex flex-col">

@@ -43,21 +43,29 @@ export default function ProductClient({ product, suggestedProducts }: ProductCli
           {/* Leftmost Column: Static Anchor */}
           <div className="flex-1 sticky top-[80px] h-[calc(100vh-80px)] pb-4 shrink-0 flex items-center justify-center">
             <div className="relative w-full h-full bg-white rounded-2xl overflow-hidden flex items-center justify-center border border-black/5 shadow-sm">
-              <Image 
-                src={displayImages[0]}
-                alt={product.title}
-                fill
-                className="object-cover"
-                priority
-              />
+              {displayImages[0] ? (
+                <Image 
+                  src={displayImages[0]}
+                  alt={product.title}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              ) : (
+                <div className="text-black/10 font-bold uppercase tracking-widest text-[10px]">No Preview</div>
+              )}
             </div>
           </div>
 
           {/* Middle Column: Scrollable Gallery */}
           <div className="flex-1 flex flex-col gap-4 pb-[20vh]">
             {displayImages.map((src, i) => (
-               <div key={i} className="relative w-full aspect-[2/3] bg-white border border-black/5 rounded-2xl overflow-hidden shadow-sm">
-                   <Image src={src} alt={`Gallery ${i}`} fill className="object-cover" priority={i === 0} />
+               <div key={i} className="relative w-full aspect-[2/3] bg-white border border-black/5 rounded-2xl overflow-hidden shadow-sm flex items-center justify-center">
+                   {src ? (
+                     <Image src={src} alt={`Gallery ${i}`} fill className="object-cover" priority={i === 0} />
+                   ) : (
+                     <div className="text-black/5 font-bold uppercase tracking-widest text-[10px]">No Detail Image</div>
+                   )}
                </div>
             ))}
           </div>
