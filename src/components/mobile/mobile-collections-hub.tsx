@@ -215,11 +215,11 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
               <div className="px-3 flex flex-col pb-6">
                 <div className="flex justify-between items-start w-full">
                   <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full pr-1">
-                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-black mb-0.5 truncate">{product.title}</h3>
+                    <h3 className="text-[7px] font-bold uppercase tracking-widest text-black mb-0.5 truncate">{product.title}</h3>
                   </Link>
-                  <button className="text-black/40 shrink-0 mt-[-2px]"><Plus size={16} strokeWidth={1.5} /></button>
+                  <button className="text-black/40 shrink-0 mt-[-4px]"><Plus size={12} strokeWidth={1.5} /></button>
                 </div>
-                <p className="text-[10px] font-bold tracking-wider text-black/60">{formatPrice(product)}</p>
+                <p className="text-[6.5px] font-bold tracking-wider text-black/60">{formatPrice(product)}</p>
               </div>
             </div>
           ))}
