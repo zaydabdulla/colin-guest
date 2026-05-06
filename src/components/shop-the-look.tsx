@@ -85,8 +85,8 @@ export function ShopTheLook({ currentProduct, allProducts }: ShopTheLookProps) {
   };
 
   return (
-    <div className="w-full my-6 border-y border-black/[0.05] bg-[#fcfcfc] overflow-hidden">
-      <div className="w-full px-6 md:px-10 py-10 md:py-16 relative group/container">
+    <div className="w-full my-1 border-y border-black/[0.05] bg-[#fcfcfc] overflow-hidden">
+      <div className="w-full px-6 md:px-10 py-4 md:py-6 relative group/container">
         
         <div className="max-w-[1400px] mx-auto relative z-10 px-4">
           <div className="flex flex-col lg:flex-row items-stretch justify-center gap-2 lg:gap-0">
@@ -95,7 +95,7 @@ export function ShopTheLook({ currentProduct, allProducts }: ShopTheLookProps) {
             <div className="flex items-center space-y-2 max-w-[180px] text-center lg:text-left shrink-0 py-4">
               <div className="space-y-1">
                 <h2 className="text-2xl md:text-3xl font-serif italic text-black tracking-tight leading-tight">
-                  <span className="font-light inline md:block md:opacity-30 mr-1 md:mr-0 not-italic">Elevate</span>
+                  <span className="font-light inline md:block opacity-30 mr-1 md:mr-0 not-italic">Elevate</span>
                   The Look
                 </h2>
               </div>
