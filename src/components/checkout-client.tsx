@@ -26,7 +26,7 @@ import {
 
 export function CheckoutClient() {
   const router = useRouter();
-  const { items, updateQuantity, removeFromCart, isLoggedIn, user } = useCartStore();
+  const { items, updateQuantity, removeFromCart, isLoggedIn, user, addToCart } = useCartStore();
   const [loading, setLoading] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -192,11 +192,16 @@ export function CheckoutClient() {
               <div className="space-y-6 mb-10 max-h-[320px] overflow-y-auto no-scrollbar pr-2 border-b border-black/5 pb-8">
                 {items.map((item) => (
                   <div key={item.id} className="flex gap-4 group items-center">
-                    <div className="relative w-16 h-16 rounded-[18px] overflow-hidden bg-[#f9f9fa] border border-black/[0.03] flex-shrink-0 group-hover:scale-105 transition-transform">
+                    <Link 
+                      href={`/product/${encodeURIComponent(item.product.id)}`}
+                      className="relative w-16 h-16 rounded-[18px] overflow-hidden bg-[#f9f9fa] border border-black/[0.03] flex-shrink-0 group-hover:scale-105 transition-transform"
+                    >
                       <Image src={item.product.src} alt={item.product.title} fill className="object-contain p-2" />
-                    </div>
+                    </Link>
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-[10px] md:text-[11px] font-bold uppercase tracking-widest leading-tight truncate text-black/80">{item.product.title}</h4>
+                      <Link href={`/product/${encodeURIComponent(item.product.id)}`}>
+                        <h4 className="text-[10px] md:text-[11px] font-bold uppercase tracking-widest leading-tight truncate text-black/80 hover:text-black transition-colors">{item.product.title}</h4>
+                      </Link>
                       <p className="text-[8px] md:text-[9px] font-bold text-black/50 uppercase tracking-widest mt-1">Size: {item.size}</p>
                       
                       <div className="flex items-center justify-between mt-2">
@@ -430,7 +435,6 @@ export function CheckoutClient() {
             </motion.div>
           </div>
 
-          {/* Section C: Payment (Methods + Button) - Order 3 on mobile */}
           <div className="lg:hidden order-3">
             <PaymentProtocolCard 
               paymentMethod={paymentMethod} 
@@ -441,6 +445,7 @@ export function CheckoutClient() {
           </div>
 
         </div>
+
       </div>
     </main>
   );

@@ -16,7 +16,10 @@ export function CartDrawer() {
   const [showScrollArrow, setShowScrollArrow] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const parsePrice = (priceStr: string) => parseInt(priceStr.replace(/[^0-9]/g, ''));
+  const parsePrice = (priceStr: string) => {
+    if (!priceStr) return 0;
+    return parseInt(priceStr.replace(/[^0-9]/g, ''));
+  };
   // Summing total exactly like a real ecommerce API engine
   const total = items.reduce((sum: number, item: CartItem) => sum + (parsePrice(item.product.price) * item.quantity), 0);
   
@@ -83,11 +86,14 @@ export function CartDrawer() {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
+      document.body.style.overscrollBehavior = "contain";
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
+      document.body.style.overscrollBehavior = "";
     }
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
+      document.body.style.overscrollBehavior = "";
     };
   }, [isOpen]);
 
@@ -137,7 +143,10 @@ export function CartDrawer() {
              <div className="flex-1 bg-white text-black overflow-hidden flex flex-col relative">
                
                {/* Main Cart Items Scroll Area */}
-               <div className="flex-1 overflow-y-auto px-5 pt-6 pb-2 custom-scrollbar relative">
+               <div 
+                 className="flex-1 overflow-y-auto px-5 pt-6 pb-2 relative"
+                 data-lenis-prevent
+               >
                   {items.length === 0 ? (
                     <div className="h-64 flex flex-col items-center justify-center text-black/20">
                        <ShoppingBag size={48} strokeWidth={1} className="mb-4 drop-shadow-sm" />
@@ -215,17 +224,27 @@ export function CartDrawer() {
                             <div className="flex gap-3 items-center">
                               <div className="relative w-16 h-16 rounded-md bg-[#f4f4f5] border border-black/5 overflow-hidden shrink-0 shadow-sm">
                                 {product.src && (
-                                  <Image src={product.src} alt={product.title} fill className="object-cover group-hover/suggestion:scale-110 transition-transform duration-500" />
+                                  <button 
+                                    onClick={() => {
+                                      closeCart();
+                                      router.push(`/product/${encodeURIComponent(product.id)}`);
+                                    }}
+                                    className="absolute inset-0 z-10"
+                                  >
+                                    <Image src={product.src} alt={product.title} fill className="object-cover group-hover/suggestion:scale-110 transition-transform duration-500" />
+                                  </button>
                                 )}
-                                <button 
-                                  onClick={() => addToCart(product, "Free Size")}
-                                  className="absolute inset-0 bg-black/40 opacity-0 group-hover/suggestion:opacity-100 transition-opacity flex items-center justify-center"
-                                >
-                                  <Plus size={16} className="text-white" />
-                                </button>
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="text-[9px] font-bold text-black truncate uppercase tracking-tight">{product.title}</p>
+                                <button 
+                                  onClick={() => {
+                                    closeCart();
+                                    router.push(`/product/${encodeURIComponent(product.id)}`);
+                                  }}
+                                  className="text-left w-full"
+                                >
+                                  <p className="text-[9px] font-bold text-black truncate uppercase tracking-tight hover:opacity-60 transition-opacity">{product.title}</p>
+                                </button>
                                 <p className="text-[9px] text-black/40 font-medium mt-0.5">{product.price}</p>
                                 <button 
                                   onClick={() => addToCart(product, "Free Size")}
