@@ -168,7 +168,7 @@ export function MobileCollectionClient({
 
             {/* Header Section - Maintaining padding for text */}
             <div className="px-6 flex justify-between items-center w-full">
-              <h1 className="text-[9px] font-bold uppercase tracking-widest text-black/80">
+              <h1 className="text-[8px] font-bold uppercase tracking-wider text-black/80 flex-1 pr-2 truncate">
                 {formattedCategory}
               </h1>
 

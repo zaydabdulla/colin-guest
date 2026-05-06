@@ -259,7 +259,7 @@ export function MobileProductClient({ product, suggestedProducts }: MobileProduc
             {suggestedProducts && suggestedProducts.length > 0 ? (
               suggestedProducts.map((suggested, i) => (
                 <div key={suggested.id} className="min-w-[65vw] flex-shrink-0 snap-start">
-                  <ProductCard product={suggested} index={i} />
+                  <ProductCard product={suggested} index={i} disableSlider={true} />
                 </div>
               ))
             ) : (

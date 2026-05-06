@@ -11,30 +11,32 @@ import { useCartStore } from "@/lib/store";
 export function ProductCard({ 
   product, 
   index = 0, 
-  isDense = false 
+  isDense = false,
+  disableSlider = false
 }: { 
   product: Product, 
   index?: number,
-  isDense?: boolean 
+  isDense?: boolean,
+  disableSlider?: boolean
 }) {
   const [imgIndex, setImgIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const { wishlistItems, toggleWishlist } = useCartStore();
   const isWishlisted = wishlistItems.some((item: Product) => item.id === product.id);
 
-  // We ensure there are multiple images for prototyping tracking
-  const srcs = product.srcs && product.srcs.length > 1 ? product.srcs : [product.src, product.src, product.src];
+  // We ensure there are multiple images for prototyping tracking unless disabled
+  const srcs = disableSlider ? [product.src] : (product.srcs && product.srcs.length > 1 ? product.srcs : [product.src, product.src, product.src]);
 
   const handleNext = (e: React.MouseEvent) => {
     e.preventDefault(); 
     e.stopPropagation(); 
-    setImgIndex((prev) => (prev + 1) % srcs.length);
+    if (!disableSlider) setImgIndex((prev) => (prev + 1) % srcs.length);
   };
 
   const handlePrev = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setImgIndex((prev) => (prev - 1 + srcs.length) % srcs.length);
+    if (!disableSlider) setImgIndex((prev) => (prev - 1 + srcs.length) % srcs.length);
   };
 
   return (
@@ -42,11 +44,11 @@ export function ProductCard({
       className="group flex flex-col relative" 
       onMouseEnter={() => {
         setIsHovered(true);
-        if (imgIndex === 0 && srcs.length > 1) setImgIndex(1);
+        if (!disableSlider && imgIndex === 0 && srcs.length > 1) setImgIndex(1);
       }} 
       onMouseLeave={() => {
         setIsHovered(false);
-        setImgIndex(0);
+        if (!disableSlider) setImgIndex(0);
       }}
     >
       <motion.div 
@@ -72,7 +74,7 @@ export function ProductCard({
 
         {/* Image Slider / Swipe Area - Mobile Swipeable, Desktop Hover-Swap */}
         <div 
-          className="relative w-full h-full flex flex-nowrap overflow-x-auto md:overflow-visible snap-x snap-mandatory no-scrollbar md:[transform:translateX(var(--tx))] md:transition-transform md:duration-500 md:ease-out"
+          className={`relative w-full h-full flex flex-nowrap ${disableSlider ? 'overflow-hidden' : 'overflow-x-auto md:overflow-visible snap-x snap-mandatory no-scrollbar md:[transform:translateX(var(--tx))] md:transition-transform md:duration-500 md:ease-out'}`}
           style={{ 
             '--tx': `-${imgIndex * 100}%`,
             transition: (imgIndex === 0) ? 'none' : undefined
@@ -97,7 +99,7 @@ export function ProductCard({
         </div>
 
         {/* Dynamic Hover Arrows (Desktop Only) */}
-        {srcs.length > 1 && !isDense && (
+        {srcs.length > 1 && !isDense && !disableSlider && (
           <div className="absolute inset-x-3 top-1/2 -translate-y-1/2 hidden md:flex justify-between z-40 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
              <button 
                onClick={handlePrev} 

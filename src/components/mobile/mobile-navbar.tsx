@@ -205,7 +205,7 @@ export function MobileNavbar() {
       <div className="fixed bottom-6 left-0 right-0 z-40 px-6 flex justify-center pointer-events-none">
         <div className="pointer-events-auto relative flex items-center justify-between px-7 py-2.5 bg-white/[0.08] backdrop-blur-[40px] backdrop-saturate-[2.1] border border-white/20 border-t-white/40 border-l-white/30 rounded-full shadow-[0_15px_35px_rgba(0,0,0,0.25)] w-full max-w-[260px] overflow-hidden">
           {/* Active Gliding Pill Background */}
-          <div className="absolute inset-y-1.5 left-2 right-2 flex pointer-events-none">
+          <div className="absolute inset-y-1.5 left-7 right-7 flex pointer-events-none">
             {["/collections/all", "search", isLoggedIn ? "/profile" : "/login", "/lookbook"].map((tab, idx) => {
               const isActive = tab === "search" ? isSearchOpen : (tab === "/collections/all" ? pathname.startsWith("/collections") : pathname === tab);
               return (
@@ -213,7 +213,7 @@ export function MobileNavbar() {
                   {isActive && (
                     <motion.div
                       layoutId="activePill"
-                      className="absolute inset-0 bg-white/15 rounded-full z-0"
+                      className="absolute inset-y-0 -inset-x-2 bg-white/15 rounded-full z-0"
                       transition={{ type: "spring", stiffness: 400, damping: 32, mass: 0.8 }}
                     />
                   )}

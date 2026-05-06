@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useCartStore } from "@/lib/store";
 import { useSession } from "next-auth/react";
 import { getOrCreateShopifyCustomer, adminGetCustomerData } from "@/app/actions/shopify";
@@ -10,6 +10,10 @@ import { getOrCreateShopifyCustomer, adminGetCustomerData } from "@/app/actions/
 export function SyncManager() {
   const { isLoggedIn, syncData, isSyncing, customerId, hasLoggedOut } = useCartStore();
   const { data: session, status } = useSession();
+  
+  // Track state to manage initial merge and prevent redundant syncs
+  const wasLoggedIn = useRef(isLoggedIn);
+  const lastSyncedId = useRef<string | null>(null);
 
   useEffect(() => {
     // If user is logged in via Google but not in our store, sync them
@@ -37,17 +41,27 @@ export function SyncManager() {
         });
       });
     }
-
-
   }, [status, session, isLoggedIn, hasLoggedOut]);
 
   useEffect(() => {
     if (isLoggedIn && !isSyncing && customerId) {
-      syncData();
+      // Avoid redundant syncs if we've already synced for this specific customer session
+      if (lastSyncedId.current === customerId) return;
+
+      // If we just transitioned from logged out to logged in, perform a MERGE sync
+      const shouldMerge = !wasLoggedIn.current;
+      
+      syncData(shouldMerge);
+      
+      // Update refs to track completion
+      wasLoggedIn.current = true;
+      lastSyncedId.current = customerId;
+    } else if (!isLoggedIn) {
+      // Reset tracking when logged out
+      wasLoggedIn.current = false;
+      lastSyncedId.current = null;
     }
-    // We only want to trigger this when the user identity actually changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn, customerId]);
+  }, [isLoggedIn, customerId, isSyncing, syncData]);
 
   return null;
 }

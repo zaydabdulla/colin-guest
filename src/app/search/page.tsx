@@ -1,5 +1,6 @@
 import { searchProducts, getAllCollections } from "@/lib/shopify";
 import CategoryClient from "@/components/category-client";
+import { MobileCollectionClient } from "@/components/mobile/mobile-collection-client";
 import { Product, Collection } from "@/lib/data";
 
 export default async function SearchPage({
@@ -63,13 +64,26 @@ export default async function SearchPage({
   const formattedCategory = `SEARCH RESULTS FOR "${searchQuery.toUpperCase()}"`;
 
   return (
-    <main className="min-h-screen bg-white text-black font-sans relative">
-      <CategoryClient 
-        category="search"
-        formattedCategory={formattedCategory}
-        displayProducts={displayProducts}
-        collections={collections}
-      />
-    </main>
+    <>
+      {/* Desktop View - Strict Isolation */}
+      <div className="hidden md:block min-h-screen bg-white text-black font-sans relative">
+        <CategoryClient 
+          category="search"
+          formattedCategory={formattedCategory}
+          displayProducts={displayProducts}
+          collections={collections}
+        />
+      </div>
+
+      {/* Mobile View - Strict Isolation */}
+      <div className="block md:hidden min-h-screen bg-[#f4f4f4]">
+        <MobileCollectionClient
+          category="search"
+          formattedCategory={formattedCategory}
+          displayProducts={displayProducts}
+          collections={collections}
+        />
+      </div>
+    </>
   );
 }
