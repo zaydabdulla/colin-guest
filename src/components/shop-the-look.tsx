@@ -30,7 +30,7 @@ export function ShopTheLook({ currentProduct, allProducts }: ShopTheLookProps) {
     // Ensure we only suggest products that are currently in stock
     const availablePool = allProducts.filter(p => p.id !== currentProduct.id && p.variants?.some(v => v.availableForSale));
 
-    let candidates = [];
+    let candidates: Product[] = [];
 
     if (isTop) {
       // If viewing a Top, prioritize finding a Bottom

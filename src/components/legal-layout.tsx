@@ -6,7 +6,7 @@ interface LegalPageProps {
   title: string;
   content: {
     section?: string;
-    text: string;
+    text?: string;
     items?: string[];
   }[];
 }
@@ -32,9 +32,11 @@ export default function LegalLayout({ title, content }: LegalPageProps) {
                     {item.section}
                   </h2>
                 )}
-                <p className="text-[13px] md:text-[15px] font-medium leading-[1.7] text-black/60 whitespace-pre-line tracking-tight">
-                  {item.text}
-                </p>
+                {item.text && (
+                  <p className="text-[13px] md:text-[15px] font-medium leading-[1.7] text-black/60 whitespace-pre-line tracking-tight">
+                    {item.text}
+                  </p>
+                )}
                 {item.items && (
                   <ul className="space-y-3 mt-6">
                     {item.items.map((bullet, i) => (
