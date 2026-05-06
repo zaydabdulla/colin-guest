@@ -570,7 +570,7 @@ export async function getAllCollections(): Promise<Collection[]> {
   // Sort logic: Best Sellers first, then New Arrivals
   const priorityOrder = ["best sellers", "new arrivals"];
   
-  return collections.sort((a, b) => {
+  return collections.sort((a: Collection, b: Collection) => {
     const titleA = a.title.toLowerCase().trim();
     const titleB = b.title.toLowerCase().trim();
     
