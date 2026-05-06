@@ -10,7 +10,13 @@ export function Footer() {
   const pathname = usePathname();
 
   // Show on About, Collections, Product, and Checkout pages as requested
-  const showFooter = pathname === "/about" || pathname.startsWith("/collections") || pathname.startsWith("/product") || pathname === "/checkout";
+  // Show on About, Collections, Product, Checkout, and Legal pages
+  const legalPages = ["/terms", "/privacy", "/shipping", "/returns"];
+  const showFooter = pathname === "/about" || 
+                     pathname.startsWith("/collections") || 
+                     pathname.startsWith("/product") || 
+                     pathname === "/checkout" ||
+                     legalPages.includes(pathname);
 
   if (!showFooter) return null;
 
@@ -37,10 +43,10 @@ export function Footer() {
     {
       title: "Assistance",
       links: [
-        { name: "Shipping & Delivery", href: "#" },
-        { name: "Returns & Exchanges", href: "#" },
-        { name: "Order Tracking", href: "#" },
-        { name: "Size Guide", href: "#" },
+        { name: "Terms & Conditions", href: "/terms" },
+        { name: "Shipping Policy", href: "/shipping" },
+        { name: "Return & Refund", href: "/returns" },
+        { name: "Privacy Policy", href: "/privacy" },
       ],
     },
   ];
@@ -146,8 +152,8 @@ export function Footer() {
           <div className="mt-16 pt-6 border-t border-black/[0.03] flex flex-col md:flex-row justify-between items-center gap-4 text-[7px] font-bold uppercase tracking-[0.4em] opacity-20">
             <p>© 2024 COLIN GUEST RETAIL.</p>
             <div className="flex gap-8">
-              <Link href="#" className="hover:opacity-100">Privacy</Link>
-              <Link href="#" className="hover:opacity-100">Terms</Link>
+              <Link href="/privacy" className="hover:opacity-100">Privacy</Link>
+              <Link href="/terms" className="hover:opacity-100">Terms</Link>
             </div>
           </div>
         </div>

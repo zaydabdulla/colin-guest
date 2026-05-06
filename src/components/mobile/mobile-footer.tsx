@@ -10,7 +10,13 @@ export function MobileFooter() {
   const pathname = usePathname();
 
   // Show on About, Collections, Product, and Checkout pages as requested
-  const showFooter = pathname === "/about" || pathname.startsWith("/collections") || pathname.startsWith("/product") || pathname === "/checkout";
+  // Show on About, Collections, Product, Checkout, and Legal pages
+  const legalPages = ["/terms", "/privacy", "/shipping", "/returns"];
+  const showFooter = pathname === "/about" || 
+                     pathname.startsWith("/collections") || 
+                     pathname.startsWith("/product") || 
+                     pathname === "/checkout" ||
+                     legalPages.includes(pathname);
 
   if (!showFooter) return null;
 
@@ -35,9 +41,10 @@ export function MobileFooter() {
     {
       title: "Assistance",
       links: [
-        { name: "Shipping", href: "#" },
-        { name: "Returns", href: "#" },
-        { name: "Size Guide", href: "#" },
+        { name: "Terms & Conditions", href: "/terms" },
+        { name: "Shipping Policy", href: "/shipping" },
+        { name: "Return & Refund", href: "/returns" },
+        { name: "Privacy Policy", href: "/privacy" },
       ],
     },
   ];
@@ -140,8 +147,8 @@ export function MobileFooter() {
           <div className="pt-4 border-t border-black/[0.03] flex justify-between items-center text-[6.5px] font-bold uppercase tracking-[0.3em] opacity-20">
             <p>© 2024 COLIN GUEST.</p>
             <div className="flex gap-4">
-              <Link href="#" className="hover:opacity-100">Privacy</Link>
-              <Link href="#" className="hover:opacity-100">Terms</Link>
+              <Link href="/privacy" className="hover:opacity-100">Privacy</Link>
+              <Link href="/terms" className="hover:opacity-100">Terms</Link>
             </div>
           </div>
         </div>

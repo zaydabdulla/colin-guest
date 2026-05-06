@@ -8,13 +8,15 @@ import { Product } from "@/lib/data";
 import { useCartStore } from "@/lib/store";
 import { ProductCard } from "@/components/product-card";
 import { MobileProductClient } from "@/components/mobile/mobile-product-client";
+import { ShopTheLook } from "@/components/shop-the-look";
 
 interface ProductClientProps {
   product: Product;
   suggestedProducts: Product[];
+  allProducts: Product[];
 }
 
-export default function ProductClient({ product, suggestedProducts }: ProductClientProps) {
+export default function ProductClient({ product, suggestedProducts, allProducts }: ProductClientProps) {
   const [selectedSize, setSelectedSize] = useState<string | null>(
     product.variants?.find(v => v.availableForSale)?.title || null
   );
@@ -33,7 +35,7 @@ export default function ProductClient({ product, suggestedProducts }: ProductCli
     <>
       {/* Mobile View - Strict Isolation */}
       <div className="md:hidden">
-        <MobileProductClient product={product} suggestedProducts={suggestedProducts} />
+        <MobileProductClient product={product} suggestedProducts={suggestedProducts} allProducts={allProducts} />
       </div>
 
       {/* Desktop View - Strict Isolation */}
@@ -224,11 +226,14 @@ export default function ProductClient({ product, suggestedProducts }: ProductCli
         </div>
 
         <section className="bg-[#fcfcfc] w-full pt-12 pb-52 px-12 border-t border-black/5 z-20 relative">
-          <h2 className="text-xl font-bold tracking-tight mb-8">You may also like</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-             {suggestedProducts.map((suggested, i) => (
-               <ProductCard key={suggested.id} product={suggested} index={i} />
-             ))}
+          <div className="max-w-6xl mx-auto">
+            <ShopTheLook currentProduct={product} allProducts={allProducts} />
+            <h2 className="text-xl font-bold tracking-tight mt-16 mb-8">You may also like</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+               {suggestedProducts.map((suggested, i) => (
+                 <ProductCard key={suggested.id} product={suggested} index={i} />
+               ))}
+            </div>
           </div>
         </section>
 

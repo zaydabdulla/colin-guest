@@ -80,10 +80,31 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     }
   }
 
+  // Fetch all products for "Shop the Look" logic
+  const allRawProducts = await getAllProducts();
+  const allProducts: Product[] = allRawProducts.map((p: any) => ({
+    id: p.id,
+    src: p.images[0]?.url || "/placeholder.jpg",
+    secondarySrc: p.images[1]?.url,
+    srcs: p.images.map((img: any) => img.url),
+    title: p.title,
+    price: `${p.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(p.priceRange.minVariantPrice.amount).toLocaleString()}`,
+    desc: p.description,
+    category: p.productType || "Collection",
+    amount: parseFloat(p.priceRange.minVariantPrice.amount),
+    type: p.productType || "General",
+    variants: p.variants?.edges.map((e: any) => ({
+      id: e.node.id,
+      title: e.node.title,
+      availableForSale: e.node.availableForSale,
+      selectedOptions: e.node.selectedOptions
+    }))
+  }));
+
   if (!product) {
     notFound();
   }
 
-  return <ProductClient product={product} suggestedProducts={suggestedProducts} />;
+  return <ProductClient product={product} suggestedProducts={suggestedProducts} allProducts={allProducts} />;
 }
 

@@ -7,13 +7,15 @@ import { useCartStore } from "@/lib/store";
 import { Bookmark, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { ProductCard } from "../product-card";
+import { ShopTheLook } from "../shop-the-look";
 
 interface MobileProductClientProps {
   product: Product;
   suggestedProducts: Product[];
+  allProducts: Product[];
 }
 
-export function MobileProductClient({ product, suggestedProducts }: MobileProductClientProps) {
+export function MobileProductClient({ product, suggestedProducts, allProducts }: MobileProductClientProps) {
   const [selectedSize, setSelectedSize] = useState<string | null>(
     product.variants?.find(v => v.availableForSale)?.title || null
   );
@@ -245,6 +247,9 @@ export function MobileProductClient({ product, suggestedProducts }: MobileProduc
           </div>
         </div>
       </div>
+
+      {/* 5.5 Shop the Look (Outfit pairing) */}
+      <ShopTheLook currentProduct={product} allProducts={allProducts} />
 
       {/* 6. You May Also Like */}
       <div className="mt-8 bg-white relative z-10">
