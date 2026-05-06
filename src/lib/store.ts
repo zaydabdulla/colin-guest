@@ -58,6 +58,7 @@ interface CartState {
   wishlistPopupProduct: Product | null;
   clearWishlistPopup: () => void;
   hasLoggedOut: boolean;
+  lastSyncedCustomerId: string | null;
 }
 
 export const useCartStore = create<CartState>()(
@@ -65,6 +66,7 @@ export const useCartStore = create<CartState>()(
     (set, get) => ({
       items: [],
       isOpen: false,
+      lastSyncedCustomerId: null,
       openCart: () => set({ isOpen: true, isWishlistOpen: false }), // automatically close wishlist if cart opens safely
       closeCart: () => set({ isOpen: false }),
       addToCart: (product, size) => {
@@ -302,6 +304,7 @@ export const useCartStore = create<CartState>()(
           accessToken: null,
           items: [],
           wishlistItems: [],
+          lastSyncedCustomerId: null,
           hasLoggedOut: true
         });
 
@@ -417,7 +420,8 @@ export const useCartStore = create<CartState>()(
               set({
                 wishlistItems: mergedWishlist,
                 items: mergedCart,
-                isSyncing: false
+                isSyncing: false,
+                lastSyncedCustomerId: customerId
               });
 
               // Save the merged state back to Shopify
@@ -426,7 +430,8 @@ export const useCartStore = create<CartState>()(
               set({
                 wishlistItems: newWishlistItems,
                 items: newCartItems,
-                isSyncing: false
+                isSyncing: false,
+                lastSyncedCustomerId: customerId
               });
             }
           }

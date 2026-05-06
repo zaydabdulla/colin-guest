@@ -6,13 +6,13 @@ import { MobileCollectionsHub } from "@/components/mobile/mobile-collections-hub
 
 export default async function Home() {
   let shopifyProducts = await getCollectionProducts("Landing Page");
-  
+
   // If "Landing Page" collection is empty or missing, fetch all products as fallback
   if (shopifyProducts.length === 0) {
     console.log("No specific 'Landing Page' collection found. Falling back to all products.");
     shopifyProducts = await getAllProducts();
   }
-  
+
   // Map Shopify products to our Product type
   const displayProducts: Product[] = shopifyProducts.map((p: any) => ({
     id: p.id,
@@ -30,7 +30,7 @@ export default async function Home() {
   // Fetch collections for mobile integration
   const allCollections = await getAllCollections();
   const filteredCollections = allCollections.filter((c: Collection) => c.title.toLowerCase() !== 'landing page');
-  
+
   // For Collections Hub
   const landingPageCollection = allCollections.find(c => c.title.toLowerCase() === 'landing page');
   const allProductsImage = landingPageCollection?.image?.url || "/collections_hero.jpg";
@@ -44,7 +44,7 @@ export default async function Home() {
 
       {/* Mobile View - Strict Isolation */}
       <div className="block md:hidden">
-        <MobileCollectionsHub 
+        <MobileCollectionsHub
           collections={filteredCollections}
           allProductsImage={allProductsImage}
         />

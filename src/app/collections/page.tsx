@@ -12,8 +12,11 @@ export default async function CollectionsHub() {
   const landingPageCollection = allCollections.find(c => c.title.toLowerCase() === 'landing page');
   const allProductsImage = landingPageCollection?.image?.url || "/collections_hero.jpg";
 
-  // Filter out "Landing Page" from the Browse Categories section
-  const filteredCollections = allCollections.filter(c => c.title.toLowerCase() !== 'landing page');
+  // Filter out "Landing Page" and "All Product(s)" from the Browse Categories section
+  const filteredCollections = allCollections.filter(c => {
+    const title = c.title.toLowerCase();
+    return title !== 'landing page' && title !== 'all products' && title !== 'all product';
+  });
 
   return (
     <>

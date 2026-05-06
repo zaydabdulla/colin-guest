@@ -26,7 +26,10 @@ export default async function SearchPage({
     getAllCollections()
   ]);
 
-  const collections = allCollections.filter((c: Collection) => c.title.toLowerCase() !== 'landing page');
+  const collections = allCollections.filter((c: Collection) => {
+    const title = c.title.toLowerCase();
+    return title !== 'landing page' && title !== 'all products' && title !== 'all product';
+  });
 
   const displayProducts: Product[] = shopifyProducts.map((p: any, index: number) => ({
     id: p.id,

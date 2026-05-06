@@ -41,7 +41,10 @@ export function Navbar() {
   useEffect(() => {
     const fetchCollections = async () => {
       const fetchedCollections = await getAllCollections();
-      setCollections(fetchedCollections.filter((c: Collection) => c.title.toLowerCase() !== 'landing page'));
+      setCollections(fetchedCollections.filter((c: Collection) => {
+        const title = c.title.toLowerCase();
+        return title !== 'landing page' && title !== 'all products' && title !== 'all product';
+      }));
     };
     fetchCollections();
   }, []);

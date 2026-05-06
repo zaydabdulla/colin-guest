@@ -6,6 +6,7 @@ import { Bookmark, Clock, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
 import { type Product } from "@/lib/data";
+import { ProductCard } from "@/components/product-card";
 
 // Import Mobile-specific client for isolation
 import { MobileWishlistClient } from "@/components/mobile/mobile-wishlist-client";
@@ -41,25 +42,13 @@ export default function WishlistDashboard() {
         {/* Grid rendering (Visible for Condition 2 & Condition 3) */}
         {wishlistItems.length > 0 && (
            <div className="max-w-[1500px] mx-auto px-8 pt-12 pb-24">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16">
-                 {wishlistItems.map((product: Product) => (
-                   <div key={product.id} className="group relative">
-                      <div className="w-full aspect-[4/5] bg-gradient-to-tr from-[#ececec] to-white rounded-2xl overflow-hidden relative mb-4 shadow-sm border border-black/5 cursor-pointer">
-                        <div onClick={(e) => { e.stopPropagation(); toggleWishlist(product); }} className="absolute top-4 right-6 z-20 hover:scale-110 transition-transform cursor-pointer">
-                          <Bookmark size={36} className="fill-[#3272e6] text-[#3272e6] stroke-none" />
-                        </div>
-                        <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-contain p-6 mix-blend-multiply group-hover:scale-105 transition-transform duration-700" />
-                      </div>
-                      
-                      <div className="flex justify-between items-start px-2">
-                         <h4 className="text-[12px] font-bold text-black tracking-tight">{product.title}</h4>
-                         <div className="text-[9px] text-black/40 font-bold uppercase tracking-widest text-right">
-                           Selected Size <span className="text-black ml-1">XS</span>
-                         </div>
-                      </div>
-                   </div>
-                 ))}
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+               {wishlistItems.map((product: Product, i: number) => (
+                 <div key={product.id}>
+                    <ProductCard product={product} index={i} />
+                 </div>
+               ))}
+            </div>
            </div>
         )}
 

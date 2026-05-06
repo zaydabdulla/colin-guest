@@ -49,7 +49,10 @@ export function MobileNavbar() {
   useEffect(() => {
     const fetchCollections = async () => {
       const fetchedCollections = await getAllCollections();
-      setCollections(fetchedCollections.filter((c: Collection) => c.title.toLowerCase() !== 'landing page'));
+      setCollections(fetchedCollections.filter((c: Collection) => {
+        const title = c.title.toLowerCase();
+        return title !== 'landing page' && title !== 'all products' && title !== 'all product';
+      }));
     };
     fetchCollections();
   }, []);
@@ -338,9 +341,9 @@ export function MobileNavbar() {
           {/* Main Links - Editorial Style */}
           <nav className="flex-1 px-10 flex flex-col gap-2 overflow-y-auto no-scrollbar">
             {[
-              { name: "Shop All", href: "/collections/all", num: "01" },
-              { name: "Bestsellers", href: "/collections/bestsellers", num: "02" },
-              { name: "New Arrival", href: "/collections/new-arrivals", num: "03" },
+              { name: "View All", href: "/collections/all", num: "01" },
+              { name: "Best Sellers", href: "/collections/best-sellers", num: "02" },
+              { name: "New Arrivals", href: "/collections/new-arrivals", num: "03" },
               { name: "Login", href: "/login", num: "04" },
               { name: "About", href: "/about", num: "05" },
             ].map((link, i) => (

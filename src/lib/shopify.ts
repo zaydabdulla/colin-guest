@@ -565,7 +565,25 @@ export async function getAllCollections(): Promise<Collection[]> {
   `;
 
   const response = await shopifyFetch({ query });
-  return response.data?.collections?.edges.map((edge: any) => edge.node) || [];
+  const collections = response.data?.collections?.edges.map((edge: any) => edge.node) || [];
+
+  // Sort logic: Best Sellers first, then New Arrivals
+  const priorityOrder = ["best sellers", "new arrivals"];
+  
+  return collections.sort((a, b) => {
+    const titleA = a.title.toLowerCase().trim();
+    const titleB = b.title.toLowerCase().trim();
+    
+    const indexA = priorityOrder.indexOf(titleA);
+    const indexB = priorityOrder.indexOf(titleB);
+    
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    
+    // Maintain original order for others
+    return 0;
+  });
 }
 
 export async function searchProducts(searchTerm: string): Promise<any[]> {

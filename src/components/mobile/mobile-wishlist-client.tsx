@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Bookmark, Clock, ArrowRight } from "lucide-react";
+import { Bookmark, Clock, ArrowRight, Plus } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
 import { type Product } from "@/lib/data";
@@ -32,33 +32,74 @@ export function MobileWishlistClient() {
       {wishlistItems.length > 0 && (
          <div className="max-w-[1500px] mx-auto px-4 pt-8 pb-40">
             {/* 2 columns on mobile for optimal scanning */}
-            <div className="grid grid-cols-2 gap-x-4 gap-y-10">
-               {wishlistItems.map((product: Product) => (
-                 <div key={product.id} className="group relative">
-                    {/* The Product Image Container */}
-                    <div className="w-full aspect-[4/5] bg-[#f9f9f9] rounded-xl overflow-hidden relative mb-4 shadow-sm border border-black/5 cursor-pointer">
-                      {/* Responsive Bookmark Icon */}
-                      <div 
-                        onClick={(e) => { e.stopPropagation(); toggleWishlist(product); }} 
-                        className="absolute top-3 right-3 z-20 active:scale-90 transition-transform cursor-pointer"
-                      >
-                        <Bookmark size={24} className="fill-[#3272e6] text-[#3272e6] stroke-none" />
-                      </div>
-                      <Link href={`/product/${encodeURIComponent(product.id)}`}>
-                        <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-contain p-4 mix-blend-multiply transition-transform duration-700" />
-                      </Link>
-                    </div>
-                    
-                    {/* Footnote text */}
-                    <div className="flex flex-col justify-between items-start px-1 gap-1">
-                       <h4 className="text-[10px] font-bold text-black tracking-tight uppercase line-clamp-1">{product.title}</h4>
-                       <div className="text-[9px] text-black/60 font-bold uppercase tracking-widest">
-                         {product.price}
+             <div className="grid grid-cols-2 gap-1 px-0 w-full">
+                {wishlistItems.map((product: Product) => (
+                  <div key={product.id} className="flex flex-col group relative">
+                     {/* Product Image Container */}
+                     <div className="w-full">
+                       <div className="relative aspect-[2/3] w-full bg-[#e8e8e8] overflow-hidden rounded-xl mb-1.5">
+                         {/* Swipable Carousel */}
+                         <div className="w-full h-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar relative">
+                           {(product.srcs && product.srcs.length > 0 ? product.srcs : [product.src]).map((src, i) => (
+                             <div key={i} className="w-full h-full flex-none snap-center relative">
+                               <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full h-full block">
+                                 <Image
+                                   src={src || "/placeholder.jpg"}
+                                   alt={`${product.title} - view ${i + 1}`}
+                                   fill
+                                   className="object-cover"
+                                   sizes="50vw"
+                                   priority={i === 0}
+                                 />
+                               </Link>
+                             </div>
+                           ))}
+
+                           {/* Bookmark Ribbon Icon */}
+                           <button 
+                             onClick={(e) => { 
+                               e.preventDefault(); 
+                               e.stopPropagation(); 
+                               toggleWishlist(product); 
+                             }} 
+                             className="absolute top-1.5 right-1.5 z-20 text-white drop-shadow-sm transition-opacity active:opacity-50"
+                           >
+                             <Bookmark 
+                               className={`w-6 h-6 fill-white stroke-white`} 
+                               strokeWidth={1.5} 
+                             />
+                           </button>
+
+                           {/* Pagination Dots Indicator */}
+                           {(product.srcs && product.srcs.length > 1) && (
+                             <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10 pointer-events-none">
+                               {product.srcs.map((_, i) => (
+                                 <div key={i} className="w-1.5 h-1.5 rounded-full bg-white shadow-sm opacity-60"></div>
+                               ))}
+                             </div>
+                           )}
+                         </div>
                        </div>
-                    </div>
-                 </div>
-               ))}
-            </div>
+                     </div>
+                     
+                     <div className="flex flex-col px-2 pb-4">
+                        <div className="flex justify-between items-start w-full">
+                          <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full pr-1">
+                            <h3 className="text-[7px] font-bold uppercase tracking-widest text-black mb-0.5">
+                              {product.title}
+                            </h3>
+                          </Link>
+                          <button className="text-black/40 hover:text-black shrink-0 mt-[-4px]">
+                            <Plus className="w-3 h-3" strokeWidth={1.5} />
+                          </button>
+                        </div>
+                        <p className="text-[6.5px] font-bold tracking-wider text-black/60">
+                          {product.price}
+                        </p>
+                     </div>
+                  </div>
+                ))}
+             </div>
          </div>
       )}
 

@@ -100,7 +100,7 @@ export default function CategoryClient({ category, formattedCategory, displayPro
   });
 
   const categories = [
-    { name: 'View all', id: 'all' },
+    { name: 'View All', id: 'all' },
     ...collections.map(c => ({
       name: c.title,
       id: c.handle

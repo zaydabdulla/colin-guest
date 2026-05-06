@@ -70,7 +70,7 @@ export function MobileCollectionClient({
   });
 
   const categories = [
-    { name: "View all", handle: "all" },
+    { name: "View All", handle: "all" },
     ...collections.map(c => ({ name: c.title, handle: c.handle }))
   ];
 

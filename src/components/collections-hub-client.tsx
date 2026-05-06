@@ -79,7 +79,7 @@ export function CollectionsHubClient({ collections, allProductsImage }: Collecti
               />
             </div>
             <div className="mt-6 flex items-center font-bold text-xs tracking-widest uppercase">
-              All Products <span className="ml-3 group-hover:translate-x-2 transition-transform">→</span>
+              View All <span className="ml-3 group-hover:translate-x-2 transition-transform">→</span>
             </div>
           </Link>
         </motion.div>

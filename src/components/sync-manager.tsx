@@ -1,19 +1,16 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCartStore } from "@/lib/store";
 import { useSession } from "next-auth/react";
 import { getOrCreateShopifyCustomer, adminGetCustomerData } from "@/app/actions/shopify";
 
-
-
-export function SyncManager() {
-  const { isLoggedIn, syncData, isSyncing, customerId, hasLoggedOut } = useCartStore();
+function SyncManagerInternal() {
+  const { isLoggedIn, syncData, isSyncing, customerId, hasLoggedOut, lastSyncedCustomerId } = useCartStore();
   const { data: session, status } = useSession();
   
   // Track state to manage initial merge and prevent redundant syncs
   const wasLoggedIn = useRef(isLoggedIn);
-  const lastSyncedId = useRef<string | null>(null);
 
   useEffect(() => {
     // If user is logged in via Google but not in our store, sync them
@@ -46,22 +43,33 @@ export function SyncManager() {
   useEffect(() => {
     if (isLoggedIn && !isSyncing && customerId) {
       // Avoid redundant syncs if we've already synced for this specific customer session
-      if (lastSyncedId.current === customerId) return;
+      if (lastSyncedCustomerId === customerId) return;
 
       // If we just transitioned from logged out to logged in, perform a MERGE sync
+      // If we are on initial mount and already logged in, shouldMerge will be false because wasLoggedIn.current was initialized to true
       const shouldMerge = !wasLoggedIn.current;
       
       syncData(shouldMerge);
       
       // Update refs to track completion
       wasLoggedIn.current = true;
-      lastSyncedId.current = customerId;
     } else if (!isLoggedIn) {
       // Reset tracking when logged out
       wasLoggedIn.current = false;
-      lastSyncedId.current = null;
     }
-  }, [isLoggedIn, customerId, isSyncing, syncData]);
+  }, [isLoggedIn, customerId, isSyncing, syncData, lastSyncedCustomerId]);
 
   return null;
+}
+
+export function SyncManager() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  return <SyncManagerInternal />;
 }
