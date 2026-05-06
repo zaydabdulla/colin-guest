@@ -37,7 +37,7 @@ export function CartDrawer() {
             className="fixed top-[calc(64px+env(safe-area-inset-top,0px))] right-0 h-[calc(100%-64px-env(safe-area-inset-top,0px))] md:top-0 md:h-full w-[75%] md:w-[420px] bg-[#e5e7eb] z-[401] flex flex-col shadow-2xl rounded-l-[16px] overflow-hidden"
           >
              {/* Header matches desktop grey aesthetic */}
-             <div className="flex items-center gap-4 px-6 py-2 md:py-5 text-black bg-[#e5e7eb]">
+             <div className="flex items-center gap-4 px-6 py-3 md:py-5 text-black bg-[#e5e7eb]">
                 <button 
                   onClick={closeCart} 
                   className="p-1 -ml-1 hover:opacity-60 transition-opacity flex items-center justify-center"
