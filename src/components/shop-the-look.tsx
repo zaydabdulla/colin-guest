@@ -98,43 +98,39 @@ export function ShopTheLook({ currentProduct, allProducts }: ShopTheLookProps) {
             {/* Left Column: Title */}
             <div className="lg:flex-1 space-y-2 max-w-[220px] text-center lg:text-left">
               <div className="space-y-1">
-                <p className="text-[8px] font-semibold uppercase tracking-[0.4em] text-black/20 italic">Archive Duo</p>
                 <h2 className="text-xl md:text-2xl font-medium uppercase tracking-[0.1em] leading-tight text-black">
                   <span className="italic font-light inline md:block md:opacity-30 mr-1 md:mr-0">Elevate</span>
                   The Look
                 </h2>
               </div>
-              <p className="text-[10px] font-medium text-black/30 leading-tight italic hidden lg:block">
-                “Architectural balance.”
-              </p>
             </div>
 
             {/* Center Column: Products */}
             <div className="flex flex-col md:flex-row items-center gap-6 lg:gap-14">
-              <div className="flex items-center gap-6 md:gap-12 relative">
+              <div className="flex items-center gap-8 md:gap-16 relative">
                 {/* Product 1 */}
-                <div className="relative group/item text-center max-w-[120px] md:max-w-[140px]">
-                  <div className="w-20 h-28 md:w-24 md:h-32 relative overflow-hidden rounded-sm transition-all duration-700 shadow-sm border border-black/5 bg-white mx-auto">
+                <div className="relative group/item text-center max-w-[140px] md:max-w-[180px]">
+                  <div className="w-28 h-36 md:w-36 md:h-48 relative overflow-hidden rounded-sm transition-all duration-700 shadow-sm border border-black/5 bg-white mx-auto">
                     <Image src={currentProduct.src} alt={currentProduct.title} fill className="object-cover" />
                   </div>
-                  <div className="mt-2 space-y-0.5">
-                    <p className="text-[8px] font-bold text-black truncate uppercase tracking-tight">{currentProduct.title}</p>
-                    <p className="text-[9px] font-medium text-black/50">{currentProduct.price}</p>
+                  <div className="mt-3 space-y-1">
+                    <p className="text-[9px] font-bold text-black truncate uppercase tracking-tight">{currentProduct.title}</p>
+                    <p className="text-[10px] font-medium text-black/50">{currentProduct.price}</p>
                   </div>
                 </div>
 
                 <div className="flex flex-col items-center">
-                  <Plus size={10} strokeWidth={1} className="text-black/30" />
+                  <Plus size={12} strokeWidth={1} className="text-black/30" />
                 </div>
 
                 {/* Product 2 */}
-                <div className="relative group/item text-center max-w-[120px] md:max-w-[140px]">
-                  <div className="w-20 h-28 md:w-24 md:h-32 relative overflow-hidden rounded-sm transition-all duration-700 shadow-sm border border-black/5 bg-white mx-auto">
+                <div className="relative group/item text-center max-w-[140px] md:max-w-[180px]">
+                  <div className="w-28 h-36 md:w-36 md:h-48 relative overflow-hidden rounded-sm transition-all duration-700 shadow-sm border border-black/5 bg-white mx-auto">
                     <Image src={pairing.src} alt={pairing.title} fill className="object-cover" />
                   </div>
-                  <div className="mt-2 space-y-0.5">
-                    <p className="text-[8px] font-bold text-black truncate uppercase tracking-tight">{pairing.title}</p>
-                    <p className="text-[9px] font-medium text-black/50">{pairing.price}</p>
+                  <div className="mt-3 space-y-1">
+                    <p className="text-[9px] font-bold text-black truncate uppercase tracking-tight">{pairing.title}</p>
+                    <p className="text-[10px] font-medium text-black/50">{pairing.price}</p>
                   </div>
                 </div>
               </div>
