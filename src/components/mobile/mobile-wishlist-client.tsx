@@ -28,6 +28,18 @@ export function MobileWishlistClient() {
         </div>
       )}
 
+      {/* Header Section */}
+      {wishlistItems.length > 0 && (
+        <div className="px-6 pt-8 pb-2">
+            <h1 className="text-2xl font-serif italic text-black tracking-tight mb-0.5">
+              Wishlist.
+            </h1>
+            <p className="text-[8px] font-bold uppercase tracking-[0.5em] text-black/40">
+              Curated Selection
+            </p>
+        </div>
+      )}
+
       {/* Grid rendering (Visible for Condition 2 & Condition 3) */}
       {wishlistItems.length > 0 && (
          <div className="max-w-[1500px] mx-auto px-4 pt-8 pb-40">
