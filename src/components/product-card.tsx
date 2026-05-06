@@ -74,10 +74,9 @@ export function ProductCard({
 
         {/* Image Slider / Swipe Area - Mobile Swipeable, Desktop Hover-Swap */}
         <div 
-          className={`relative w-full h-full flex flex-nowrap ${disableSlider ? 'overflow-hidden' : 'overflow-x-auto md:overflow-visible snap-x snap-mandatory no-scrollbar md:[transform:translateX(var(--tx))] md:transition-transform md:duration-500 md:ease-out'}`}
+          className={`relative w-full h-full flex flex-nowrap ${disableSlider ? 'overflow-hidden' : 'overflow-x-auto md:overflow-visible snap-x snap-mandatory no-scrollbar md:[transform:translateX(var(--tx))]'}`}
           style={{ 
-            '--tx': `-${imgIndex * 100}%`,
-            transition: (imgIndex === 0) ? 'none' : undefined
+            '--tx': `-${imgIndex * 100}%`
           } as any}
         >
           {srcs.map((src, i) => (
