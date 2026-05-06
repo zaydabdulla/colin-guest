@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Lenis from "lenis";
 import { usePathname } from "next/navigation";
+import { useCartStore } from "@/lib/store";
 
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -20,9 +21,10 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  const { isOpen } = useCartStore();
+
   useEffect(() => {
     // FINAL SOLUTION: Disable Smooth Scroll (Lenis) on mobile entirely.
-    // Native mobile scrolling is more reliable and avoids blocking touch events.
     if (isMobile) {
       if (lenisRef.current) {
         lenisRef.current.destroy();
@@ -66,6 +68,17 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       lenisRef.current = null;
     };
   }, [pathname, isMobile]);
+
+  // Handle Scroll Lock for Cart/Wishlist
+  useEffect(() => {
+    if (lenisRef.current) {
+      if (isOpen) {
+        lenisRef.current.stop();
+      } else {
+        lenisRef.current.start();
+      }
+    }
+  }, [isOpen]);
 
   return <>{children}</>;
 }

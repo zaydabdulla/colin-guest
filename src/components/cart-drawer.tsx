@@ -80,6 +80,17 @@ export function CartDrawer() {
     }
   }, [isOpen, items]);
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+
   const checkScroll = () => {
     if (scrollContainerRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
@@ -126,7 +137,7 @@ export function CartDrawer() {
              <div className="flex-1 bg-white text-black overflow-hidden flex flex-col relative">
                
                {/* Main Cart Items Scroll Area */}
-               <div className="flex-1 overflow-y-auto px-5 pt-6 pb-4 custom-scrollbar">
+               <div className="flex-1 overflow-y-auto px-5 pt-6 pb-2 custom-scrollbar relative">
                   {items.length === 0 ? (
                     <div className="h-64 flex flex-col items-center justify-center text-black/20">
                        <ShoppingBag size={48} strokeWidth={1} className="mb-4 drop-shadow-sm" />
@@ -178,83 +189,90 @@ export function CartDrawer() {
                       ))}
                     </div>
                   )}
+                  {/* Subtle fade to indicate more items below */}
+                  {items.length > 2 && (
+                    <div className="sticky bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
+                  )}
                </div>
 
-               {/* "You May Also Like" - Anchored to bottom of body, scrollable horizontally */}
-               <div className="bg-[#fcfcfc] border-t border-black/5 pt-5 pb-28 px-5 relative">
-                  <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-black/40 flex items-center gap-2">
-                    <span className="w-4 h-[1px] bg-black/10" />
-                    You May Also Like
-                  </h3>
-                  
-                  <div className="relative group/scroll">
-                    <div 
-                      ref={scrollContainerRef}
-                      onScroll={checkScroll}
-                      className="flex gap-4 overflow-x-auto pb-4 no-scrollbar snap-x snap-mandatory"
-                    >
-                      {suggestions.map((product) => (
-                        <div key={product.id} className="min-w-[160px] max-w-[160px] snap-start group/suggestion relative">
-                          <div className="flex gap-3 items-center">
-                            <div className="relative w-16 h-16 rounded-md bg-[#f4f4f5] border border-black/5 overflow-hidden shrink-0 shadow-sm">
-                              {product.src && (
-                                <Image src={product.src} alt={product.title} fill className="object-cover group-hover/suggestion:scale-110 transition-transform duration-500" />
-                              )}
-                              <button 
-                                onClick={() => addToCart(product, "Free Size")}
-                                className="absolute inset-0 bg-black/40 opacity-0 group-hover/suggestion:opacity-100 transition-opacity flex items-center justify-center"
-                              >
-                                <Plus size={16} className="text-white" />
-                              </button>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-[9px] font-bold text-black truncate uppercase tracking-tight">{product.title}</p>
-                              <p className="text-[9px] text-black/40 font-medium mt-0.5">{product.price}</p>
-                              <button 
-                                onClick={() => addToCart(product, "Free Size")}
-                                className="mt-1.5 text-[8px] font-bold uppercase tracking-widest text-black/20 hover:text-black transition-colors"
-                              >
-                                Add +
-                              </button>
+               {/* Bottom Content Container - Anchored above checkout */}
+               <div className="mt-auto">
+                 {/* "You May Also Like" */}
+                 <div className="bg-[#fcfcfc] border-t border-black/5 pt-5 pb-4 px-5 relative">
+                    <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-black/40 flex items-center gap-2">
+                      <span className="w-4 h-[1px] bg-black/10" />
+                      You May Also Like
+                    </h3>
+                    
+                    <div className="relative group/scroll">
+                      <div 
+                        ref={scrollContainerRef}
+                        onScroll={checkScroll}
+                        className="flex gap-4 overflow-x-auto pb-4 no-scrollbar snap-x snap-mandatory"
+                      >
+                        {suggestions.map((product) => (
+                          <div key={product.id} className="min-w-[160px] max-w-[160px] snap-start group/suggestion relative">
+                            <div className="flex gap-3 items-center">
+                              <div className="relative w-16 h-16 rounded-md bg-[#f4f4f5] border border-black/5 overflow-hidden shrink-0 shadow-sm">
+                                {product.src && (
+                                  <Image src={product.src} alt={product.title} fill className="object-cover group-hover/suggestion:scale-110 transition-transform duration-500" />
+                                )}
+                                <button 
+                                  onClick={() => addToCart(product, "Free Size")}
+                                  className="absolute inset-0 bg-black/40 opacity-0 group-hover/suggestion:opacity-100 transition-opacity flex items-center justify-center"
+                                >
+                                  <Plus size={16} className="text-white" />
+                                </button>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-[9px] font-bold text-black truncate uppercase tracking-tight">{product.title}</p>
+                                <p className="text-[9px] text-black/40 font-medium mt-0.5">{product.price}</p>
+                                <button 
+                                  onClick={() => addToCart(product, "Free Size")}
+                                  className="mt-1.5 text-[8px] font-bold uppercase tracking-widest text-black/20 hover:text-black transition-colors"
+                                >
+                                  Add +
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Scroll Indicator Arrow */}
-                    {showScrollArrow && (
-                      <div className="absolute right-[-20px] top-0 bottom-0 w-16 flex items-center justify-center pointer-events-none z-10 bg-gradient-to-l from-[#fcfcfc] via-[#fcfcfc]/80 to-transparent">
-                        <motion.div
-                          initial={{ opacity: 0, x: -5 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          className="p-1.5 rounded-full bg-white shadow-md border border-black/5"
-                        >
-                          <ChevronRight size={14} className="text-black/40" />
-                        </motion.div>
+                        ))}
                       </div>
-                    )}
-                  </div>
-               </div>
 
-               {/* Floating Footer Checkout Button */}
-               {items.length > 0 && (
-                 <div className="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-white via-white to-transparent pointer-events-none">
-                    <button 
-                      onClick={() => {
-                        closeCart();
-                        router.push("/checkout");
-                      }}
-                      className="w-full pointer-events-auto bg-black text-white px-6 py-[18px] rounded-[2rem] flex justify-between items-center shadow-lg hover:scale-[1.02] transition-transform"
-                    >
-                       <span className="text-[13px] font-medium">Check out</span>
-                       <span className="text-[10px] font-bold tracking-wide flex items-center gap-2">
-                         {formattedTotal}
-                         <ArrowRight size={14} />
-                       </span>
-                    </button>
+                      {/* Scroll Indicator Arrow */}
+                      {showScrollArrow && (
+                        <div className="absolute right-[-10px] top-0 bottom-0 w-16 flex items-center justify-center pointer-events-none z-10 bg-gradient-to-l from-[#fcfcfc] via-[#fcfcfc]/80 to-transparent">
+                          <motion.div
+                            initial={{ opacity: 0, x: -5 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="p-1.5 rounded-full bg-white shadow-md border border-black/5"
+                          >
+                            <ChevronRight size={14} className="text-black/40" />
+                          </motion.div>
+                        </div>
+                      )}
+                    </div>
                  </div>
-               )}
+
+                 {/* Checkout Button Section */}
+                 {items.length > 0 && (
+                   <div className="p-5 pt-0 bg-[#fcfcfc] border-t border-black/[0.02]">
+                      <button 
+                        onClick={() => {
+                          closeCart();
+                          router.push("/checkout");
+                        }}
+                        className="w-full bg-black text-white px-6 py-[18px] rounded-[2rem] flex justify-between items-center shadow-lg hover:scale-[1.02] transition-transform"
+                      >
+                         <span className="text-[13px] font-medium">Check out</span>
+                         <span className="text-[10px] font-bold tracking-wide flex items-center gap-2">
+                           {formattedTotal}
+                           <ArrowRight size={14} />
+                         </span>
+                      </button>
+                   </div>
+                 )}
+               </div>
                
              </div>
           </motion.div>
