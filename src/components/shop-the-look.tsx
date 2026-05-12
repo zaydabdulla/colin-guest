@@ -53,12 +53,16 @@ export function ShopTheLook({ currentProduct, allProducts }: ShopTheLookProps) {
       candidates = availablePool.filter(p => p.type === currentProduct.type);
     }
 
-    // Final Fallback: Any available product from the Archive
     if (candidates.length === 0) {
-      candidates = availablePool;
+      return null;
     }
 
-    return candidates.length > 0 ? candidates[Math.floor(Math.random() * candidates.length)] : null;
+    // Use a deterministic index based on the product ID to avoid hydration mismatches
+    // while still ensuring different products get different pairings.
+    const idHash = currentProduct.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const deterministicIndex = idHash % candidates.length;
+    
+    return candidates[deterministicIndex];
   }, [currentProduct, allProducts]);
 
   if (!pairing) return null;

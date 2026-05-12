@@ -146,24 +146,9 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
                 </button>
               ))
             ) : (
-              ['XXXS', 'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'].map(size => {
-                const isOutOfStock = ['XXXS', 'XXS', 'XXXL'].includes(size);
-                return (
-                  <button
-                    key={size}
-                    type="button"
-                    onClick={() => !isOutOfStock && setSelectedSize(size)}
-                    className={`py-4 text-[10px] rounded-full font-bold transition-all duration-200 active:scale-95 ${selectedSize === size
-                      ? 'bg-black text-white border-black'
-                      : isOutOfStock
-                        ? 'bg-[#f5f5f5] text-black/20 pointer-events-none line-through'
-                        : 'bg-white border border-[#e5e5e5] text-black active:bg-gray-100'
-                      }`}
-                  >
-                    {size}
-                  </button>
-                );
-              })
+              <div className="col-span-full py-4 text-[10px] font-bold text-black/30 uppercase tracking-[0.2em] italic text-center">
+                Standard Archival Fit / One Size
+              </div>
             )}
           </div>
         </div>

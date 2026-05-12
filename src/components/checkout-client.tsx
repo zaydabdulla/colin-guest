@@ -23,12 +23,14 @@ import {
   ShoppingBag,
   CreditCard as PaymentIcon
 } from "lucide-react";
+import { createDraftOrder } from "@/app/actions/shopify";
 
 export function CheckoutClient() {
   const router = useRouter();
-  const { items, updateQuantity, removeFromCart, isLoggedIn, user, addToCart } = useCartStore();
+  const { items, updateQuantity, removeFromCart, isLoggedIn, user, addToCart, clearCart } = useCartStore();
   const [loading, setLoading] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [orderResult, setOrderResult] = useState<{ success: boolean; name?: string; error?: string } | null>(null);
 
   const [formData, setFormData] = useState({
     firstName: user?.firstName || "",
@@ -83,7 +85,79 @@ export function CheckoutClient() {
     setFormData(prev => ({ ...prev, [name]: val }));
   };
 
+  const handlePlaceOrder = async () => {
+    if (!formData.email || !formData.address || !formData.city || !formData.pinCode) {
+      alert("Please fill in the required fields (Email, Address, City, PIN Code)");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const customerInfo = {
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        address1: formData.address,
+        address2: formData.apartment,
+        city: formData.city,
+        province: formData.state,
+        zip: formData.pinCode,
+        country: formData.country,
+        phone: formData.phone
+      };
+
+      const result = await createDraftOrder(items, customerInfo);
+
+      if (result.success) {
+        setOrderResult({ success: true, name: result.orderName });
+        clearCart();
+      } else {
+        setOrderResult({ success: false, error: result.error });
+        alert(`Order Failed: ${result.error}`);
+      }
+    } catch (error: any) {
+      alert(`Error: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!isHydrated) return null;
+
+  if (orderResult?.success) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center px-4 pt-32 pb-20 bg-[#fcfcfc]">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="w-24 h-24 bg-black rounded-[32px] shadow-xl flex items-center justify-center mb-10"
+        >
+          <ShieldCheck className="w-10 h-10 text-white" strokeWidth={1.5} />
+        </motion.div>
+        
+        <h2 className="text-3xl font-serif italic text-black mb-2 text-center">Acquisition Confirmed.</h2>
+        <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-black/40 mb-10 text-center max-w-sm leading-relaxed">
+          Order {orderResult.name} has been synced with the archive. <br />
+          A confirmation dispatch will follow shortly.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm">
+          <Link 
+            href="/collections/all"
+            className="flex-1 bg-black text-white text-center py-5 rounded-full text-[9px] font-bold uppercase tracking-[0.3em] hover:scale-[1.02] transition-transform shadow-lg"
+          >
+            Continue Discovery
+          </Link>
+          <button 
+            onClick={() => router.push("/")}
+            className="flex-1 bg-white border border-black/10 text-black text-center py-5 rounded-full text-[9px] font-bold uppercase tracking-[0.3em] hover:bg-black/5 transition-all"
+          >
+            View Manifesto
+          </button>
+        </div>
+      </main>
+    );
+  }
 
   if (items.length === 0) {
     return (
@@ -240,6 +314,7 @@ export function CheckoutClient() {
                 setPaymentMethod={setPaymentMethod} 
                 loading={loading} 
                 total={total} 
+                onPlaceOrder={handlePlaceOrder}
               />
             </div>
           </div>
@@ -441,6 +516,7 @@ export function CheckoutClient() {
               setPaymentMethod={setPaymentMethod} 
               loading={loading} 
               total={total} 
+              onPlaceOrder={handlePlaceOrder}
             />
           </div>
 
@@ -452,7 +528,7 @@ export function CheckoutClient() {
 }
 
 // Extracted Payment Component for Reordering
-function PaymentProtocolCard({ paymentMethod, setPaymentMethod, loading, total }: any) {
+function PaymentProtocolCard({ paymentMethod, setPaymentMethod, loading, total, onPlaceOrder }: any) {
   return (
     <motion.div 
       initial={{ opacity: 0, y: 15 }}
@@ -498,6 +574,7 @@ function PaymentProtocolCard({ paymentMethod, setPaymentMethod, loading, total }
       </div>
 
       <button 
+        onClick={onPlaceOrder}
         disabled={loading}
         className="w-full bg-black text-white py-5 rounded-full text-[11px] font-bold uppercase tracking-[0.4em] flex items-center justify-center gap-3 hover:bg-black/90 transition-all active:scale-[0.98] disabled:opacity-50 shadow-xl"
       >

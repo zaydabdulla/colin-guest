@@ -61,6 +61,10 @@ export function CartDrawer() {
 
             if (hasTop && isBottom) score += 10;
             if (hasBottom && isTop) score += 10;
+            
+            // Boost similarity (same type)
+            if (items.some(item => item.product.type === p.type)) score += 5;
+
             if (!hasTop && !hasBottom) score += 5; // Default variety
 
             return { product: p, score };
@@ -204,72 +208,77 @@ export function CartDrawer() {
                 )}
               </div>
 
-              {/* Bottom Content Container - Anchored above checkout */}
-              <div className="mt-auto">
-                {/* "You May Also Like" */}
-                <div className="bg-[#fcfcfc] border-t border-black/5 pt-5 pb-4 px-5 relative">
-                  <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-black/40 flex items-center gap-2">
-                    <span className="w-4 h-[1px] bg-black/10" />
-                    You May Also Like
-                  </h3>
-
-                  <div className="relative group/scroll">
-                    <div
-                      ref={scrollContainerRef}
-                      onScroll={checkScroll}
-                      className="flex gap-4 overflow-x-auto pb-4 no-scrollbar snap-x snap-mandatory"
-                    >
-                      {suggestions.map((product) => (
-                        <div key={product.id} className="min-w-[160px] max-w-[160px] snap-start group/suggestion relative">
-                          <div className="flex gap-3 items-center">
-                            <div className="relative w-16 h-16 rounded-md bg-[#f4f4f5] border border-black/5 overflow-hidden shrink-0 shadow-sm">
-                              {product.src && (
-                                <button
-                                  onClick={() => {
-                                    closeCart();
-                                    router.push(`/product/${encodeURIComponent(product.id)}`);
-                                  }}
-                                  className="absolute inset-0 z-10"
-                                >
-                                  <Image src={product.src} alt={product.title} fill className="object-cover group-hover/suggestion:scale-110 transition-transform duration-500" />
-                                </button>
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <button
-                                onClick={() => {
-                                  closeCart();
-                                  router.push(`/product/${encodeURIComponent(product.id)}`);
-                                }}
-                                className="text-left w-full"
-                              >
-                                <p className="text-[9px] font-bold text-black truncate uppercase tracking-tight hover:opacity-60 transition-opacity">{product.title}</p>
-                              </button>
-                              <p className="text-[9px] text-black/40 font-medium mt-0.5">{product.price}</p>
-                              <button
-                                onClick={() => addToCart(product, "Free Size")}
-                                className="mt-1.5 text-[8px] font-bold uppercase tracking-widest text-black/20 hover:text-black transition-colors"
-                              >
-                                Add +
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                {/* Bottom Content Container - Anchored above checkout */}
+                <div className="mt-auto">
+                  {/* "You May Also Like" - Only show if cart is NOT empty */}
+                  {items.length > 0 && suggestions.length > 0 && (
+                    <div className="bg-[#fcfcfc] border-t border-black/5 pt-5 pb-4 px-5 relative">
+                       <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-black/40 flex items-center gap-2">
+                         <span className="w-4 h-[1px] bg-black/10" />
+                         You May Also Like
+                       </h3>
+                       
+                       <div className="relative group/scroll">
+                         <div 
+                           ref={scrollContainerRef}
+                           onScroll={checkScroll}
+                           className="flex gap-4 overflow-x-auto pb-4 no-scrollbar snap-x snap-mandatory"
+                         >
+                           {suggestions.map((product) => (
+                             <div key={product.id} className="min-w-[160px] max-w-[160px] snap-start group/suggestion relative">
+                               <div className="flex gap-3 items-center">
+                                 <div className="relative w-16 h-16 rounded-md bg-[#f4f4f5] border border-black/5 overflow-hidden shrink-0 shadow-sm">
+                                   {product.src && (
+                                     <button 
+                                       onClick={() => {
+                                         closeCart();
+                                         router.push(`/product/${encodeURIComponent(product.id)}`);
+                                       }}
+                                       className="absolute inset-0 z-10"
+                                     >
+                                       <Image src={product.src} alt={product.title} fill className="object-cover group-hover/suggestion:scale-110 transition-transform duration-500" />
+                                     </button>
+                                   )}
+                                 </div>
+                                 <div className="flex-1 min-w-0">
+                                   <button 
+                                     onClick={() => {
+                                       closeCart();
+                                       router.push(`/product/${encodeURIComponent(product.id)}`);
+                                     }}
+                                     className="text-left w-full"
+                                   >
+                                     <p className="text-[9px] font-bold text-black truncate uppercase tracking-tight hover:opacity-60 transition-opacity">{product.title}</p>
+                                   </button>
+                                   <p className="text-[9px] text-black/40 font-medium mt-0.5">{product.price}</p>
+                                   <button 
+                                     onClick={() => addToCart(product, "Free Size")}
+                                     className="mt-1.5 text-[8px] font-bold uppercase tracking-widest text-black/20 hover:text-black transition-colors"
+                                   >
+                                     Add +
+                                   </button>
+                                 </div>
+                               </div>
+                             </div>
+                           ))}
+                         </div>
+    
+                         {/* Scroll Indicator Arrow */}
+                         {showScrollArrow && (
+                           <div className="absolute right-[-10px] top-0 bottom-0 w-16 flex items-center justify-center pointer-events-none z-10 bg-gradient-to-l from-[#fcfcfc] via-[#fcfcfc]/80 to-transparent">
+                             <motion.div
+                               initial={{ opacity: 0, x: -5 }}
+                               animate={{ opacity: 1, x: 0 }}
+                               className="p-1.5 rounded-full bg-white shadow-md border border-black/5"
+                             >
+                               <ChevronRight size={14} className="text-black/40" />
+                             </motion.div>
+                           </div>
+                         )}
+                       </div>
                     </div>
+                  )}
 
-                    {/* Scroll Indicator Arrow */}
-                    {showScrollArrow && (
-                      <div className="absolute right-[-10px] top-0 bottom-0 w-16 flex items-center justify-center pointer-events-none z-10 bg-gradient-to-l from-[#fcfcfc] via-[#fcfcfc]/80 to-transparent">
-                        <motion.div
-                          initial={{ opacity: 0, x: -5 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          className="p-1.5 rounded-full bg-white shadow-md border border-black/5"
-                        >
-                          <ChevronRight size={14} className="text-black/40" />
-                        </motion.div>
-                      </div>
-                    )}
                   </div>
                 </div>
 

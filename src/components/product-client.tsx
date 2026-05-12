@@ -137,24 +137,9 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                       </button>
                     ))
                   ) : (
-                    ['XXXS', 'XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'].map(size => {
-                      const isOutOfStock = ['XXXS', 'XXS', 'M', 'XL', 'XXL', 'XXXL'].includes(size);
-                      return (
-                        <button 
-                          key={size} 
-                          onClick={() => !isOutOfStock && setSelectedSize(size)}
-                          className={`py-2 text-[9px] rounded-full font-bold transition-all duration-300 ${
-                            selectedSize === size 
-                              ? 'border border-black bg-black text-white' 
-                              : isOutOfStock
-                                ? 'bg-[rgba(0,0,0,0.05)] text-black/30 pointer-events-none line-through decoration-black/30'
-                                : 'border border-black/10 bg-white hover:border-black'
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      );
-                    })
+                    <div className="col-span-full py-2 text-[9px] font-bold text-black/40 uppercase tracking-[0.2em] italic">
+                      Standard Archival Fit / One Size
+                    </div>
                   )}
                 </div>
 

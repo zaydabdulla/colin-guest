@@ -712,10 +712,13 @@ export async function searchProducts(searchTerm: string): Promise<any[]> {
     }
   `;
 
+  const cleanTerms = searchTerm.trim().split(/\s+/).filter(t => t.length > 0);
+  const queryTerms = cleanTerms.map(t => `${t}*`).join(' AND ');
+
   const response = await shopifyFetch({
     query,
     variables: { 
-      searchTerm: `title:${searchTerm}* OR product_type:${searchTerm}* OR tag:${searchTerm}*`,
+      searchTerm: queryTerms,
       collectionQuery: `title:${searchTerm}*`
     },
   });

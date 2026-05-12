@@ -59,6 +59,7 @@ interface CartState {
   clearWishlistPopup: () => void;
   hasLoggedOut: boolean;
   lastSyncedCustomerId: string | null;
+  clearCart: () => void;
 }
 
 export const useCartStore = create<CartState>()(
@@ -101,6 +102,10 @@ export const useCartStore = create<CartState>()(
             return item;
           })
         }));
+        get().saveData();
+      },
+      clearCart: () => {
+        set({ items: [] });
         get().saveData();
       },
 

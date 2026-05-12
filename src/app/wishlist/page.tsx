@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { type Product } from "@/lib/data";
 import { ProductCard } from "@/components/product-card";
 
-// Import Mobile-specific client for isolation
+// Import components
 import { MobileWishlistClient } from "@/components/mobile/mobile-wishlist-client";
 
 export default function WishlistDashboard() {
@@ -51,15 +51,13 @@ export default function WishlistDashboard() {
 
         {/* Grid rendering (Visible for Condition 2 & Condition 3) */}
         {wishlistItems.length > 0 && (
-          <div className="max-w-[1500px] mx-auto px-8 pt-12 pb-24">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
-              {wishlistItems.map((product: Product, i: number) => (
-                <div key={product.id}>
-                  <ProductCard product={product} index={i} />
-                </div>
-              ))}
-            </div>
-          </div>
+           <div className="max-w-[1500px] mx-auto px-8 pt-12 pb-24">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-2 gap-y-12">
+                 {wishlistItems.map((product: Product, index: number) => (
+                   <ProductCard key={product.id} product={product} index={index} />
+                 ))}
+              </div>
+           </div>
         )}
 
         {/* CONDITION 1: Guest + Empty Wishlist (Displays the splash screen) */}

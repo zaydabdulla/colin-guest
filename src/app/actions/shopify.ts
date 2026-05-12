@@ -107,22 +107,19 @@ export async function adminAddAddress(email: string, address: any) {
 
     }
 
-    // 3. Add address to customer
+    // 3. Add address to customer using specialized address create mutation
     const addQuery = `
-      mutation customerUpdate($input: CustomerInput!) {
-        customerUpdate(input: $input) {
-          customer {
+      mutation customerAddressCreate($customerId: ID!, $address: MailingAddressInput!) {
+        customerAddressCreate(customerId: $customerId, address: $address) {
+          customerAddress {
             id
-            addresses {
-              id
-              address1
-              address2
-              city
-              province
-              country
-              zip
-              phone
-            }
+            address1
+            address2
+            city
+            province
+            country
+            zip
+            phone
           }
           userErrors {
             field
@@ -131,7 +128,7 @@ export async function adminAddAddress(email: string, address: any) {
         }
       }
     `;
-
+ 
     const addResponse = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
       method: 'POST',
       headers: {
@@ -141,22 +138,20 @@ export async function adminAddAddress(email: string, address: any) {
       body: JSON.stringify({
         query: addQuery,
         variables: {
-          input: {
-            id: customerId,
-            addresses: [address]
-          }
+          customerId: customerId,
+          address: address
         }
       }),
     });
-
+ 
     const addData = await addResponse.json();
-    if (addData.data?.customerUpdate?.userErrors?.length > 0) {
-      return { success: false, error: addData.data.customerUpdate.userErrors[0].message };
+    if (addData.data?.customerAddressCreate?.userErrors?.length > 0) {
+      return { success: false, error: addData.data.customerAddressCreate.userErrors[0].message };
     }
-
+ 
     return { 
       success: true, 
-      address: addData.data?.customerUpdate?.customer?.addresses?.slice(-1)[0] 
+      address: addData.data?.customerAddressCreate?.customerAddress
     };
 
   } catch (error: any) {
@@ -357,3 +352,96 @@ export async function getWishlist(email: string) {
   }
 }
 
+export async function createDraftOrder(items: any[], customerInfo: any) {
+  if (!domain || !clientId || !clientSecret) return { success: false, error: "Missing config" };
+
+  try {
+    const adminToken = await getAdminToken();
+    
+    const lineItems = items.map(item => {
+      // If it's already a variant ID, use it. Otherwise find it.
+      let variantId = item.variantId;
+      
+      if (!variantId && item.product?.variants) {
+        // Fallback: try to find variant by title (size)
+        const variant = item.product.variants.find((v: any) => v.title === item.size);
+        variantId = variant?.id;
+      }
+
+      // If still no variant ID, try to use product ID if it's a simple product
+      if (!variantId && item.product?.id) {
+        variantId = item.product.id;
+      }
+
+      return {
+        variantId: variantId,
+        quantity: item.quantity
+      };
+    });
+
+    const mutation = `
+      mutation draftOrderCreate($input: DraftOrderInput!) {
+        draftOrderCreate(input: $input) {
+          draftOrder {
+            id
+            name
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const variables = {
+      input: {
+        email: customerInfo.email,
+        lineItems: lineItems,
+        shippingAddress: {
+          address1: customerInfo.address1,
+          address2: customerInfo.address2 || "",
+          city: customerInfo.city,
+          province: customerInfo.province || "",
+          zip: customerInfo.zip,
+          country: customerInfo.country,
+          firstName: customerInfo.firstName,
+          lastName: customerInfo.lastName,
+          phone: customerInfo.phone || ""
+        },
+        note: "Order placed via Next.js Frontend (Test Mode)"
+      }
+    };
+
+    const response = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': adminToken,
+      },
+      body: JSON.stringify({ query: mutation, variables }),
+    });
+
+    const data = await response.json();
+    
+    if (data.errors) {
+      console.error("Shopify GraphQL Error:", data.errors);
+      return { success: false, error: data.errors[0].message };
+    }
+
+    if (data.data?.draftOrderCreate?.userErrors?.length > 0) {
+      console.error("Draft Order User Errors:", data.data.draftOrderCreate.userErrors);
+      return { success: false, error: data.data.draftOrderCreate.userErrors[0].message };
+    }
+
+    return { 
+      success: true, 
+      orderId: data.data.draftOrderCreate.draftOrder.id,
+      orderName: data.data.draftOrderCreate.draftOrder.name
+    };
+
+  } catch (error: any) {
+    console.error("Draft Order Exception:", error);
+    return { success: false, error: error.message };
+  }
+}
