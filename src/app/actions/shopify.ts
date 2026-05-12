@@ -359,25 +359,34 @@ export async function createDraftOrder(items: any[], customerInfo: any) {
     const adminToken = await getAdminToken();
     
     const lineItems = items.map(item => {
-      // If it's already a variant ID, use it. Otherwise find it.
       let variantId = item.variantId;
       
-      if (!variantId && item.product?.variants) {
-        // Fallback: try to find variant by title (size)
+      // 1. If we have a variants array, find by size title
+      if (!variantId && item.product?.variants && item.product.variants.length > 0) {
         const variant = item.product.variants.find((v: any) => v.title === item.size);
-        variantId = variant?.id;
+        if (variant) variantId = variant.id;
+        
+        // 2. If only one variant exists (One Size), use it as fallback
+        if (!variantId && item.product.variants.length === 1) {
+          variantId = item.product.variants[0].id;
+        }
       }
 
-      // If still no variant ID, try to use product ID if it's a simple product
-      if (!variantId && item.product?.id) {
-        variantId = item.product.id;
-      }
+      // 3. Log for debugging
+      console.log(`DEBUG: Processing Order Item "${item.product?.title}" | Size: ${item.size} | Resolved VariantID: ${variantId}`);
 
       return {
         variantId: variantId,
         quantity: item.quantity
       };
     });
+
+    // Filter out items with no variantId to avoid Shopify errors
+    const validLineItems = lineItems.filter(li => li.variantId && li.variantId.includes('ProductVariant'));
+    
+    if (validLineItems.length === 0) {
+      return { success: false, error: "No valid variants found. Please ensure sizes are selected correctly." };
+    }
 
     const mutation = `
       mutation draftOrderCreate($input: DraftOrderInput!) {
@@ -397,7 +406,7 @@ export async function createDraftOrder(items: any[], customerInfo: any) {
     const variables = {
       input: {
         email: customerInfo.email,
-        lineItems: lineItems,
+        lineItems: validLineItems,
         shippingAddress: {
           address1: customerInfo.address1,
           address2: customerInfo.address2 || "",
