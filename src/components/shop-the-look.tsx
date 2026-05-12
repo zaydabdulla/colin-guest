@@ -59,7 +59,7 @@ export function ShopTheLook({ currentProduct, allProducts }: ShopTheLookProps) {
 
     // Use a deterministic index based on the product ID to avoid hydration mismatches
     // while still ensuring different products get different pairings.
-    const idHash = currentProduct.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const idHash = String(currentProduct.id).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     const deterministicIndex = idHash % candidates.length;
     
     return candidates[deterministicIndex];
