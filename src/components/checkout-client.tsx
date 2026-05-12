@@ -21,7 +21,9 @@ import {
   ShieldCheck,
   Package,
   ShoppingBag,
-  CreditCard as PaymentIcon
+  CreditCard as PaymentIcon,
+  MapPin,
+  PlusCircle
 } from "lucide-react";
 import { createDraftOrder } from "@/app/actions/shopify";
 
@@ -31,6 +33,7 @@ export function CheckoutClient() {
   const [loading, setLoading] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const [orderResult, setOrderResult] = useState<{ success: boolean; name?: string; error?: string } | null>(null);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     firstName: user?.firstName || "",
@@ -65,6 +68,33 @@ export function CheckoutClient() {
       }));
     }
   }, [user]);
+
+  const handleSelectAddress = (address: any) => {
+    setSelectedAddressId(address.id);
+    setFormData(prev => ({
+      ...prev,
+      address: address.address1 || "",
+      apartment: address.address2 || "",
+      city: address.city || "",
+      state: address.province || "Kerala",
+      pinCode: address.zip || "",
+      phone: address.phone || prev.phone,
+      country: address.country || "India"
+    }));
+  };
+
+  const handleAddNewAddress = () => {
+    setSelectedAddressId("new");
+    setFormData(prev => ({
+      ...prev,
+      address: "",
+      apartment: "",
+      city: "",
+      state: "Kerala",
+      pinCode: "",
+      phone: prev.phone // Keep phone
+    }));
+  };
 
   const parsePrice = (priceStr: string) => {
     if (!priceStr) return 0;
@@ -331,6 +361,57 @@ export function CheckoutClient() {
                 <User size={13} className="opacity-70" strokeWidth={1.5} />
                 Billing Details
               </h2>
+
+              {/* Saved Addresses Selector */}
+              {isLoggedIn && user.addresses && user.addresses.length > 0 && (
+                <div className="mb-10">
+                  <p className="text-[8px] font-bold uppercase tracking-[0.4em] text-black/30 ml-1 mb-4">Select Shipping Identity</p>
+                  <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar -mx-2 px-2">
+                    {user.addresses.map((addr: any) => (
+                      <motion.div
+                        key={addr.id}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => handleSelectAddress(addr)}
+                        className={`flex-shrink-0 w-64 p-5 rounded-[24px] border cursor-pointer transition-all ${
+                          selectedAddressId === addr.id 
+                          ? "bg-black text-white border-black shadow-lg" 
+                          : "bg-[#f9f9fa] border-black/5 hover:border-black/10"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <MapPin size={14} className={selectedAddressId === addr.id ? "text-white/40" : "text-black/20"} />
+                          {selectedAddressId === addr.id && (
+                            <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
+                              <div className="w-1.5 h-1.5 bg-black rounded-full" />
+                            </div>
+                          )}
+                        </div>
+                        <p className={`text-[11px] font-bold tracking-wide mb-1 ${selectedAddressId === addr.id ? "text-white" : "text-black"}`}>
+                          {addr.address1}
+                        </p>
+                        <p className={`text-[9px] font-medium uppercase tracking-widest ${selectedAddressId === addr.id ? "text-white/60" : "text-black/40"}`}>
+                          {addr.city}, {addr.province}
+                        </p>
+                      </motion.div>
+                    ))}
+
+                    <motion.div
+                      whileTap={{ scale: 0.98 }}
+                      onClick={handleAddNewAddress}
+                      className={`flex-shrink-0 w-48 p-5 rounded-[24px] border border-dashed cursor-pointer transition-all flex flex-col items-center justify-center gap-2 ${
+                        selectedAddressId === "new" 
+                        ? "bg-black text-white border-black shadow-lg" 
+                        : "bg-white border-black/10 hover:border-black/20"
+                      }`}
+                    >
+                      <PlusCircle size={18} className={selectedAddressId === "new" ? "text-white/40" : "text-black/20"} />
+                      <p className={`text-[9px] font-bold uppercase tracking-widest ${selectedAddressId === "new" ? "text-white" : "text-black/40"}`}>
+                        New Address
+                      </p>
+                    </motion.div>
+                  </div>
+                </div>
+              )}
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                 <div className="space-y-1.5">
