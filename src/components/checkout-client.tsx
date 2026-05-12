@@ -363,11 +363,11 @@ export function CheckoutClient() {
               </h2>
 
               {/* Saved Addresses Selector */}
-              {isLoggedIn && user.addresses && user.addresses.length > 0 && (
+              {isLoggedIn && user?.addresses && user.addresses.length > 0 && (
                 <div className="mb-10">
                   <p className="text-[8px] font-bold uppercase tracking-[0.4em] text-black/30 ml-1 mb-4">Select Shipping Identity</p>
                   <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar -mx-2 px-2">
-                    {user.addresses.map((addr: any) => (
+                    {user?.addresses.map((addr: any) => (
                       <motion.div
                         key={addr.id}
                         whileTap={{ scale: 0.98 }}
