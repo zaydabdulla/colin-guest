@@ -279,8 +279,6 @@ export function CartDrawer() {
                     </div>
                   )}
 
-                  </div>
-                </div>
 
                 {/* Checkout Button Section */}
                 {items.length > 0 && (
@@ -301,7 +299,6 @@ export function CartDrawer() {
                   </div>
                 )}
               </div>
-
             </div>
           </motion.div>
         </>
