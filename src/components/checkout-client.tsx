@@ -541,42 +541,6 @@ export function CheckoutClient() {
                 </div>
               </div>
 
-              <div className="mt-12 space-y-4">
-                <label className="flex items-center gap-3 cursor-pointer group">
-                  <div className="relative flex items-center justify-center">
-                    <input 
-                      type="checkbox" 
-                      name="createAccount"
-                      checked={formData.createAccount}
-                      onChange={handleInputChange}
-                      className="peer sr-only"
-                    />
-                    <div className="w-5 h-5 border-2 border-black/5 rounded-md transition-all peer-checked:bg-black peer-checked:border-black group-hover:border-black/20"></div>
-                    <svg className="absolute w-3 h-3 text-white scale-0 peer-checked:scale-100 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}>
-                      <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </div>
-                  <span className="text-[9px] font-bold uppercase tracking-widest text-black/60 group-hover:text-black transition-colors">Create an account for swifter access</span>
-                </label>
-
-                <label className="flex items-center gap-3 cursor-pointer group">
-                  <div className="relative flex items-center justify-center">
-                    <input 
-                      type="checkbox" 
-                      name="shipDifferent"
-                      checked={formData.shipDifferent}
-                      onChange={handleInputChange}
-                      className="peer sr-only"
-                    />
-                    <div className="w-5 h-5 border-2 border-black/5 rounded-md transition-all peer-checked:bg-black peer-checked:border-black group-hover:border-black/20"></div>
-                    <svg className="absolute w-3 h-3 text-white scale-0 peer-checked:scale-100 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}>
-                      <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </div>
-                  <span className="text-[9px] font-bold uppercase tracking-widest text-black/60 group-hover:text-black transition-colors">Specify alternative shipping destination</span>
-                </label>
-              </div>
-
               <div className="mt-10 space-y-3">
                 <label className="text-[8px] font-bold uppercase tracking-[0.4em] text-black/50 ml-1">Acquisition Notes (Optional)</label>
                 <textarea 
