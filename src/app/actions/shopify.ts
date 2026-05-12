@@ -449,8 +449,91 @@ export async function createDraftOrder(items: any[], customerInfo: any) {
       orderName: data.data.draftOrderCreate.draftOrder.name
     };
 
-  } catch (error: any) {
+  } catch (error) {
     console.error("Draft Order Exception:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: "Network or Server Error" };
+  }
+}
+
+export async function getCustomerOrders(email: string) {
+  if (!domain || !clientId || !clientSecret) return { success: false, error: "Missing config" };
+
+  try {
+    const adminToken = await getAdminToken();
+    
+    const query = `
+      query getOrders($query: String!) {
+        orders(first: 20, query: $query, reverse: true) {
+          edges {
+            node {
+              id
+              name
+              createdAt
+              totalPriceSet {
+                shopMoney {
+                  amount
+                  currencyCode
+                }
+              }
+              displayFulfillmentStatus
+              lineItems(first: 10) {
+                edges {
+                  node {
+                    title
+                    quantity
+                    variant {
+                      image {
+                        url
+                      }
+                      product {
+                        handle
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const response = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': adminToken,
+      },
+      body: JSON.stringify({ 
+        query, 
+        variables: { query: `email:${email}` } 
+      }),
+    });
+
+    const data = await response.json();
+    
+    if (data.errors) {
+      return { success: false, error: data.errors[0].message };
+    }
+
+    const orders = data.data.orders.edges.map((edge: any) => ({
+      id: edge.node.id,
+      name: edge.node.name,
+      date: edge.node.createdAt,
+      total: edge.node.totalPriceSet.shopMoney.amount,
+      currency: edge.node.totalPriceSet.shopMoney.currencyCode,
+      status: edge.node.displayFulfillmentStatus,
+      items: edge.node.lineItems.edges.map((li: any) => ({
+        title: li.node.title,
+        quantity: li.node.quantity,
+        image: li.node.variant?.image?.url || null,
+        handle: li.node.variant?.product?.handle || null
+      }))
+    }));
+
+    return { success: true, orders };
+
+  } catch (error) {
+    return { success: false, error: "Failed to fetch orders" };
   }
 }
