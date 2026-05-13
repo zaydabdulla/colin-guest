@@ -156,7 +156,7 @@ export default function LoginPage() {
                           }
                         }
                       }}
-                      className="w-full border-b border-black/10 py-1.5 text-sm focus:border-black outline-none transition-colors bg-transparent px-0"
+                      className="w-full border-b border-black/10 py-1.5 text-sm text-black focus:border-black outline-none transition-colors bg-transparent px-0 placeholder:text-black/40"
                       placeholder="Enter your email"
                     />
                   </div>
@@ -177,7 +177,7 @@ export default function LoginPage() {
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full border-b border-black/10 py-1.5 text-sm focus:border-black outline-none transition-colors bg-transparent px-0"
+                      className="w-full border-b border-black/10 py-1.5 text-sm text-black focus:border-black outline-none transition-colors bg-transparent px-0 placeholder:text-black/40"
                       placeholder="••••••••"
                     />
                   </div>
@@ -252,7 +252,7 @@ export default function LoginPage() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full border-b border-black/10 py-1.5 text-sm focus:border-black outline-none transition-colors bg-transparent px-0"
+                      className="w-full border-b border-black/10 py-1.5 text-sm text-black focus:border-black outline-none transition-colors bg-transparent px-0 placeholder:text-black/40"
                     />
                   </div>
 

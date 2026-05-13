@@ -89,7 +89,7 @@ export default function SignupPage() {
                       value={formData.firstName}
                       onChange={handleChange}
                       placeholder="John" 
-                      className="w-full border-b border-black/10 py-1.5 text-sm focus:border-black outline-none transition-colors bg-transparent px-0" 
+                      className="w-full border-b border-black/10 py-1.5 text-sm text-black focus:border-black outline-none transition-colors bg-transparent px-0 placeholder:text-black/40" 
                     />
                   </div>
                   <div className="relative group">
@@ -101,7 +101,7 @@ export default function SignupPage() {
                       value={formData.lastName}
                       onChange={handleChange}
                       placeholder="Doe" 
-                      className="w-full border-b border-black/10 py-1.5 text-sm focus:border-black outline-none transition-colors bg-transparent px-0" 
+                      className="w-full border-b border-black/10 py-1.5 text-sm text-black focus:border-black outline-none transition-colors bg-transparent px-0 placeholder:text-black/40" 
                     />
                   </div>
                </div>
@@ -115,7 +115,7 @@ export default function SignupPage() {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="name@example.com" 
-                    className="w-full border-b border-black/10 py-1.5 text-sm focus:border-black outline-none transition-colors bg-transparent px-0" 
+                    className="w-full border-b border-black/10 py-1.5 text-sm text-black focus:border-black outline-none transition-colors bg-transparent px-0 placeholder:text-black/40" 
                   />
                </div>
                
@@ -128,7 +128,7 @@ export default function SignupPage() {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="••••••••" 
-                    className="w-full border-b border-black/10 py-1.5 text-sm focus:border-black outline-none transition-colors bg-transparent px-0" 
+                    className="w-full border-b border-black/10 py-1.5 text-sm text-black focus:border-black outline-none transition-colors bg-transparent px-0 placeholder:text-black/40" 
                   />
                   <p className="text-[9px] text-black/30 font-bold uppercase tracking-widest mt-1">Must be at least 8 characters long.</p>
                </div>

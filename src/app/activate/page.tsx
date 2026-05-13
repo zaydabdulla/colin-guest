@@ -27,10 +27,11 @@ function ActivateContent() {
   const isReset = mode === "reset";
 
   useEffect(() => {
+    console.log("DEBUG: Activate Page Load", { id, token, mode });
     if (!id || !token) {
-      setError("Invalid activation link. Please request a new one.");
+      setError("This link is incomplete or invalid. Please request a new " + (isReset ? "password reset" : "activation") + " email.");
     }
-  }, [id, token]);
+  }, [id, token, isReset, mode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +59,8 @@ function ActivateContent() {
         router.push("/profile");
       }, 2000);
     } else {
-      setError(result.error || (isReset ? "Reset failed." : "Activation failed."));
+      console.error("Auth action failed:", result.error);
+      setError(result.error || (isReset ? "Password reset failed. The link may have expired." : "Account activation failed."));
     }
   };
 
@@ -99,7 +101,7 @@ function ActivateContent() {
             required 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border-b border-black/10 py-1.5 text-sm focus:border-black outline-none transition-colors bg-transparent px-0" 
+            className="w-full border-b border-black/10 py-1.5 text-sm text-black focus:border-black outline-none transition-colors bg-transparent px-0 placeholder:text-black/40" 
             placeholder="••••••••"
           />
         </div>
@@ -111,7 +113,7 @@ function ActivateContent() {
             required 
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full border-b border-black/10 py-1.5 text-sm focus:border-black outline-none transition-colors bg-transparent px-0" 
+            className="w-full border-b border-black/10 py-1.5 text-sm text-black focus:border-black outline-none transition-colors bg-transparent px-0 placeholder:text-black/40" 
             placeholder="••••••••"
           />
         </div>
@@ -121,7 +123,11 @@ function ActivateContent() {
           disabled={isSyncing || !id || !token}
           className="w-full bg-black text-white py-4 rounded-full text-[10px] font-bold uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-black/90 transition-all active:scale-[0.98] disabled:opacity-50 mt-8"
         >
-          {isSyncing ? <Loader2 size={14} className="animate-spin" /> : "Verify Identity"}
+          {isSyncing ? (
+            <Loader2 size={14} className="animate-spin" />
+          ) : (
+            isReset ? "Update Password" : "Verify Identity"
+          )}
           <ArrowRight size={14} />
         </button>
       </form>
