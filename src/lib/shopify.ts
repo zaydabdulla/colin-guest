@@ -860,4 +860,5 @@ export async function customerAddressCreate(customerAccessToken: string, address
   });
 
   return response.data?.customerAddressCreate;
+}
 
