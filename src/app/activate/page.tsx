@@ -25,13 +25,19 @@ function ActivateContent() {
   const token = searchParams.get("token");
   const mode = searchParams.get("mode"); // 'reset' or 'activate'
   const isReset = mode === "reset";
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    console.log("DEBUG: Activate Page Load", { id, token, mode });
-    if (!id || !token) {
-      setError("This link is incomplete or invalid. Please request a new " + (isReset ? "password reset" : "activation") + " email.");
+    // Wait for hydration and searchParams to be available
+    if (searchParams) {
+      setIsReady(true);
+      console.log("DEBUG: Activate Page Ready", { id, token, mode });
+      
+      if (!id || !token) {
+        setError("This link is incomplete or invalid. Please request a new " + (isReset ? "password reset" : "activation") + " email.");
+      }
     }
-  }, [id, token, isReset, mode]);
+  }, [id, token, isReset, mode, searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,7 +126,7 @@ function ActivateContent() {
 
         <button 
           type="submit" 
-          disabled={isSyncing || !id || !token}
+          disabled={isSyncing || !id || !token || !isReady}
           className="w-full bg-black text-white py-4 rounded-full text-[10px] font-bold uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-black/90 transition-all active:scale-[0.98] disabled:opacity-50 mt-8"
         >
           {isSyncing ? (
