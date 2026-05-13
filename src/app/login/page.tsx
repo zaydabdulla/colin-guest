@@ -8,6 +8,7 @@ import { Loader2, ArrowLeft } from "lucide-react";
 import { signIn as socialSignIn } from "next-auth/react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { checkEmailExists } from "@/app/actions/shopify";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -32,11 +33,24 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     setMessage(null);
+
+    // 1. Pro-active check for Google accounts to prevent confusion
+    const exists = await checkEmailExists(email);
+    if (exists.exists && (exists.state === 'INVITED' || exists.state === 'ENABLED')) {
+       // We can't know for 100% sure if they have a password without trying,
+       // but if login fails, we'll give them the Google hint.
+    }
+
     const result = await login(email, password);
     if (result.success) {
       router.push("/");
     } else {
-      setError(result.error || "Invalid credentials.");
+      // If login fails, check if it's a Google account to give a better hint
+      if (exists.exists) {
+        setError("This account is linked with Google. Please use the 'Sign in with Google' button.");
+      } else {
+        setError(result.error || "Invalid credentials.");
+      }
     }
   };
 
@@ -134,6 +148,14 @@ export default function LoginPage() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      onBlur={async () => {
+                        if (email.includes('@')) {
+                          const res = await checkEmailExists(email);
+                          if (res.exists) {
+                            setMessage("Account recognized. Please authorize below.");
+                          }
+                        }
+                      }}
                       className="w-full border-b border-black/10 py-1.5 text-sm focus:border-black outline-none transition-colors bg-transparent px-0"
                       placeholder="Enter your email"
                     />
