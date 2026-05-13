@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import { type Product } from './data';
 import { customerLogin, getCustomer, getProductsByIds, customerCreate, customerRecover, customerUpdate, customerAddressCreate, customerActivate } from './shopify';
 import { signOut } from 'next-auth/react';
-import { adminAddAddress, syncWishlist, getWishlist } from '@/app/actions/shopify';
+import { adminAddAddress, syncWishlist, getWishlist, checkEmailExists } from '@/app/actions/shopify';
 
 
 
@@ -178,6 +178,19 @@ export const useCartStore = create<CartState>()(
       signup: async (input): Promise<{ success: boolean; error?: string }> => {
         set({ isSyncing: true });
         try {
+          // 1. Pre-emptively check if email exists in Shopify via Admin API
+          // This prevents Shopify from sending an activation mail automatically if we call customerCreate
+          const existsResult = await checkEmailExists(input.email);
+          
+          if (existsResult.exists) {
+            set({ isSyncing: false });
+            return {
+              success: false,
+              error: "This email is already associated with an account. Please sign in with Google or use the login form."
+            };
+          }
+
+          // 2. If it doesn't exist, proceed with creation
           const result = await customerCreate(input);
 
           if (result?.customer) {
@@ -187,13 +200,11 @@ export const useCartStore = create<CartState>()(
             return loginResult;
           }
 
-          // Handle "Email Taken" error with a smarter message
+          // Handle other errors
           const firstError = result?.customerUserErrors?.[0];
           let errorMessage = "Failed to create account";
 
-          if (firstError?.code === "TAKEN" || firstError?.message?.toLowerCase().includes("taken")) {
-            errorMessage = "This email is already associated with an account. Please sign in with Google or use the login form.";
-          } else if (firstError?.message) {
+          if (firstError?.message) {
             errorMessage = firstError.message;
           }
 

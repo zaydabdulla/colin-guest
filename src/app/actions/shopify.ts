@@ -128,7 +128,7 @@ export async function adminAddAddress(email: string, address: any) {
         }
       }
     `;
- 
+
     const addResponse = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
       method: 'POST',
       headers: {
@@ -535,5 +535,28 @@ export async function getCustomerOrders(email: string) {
 
   } catch (error) {
     return { success: false, error: "Failed to fetch orders" };
+  }
+}
+
+export async function checkEmailExists(email: string) {
+  if (!domain || !clientId || !clientSecret) return { exists: false };
+
+  try {
+    const adminToken = await getAdminToken();
+    const findQuery = `query { customers(first: 1, query: "email:${email}") { edges { node { id state } } } }`;
+    const findResponse = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': adminToken },
+      body: JSON.stringify({ query: findQuery }),
+    });
+    const findData = await findResponse.json();
+    const customer = findData.data?.customers?.edges[0]?.node;
+    
+    return { 
+      exists: !!customer, 
+      state: customer?.state || null 
+    };
+  } catch (error) {
+    return { exists: false };
   }
 }

@@ -23,6 +23,8 @@ function ActivateContent() {
   // Our redirected URL will be: /activate?id=ID&token=TOKEN
   const id = searchParams.get("id");
   const token = searchParams.get("token");
+  const mode = searchParams.get("mode"); // 'reset' or 'activate'
+  const isReset = mode === "reset";
 
   useEffect(() => {
     if (!id || !token) {
@@ -56,7 +58,7 @@ function ActivateContent() {
         router.push("/profile");
       }, 2000);
     } else {
-      setError(result.error || "Activation failed.");
+      setError(result.error || (isReset ? "Reset failed." : "Activation failed."));
     }
   };
 
@@ -70,7 +72,7 @@ function ActivateContent() {
         <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center mx-auto mb-8">
           <ShieldCheck className="text-white w-10 h-10" strokeWidth={1} />
         </div>
-        <h1 className="text-3xl font-serif italic text-black mb-4">Identity Verified.</h1>
+        <h1 className="text-3xl font-serif italic text-black mb-4">{isReset ? "Password Reset." : "Identity Verified."}</h1>
         <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-black/40">Redirecting to your dashboard...</p>
       </motion.div>
     );
@@ -79,7 +81,7 @@ function ActivateContent() {
   return (
     <div className="w-full max-w-[340px]">
       <div className="mb-10">
-        <h1 className="text-2xl font-serif italic text-black mb-2">Activate Account.</h1>
+        <h1 className="text-2xl font-serif italic text-black mb-2">{isReset ? "Reset Password." : "Activate Account."}</h1>
         <p className="text-[9px] font-bold uppercase tracking-[0.5em] text-black/30">Set your secure credentials</p>
       </div>
 
