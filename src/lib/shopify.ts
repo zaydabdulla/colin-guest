@@ -545,6 +545,35 @@ export async function customerRecover(email: string) {
   return response.data?.customerRecover;
 }
 
+export async function customerActivate(id: string, input: any) {
+  const query = `
+    mutation customerActivate($id: ID!, $input: CustomerActivateInput!) {
+      customerActivate(id: $id, input: $input) {
+        customer {
+          id
+          email
+        }
+        customerAccessToken {
+          accessToken
+          expiresAt
+        }
+        customerUserErrors {
+          code
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const response = await shopifyFetch({
+    query,
+    variables: { id, input },
+  });
+
+  return response.data?.customerActivate;
+}
+
 export async function getAllCollections(): Promise<Collection[]> {
   const query = `
     query getCollections {

@@ -107,8 +107,11 @@ export default function LoginPage() {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.4 }}
               >
-                <div className="mb-4">
-                  <h2 className="text-xl font-bold tracking-tight text-black/60">Welcome</h2>
+                <div className="mb-8">
+                  <h2 className="text-xl font-bold tracking-tight text-black/60 mb-1">Sign In</h2>
+                  <p className="text-[10px] text-black/40 font-medium tracking-wide uppercase">
+                    Access your archived details
+                  </p>
                 </div>
 
                 {error && (

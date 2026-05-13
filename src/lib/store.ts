@@ -54,6 +54,7 @@ interface CartState {
   saveData: () => Promise<void>;
   updateUser: (firstName: string, lastName: string) => Promise<{ success: boolean; error?: string }>;
   addAddress: (address: any) => Promise<{ success: boolean; error?: string }>;
+  activateAccount: (id: string, token: string, password: string) => Promise<{ success: boolean; error?: string }>;
 
   wishlistPopupProduct: Product | null;
   clearWishlistPopup: () => void;
@@ -186,10 +187,20 @@ export const useCartStore = create<CartState>()(
             return loginResult;
           }
 
+          // Handle "Email Taken" error with a smarter message
+          const firstError = result?.customerUserErrors?.[0];
+          let errorMessage = "Failed to create account";
+
+          if (firstError?.code === "TAKEN" || firstError?.message?.toLowerCase().includes("taken")) {
+            errorMessage = "This email is already associated with an account. Please sign in with Google or use the login form.";
+          } else if (firstError?.message) {
+            errorMessage = firstError.message;
+          }
+
           set({ isSyncing: false });
           return {
             success: false,
-            error: result?.customerUserErrors?.[0]?.message || "Failed to create account"
+            error: errorMessage
           };
         } catch (error) {
           set({ isSyncing: false });
@@ -296,6 +307,47 @@ export const useCartStore = create<CartState>()(
         } catch (error) {
           set({ isSyncing: false });
           return { success: false, error: "An unexpected error occurred during Admin sync" };
+        }
+      },
+      
+      activateAccount: async (id, token, password) => {
+        set({ isSyncing: true });
+        try {
+          // 1. Activate the account and get an access token
+          const result = await customerActivate(id, { activationToken: token, password });
+
+          if (result?.customerAccessToken) {
+            const accessToken = result.customerAccessToken.accessToken;
+            // 2. Fetch the customer details
+            const customer = await getCustomer(accessToken);
+
+            if (customer) {
+              set({
+                isLoggedIn: true,
+                user: {
+                  email: customer.email,
+                  firstName: customer.firstName,
+                  lastName: customer.lastName,
+                  addresses: customer.addresses?.edges.map((e: any) => e.node) || []
+                },
+                customerId: customer.id,
+                accessToken: accessToken,
+                isSyncing: false
+              });
+
+              await get().syncData(true);
+              return { success: true };
+            }
+          }
+
+          set({ isSyncing: false });
+          return {
+            success: false,
+            error: result?.customerUserErrors?.[0]?.message || "Account activation failed."
+          };
+        } catch (error) {
+          set({ isSyncing: false });
+          return { success: false, error: "An unexpected error occurred" };
         }
       },
 
