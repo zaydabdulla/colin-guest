@@ -1,3 +1,4 @@
+// Shopify Integration - COLIN GUEST Architecture
 import { Product, Collection } from "./data";
 
 const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN?.trim();
