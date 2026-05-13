@@ -799,16 +799,48 @@ export async function customerUpdate(accessToken: string, customer: { firstName?
   return response.data?.customerUpdate;
 }
 
-export async function customerAddressCreate(accessToken: string, address: any) {
+export async function customerReset(id: string, input: any) {
+  const query = `
+    mutation customerReset($id: ID!, $input: CustomerResetInput!) {
+      customerReset(id: $id, input: $input) {
+        customer {
+          id
+          email
+        }
+        customerAccessToken {
+          accessToken
+          expiresAt
+        }
+        customerUserErrors {
+          code
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const response = await shopifyFetch({
+    query,
+    variables: { id, input },
+  });
+
+  return response.data?.customerReset;
+}
+
+export async function customerAddressCreate(customerAccessToken: string, address: any) {
   const query = `
     mutation customerAddressCreate($customerAccessToken: String!, $address: MailingAddressInput!) {
       customerAddressCreate(customerAccessToken: $customerAccessToken, address: $address) {
         customerAddress {
           id
           address1
+          address2
           city
+          province
           country
           zip
+          phone
         }
         customerUserErrors {
           code
@@ -822,11 +854,10 @@ export async function customerAddressCreate(accessToken: string, address: any) {
   const response = await shopifyFetch({
     query,
     variables: {
-      customerAccessToken: accessToken,
+      customerAccessToken,
       address,
     },
   });
 
   return response.data?.customerAddressCreate;
-}
 

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { type Product } from './data';
-import { customerLogin, getCustomer, getProductsByIds, customerCreate, customerRecover, customerUpdate, customerAddressCreate, customerActivate } from './shopify';
+import { customerLogin, getCustomer, getProductsByIds, customerCreate, customerRecover, customerUpdate, customerAddressCreate, customerActivate, customerReset } from './shopify';
 import { signOut } from 'next-auth/react';
 import { adminAddAddress, syncWishlist, getWishlist, checkEmailExists } from '@/app/actions/shopify';
 
@@ -54,7 +54,7 @@ interface CartState {
   saveData: () => Promise<void>;
   updateUser: (firstName: string, lastName: string) => Promise<{ success: boolean; error?: string }>;
   addAddress: (address: any) => Promise<{ success: boolean; error?: string }>;
-  activateAccount: (id: string, token: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  activateAccount: (id: string, token: string, password: string, mode?: 'activate' | 'reset') => Promise<{ success: boolean; error?: string }>;
 
   wishlistPopupProduct: Product | null;
   clearWishlistPopup: () => void;
@@ -321,11 +321,13 @@ export const useCartStore = create<CartState>()(
         }
       },
       
-      activateAccount: async (id, token, password) => {
+      activateAccount: async (id, token, password, mode = 'activate') => {
         set({ isSyncing: true });
         try {
-          // 1. Activate the account and get an access token
-          const result = await customerActivate(id, { activationToken: token, password });
+          // 1. Call the appropriate mutation based on mode
+          const result = mode === 'reset' 
+            ? await customerReset(id, { resetToken: token, password })
+            : await customerActivate(id, { activationToken: token, password });
 
           if (result?.customerAccessToken) {
             const accessToken = result.customerAccessToken.accessToken;

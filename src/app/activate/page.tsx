@@ -51,7 +51,7 @@ function ActivateContent() {
     // Convert numeric ID to Global ID if necessary
     const gid = id.includes("gid://") ? id : `gid://shopify/Customer/${id}`;
 
-    const result = await activateAccount(gid, token, password);
+    const result = await activateAccount(gid, token, password, (mode as 'activate' | 'reset') || 'activate');
     if (result.success) {
       setSuccess(true);
       setTimeout(() => {
