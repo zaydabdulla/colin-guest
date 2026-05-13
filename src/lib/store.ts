@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { type Product } from './data';
-import { customerLogin, getCustomer, getProductsByIds, customerCreate, customerRecover, customerUpdate, customerAddressCreate } from './shopify';
+import { customerLogin, getCustomer, getProductsByIds, customerCreate, customerRecover, customerUpdate, customerAddressCreate, customerActivate } from './shopify';
 import { signOut } from 'next-auth/react';
 import { adminAddAddress, syncWishlist, getWishlist } from '@/app/actions/shopify';
 
