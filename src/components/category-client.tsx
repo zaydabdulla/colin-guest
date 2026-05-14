@@ -297,14 +297,14 @@ export default function CategoryClient({ category, formattedCategory, displayPro
          </div>
 
          {/* Editorial Category Toggles */}
-         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar relative">
+         <div className="flex gap-2 md:gap-1 overflow-x-auto pb-2 scrollbar-hide no-scrollbar relative">
             {categories.map((cat) => {
               const isActive = category.toLowerCase() === cat.id;
               return (
                 <Link 
                   key={cat.id}
                   href={`/collections/${cat.id}`}
-                  className="relative group px-6 py-1.5"
+                  className="relative group px-6 py-1.5 md:px-3 md:py-1"
                 >
                   {/* Liquid Bubble Background */}
                   {isActive && (
@@ -314,7 +314,7 @@ export default function CategoryClient({ category, formattedCategory, displayPro
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
-                  <span className={`relative z-10 text-[9px] font-bold uppercase tracking-widest transition-colors duration-300 ${
+                  <span className={`relative z-10 text-[9px] md:text-[7.5px] font-bold uppercase tracking-widest transition-colors duration-300 ${
                     isActive ? 'text-black' : 'text-black/30 group-hover:text-black'
                   }`}>
                     {cat.name}

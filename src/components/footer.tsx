@@ -149,12 +149,11 @@ export function Footer() {
           </div>
 
           {/* Legal Footer */}
-          <div className="mt-16 pt-6 border-t border-black/[0.03] flex flex-col md:flex-row justify-between items-center gap-4 text-[7px] font-bold uppercase tracking-[0.4em] opacity-20">
-            <p>© 2024 COLIN GUEST RETAIL.</p>
-            <div className="flex gap-8">
-              <Link href="/privacy" className="hover:opacity-100">Privacy</Link>
-              <Link href="/terms" className="hover:opacity-100">Terms</Link>
-            </div>
+          <div className="mt-16 pt-8 border-t border-black/[0.03] flex flex-col items-center justify-center gap-4">
+            <a href="https://sa-vision.com/" target="_blank" rel="noopener noreferrer" className="font-serif italic text-[13px] text-black/70 hover:text-black transition-colors underline underline-offset-[5px] decoration-[0.5px] decoration-black/30 hover:decoration-black">
+              Developed by S A Vision LLP
+            </a>
+            <p className="text-[7px] font-bold uppercase tracking-[0.4em] opacity-30">© 2024 COLIN GUEST RETAIL.</p>
           </div>
         </div>
       </div>
