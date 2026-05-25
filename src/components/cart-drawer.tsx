@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { X, ShoppingBag, ArrowRight, Plus, ChevronRight } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
-import { getAllProducts } from "@/lib/shopify";
+import { getAllProducts, createShopifyCheckout } from "@/lib/shopify";
 import { Product } from "@/lib/data";
 
 export function CartDrawer() {
@@ -15,6 +15,7 @@ export function CartDrawer() {
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [showScrollArrow, setShowScrollArrow] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const parsePrice = (priceStr: string) => {
     if (!priceStr) return 0;
@@ -284,13 +285,20 @@ export function CartDrawer() {
                 {items.length > 0 && (
                   <div className="p-5 pt-0 bg-[#fcfcfc] border-t border-black/[0.02]">
                     <button
-                      onClick={() => {
-                        closeCart();
-                        router.push("/checkout");
+                      disabled={isCheckingOut}
+                      onClick={async () => {
+                        setIsCheckingOut(true);
+                        const result = await createShopifyCheckout(items, useCartStore.getState().user?.email);
+                        if (result.success && result.url) {
+                          window.location.href = result.url;
+                        } else {
+                          alert(result.error || "Failed to initiate checkout");
+                          setIsCheckingOut(false);
+                        }
                       }}
-                      className="w-full bg-black text-white px-6 py-[18px] rounded-[2rem] flex justify-between items-center shadow-lg hover:scale-[1.02] transition-transform"
+                      className={`w-full bg-black text-white px-6 py-[18px] rounded-[2rem] flex justify-between items-center shadow-lg hover:scale-[1.02] transition-transform ${isCheckingOut ? 'opacity-70 pointer-events-none' : ''}`}
                     >
-                      <span className="text-[13px] font-medium">Check out</span>
+                      <span className="text-[13px] font-medium">{isCheckingOut ? 'Processing...' : 'Check out'}</span>
                       <span className="text-[10px] font-bold tracking-wide flex items-center gap-2">
                         {formattedTotal}
                         <ArrowRight size={14} />

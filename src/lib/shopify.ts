@@ -862,3 +862,62 @@ export async function customerAddressCreate(customerAccessToken: string, address
   return response.data?.customerAddressCreate;
 }
 
+export async function createShopifyCheckout(items: any[], email?: string) {
+  const lineItems = items.map(item => {
+    let variantId = item.variantId;
+    
+    // Resolve variant ID from product object if not explicitly provided
+    if (!variantId && item.product?.variants && item.product.variants.length > 0) {
+      const variant = item.product.variants.find((v: any) => v.title === item.size || v.node?.title === item.size);
+      if (variant) variantId = variant.id || variant.node?.id;
+      
+      // Fallback for single-variant products
+      if (!variantId && item.product.variants.length === 1) {
+        variantId = item.product.variants[0].id || item.product.variants[0].node?.id;
+      }
+    }
+
+    return {
+      merchandiseId: variantId,
+      quantity: item.quantity
+    };
+  }).filter(li => li.merchandiseId);
+
+  if (lineItems.length === 0) {
+    return { success: false, error: "No valid products found to checkout." };
+  }
+
+  const query = `
+    mutation cartCreate($input: CartInput) {
+      cartCreate(input: $input) {
+        cart {
+          checkoutUrl
+        }
+        userErrors {
+          message
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    input: {
+      lines: lineItems,
+      buyerIdentity: email ? { email } : undefined
+    }
+  };
+
+  const response = await shopifyFetch({ query, variables });
+
+  if (response.data?.cartCreate?.userErrors?.length > 0) {
+    return { success: false, error: response.data.cartCreate.userErrors[0].message };
+  }
+
+  const checkoutUrl = response.data?.cartCreate?.cart?.checkoutUrl;
+
+  if (checkoutUrl) {
+    return { success: true, url: checkoutUrl };
+  }
+
+  return { success: false, error: "Failed to generate checkout URL." };
+}

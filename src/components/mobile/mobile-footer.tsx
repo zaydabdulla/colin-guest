@@ -15,7 +15,6 @@ export function MobileFooter() {
   const showFooter = pathname === "/about" || 
                      pathname.startsWith("/collections") || 
                      pathname.startsWith("/product") || 
-                     pathname === "/checkout" ||
                      legalPages.includes(pathname);
 
   if (!showFooter) return null;
