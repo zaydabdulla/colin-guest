@@ -291,6 +291,8 @@ export function CartDrawer() {
                         const result = await createShopifyCheckout(items, useCartStore.getState().user?.email);
                         if (result.success && result.url) {
                           window.location.href = result.url;
+                          // Reset state after a short delay so if user presses back button, it's not stuck on "Processing"
+                          setTimeout(() => setIsCheckingOut(false), 500);
                         } else {
                           alert(result.error || "Failed to initiate checkout");
                           setIsCheckingOut(false);
