@@ -413,6 +413,22 @@ export async function getProductsByIds(ids: string[]) {
               }
             }
           }
+          variants(first: 50) {
+            edges {
+              node {
+                id
+                title
+                availableForSale
+                price {
+                  amount
+                }
+                selectedOptions {
+                  name
+                  value
+                }
+              }
+            }
+          }
         }
       }
     }

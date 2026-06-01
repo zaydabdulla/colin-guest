@@ -446,7 +446,8 @@ export const useCartStore = create<CartState>()(
                         src: product.images[0]?.url || "",
                         desc: product.description,
                         category: product.productType,
-                        handle: product.handle
+                        handle: product.handle,
+                        variants: product.variants
                       },
 
                       size: item.size,
