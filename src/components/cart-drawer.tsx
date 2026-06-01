@@ -4,10 +4,11 @@ import { useCartStore, type CartItem } from "@/lib/store";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { X, ShoppingBag, ArrowRight, Plus, ChevronRight } from "lucide-react";
+import { X, ShoppingBag, ArrowRight, Plus, ChevronRight, ArrowLeft, Loader2 } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { getAllProducts, createShopifyCheckout } from "@/lib/shopify";
 import { Product } from "@/lib/data";
+import { signIn as socialSignIn } from "next-auth/react";
 
 export function CartDrawer() {
   const router = useRouter();
@@ -16,15 +17,22 @@ export function CartDrawer() {
   const [showScrollArrow, setShowScrollArrow] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [isSocialLoading, setIsSocialLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setShowAuthPrompt(false);
+      setIsSocialLoading(false);
+    }
+  }, [isOpen]);
 
   const parsePrice = (priceStr: string) => {
     if (!priceStr) return 0;
     return parseInt(priceStr.replace(/[^0-9]/g, ''));
   };
-  // Summing total exactly like a real ecommerce API engine
+  
   const total = items.reduce((sum: number, item: CartItem) => sum + (parsePrice(item.product.price) * item.quantity), 0);
-
-  // Format to match Bluorng's explicit syntax "RS. 17,400"
   const formattedTotal = "RS. " + total.toLocaleString();
 
   useEffect(() => {
@@ -33,7 +41,6 @@ export function CartDrawer() {
         const allProducts = await getAllProducts();
         const cartProductIds = new Set(items.map(item => item.product.id));
 
-        // Analyze cart for pairing logic
         const topKeywords = ["shirt", "hoodie", "top", "jacket", "tee", "t-shirt", "vest", "knitwear", "sweater", "blazer"];
         const bottomKeywords = ["jeans", "pants", "trousers", "shorts", "cargo", "skirt", "joggers", "denim"];
 
@@ -49,7 +56,6 @@ export function CartDrawer() {
           return bottomKeywords.some(k => t.includes(k) || type.includes(k));
         });
 
-        // Scoring algorithm
         const scoredProducts = allProducts
           .filter(p => !cartProductIds.has(p.id))
           .map(p => {
@@ -63,10 +69,8 @@ export function CartDrawer() {
             if (hasTop && isBottom) score += 10;
             if (hasBottom && isTop) score += 10;
             
-            // Boost similarity (same type)
             if (items.some(item => item.product.type === p.type)) score += 5;
-
-            if (!hasTop && !hasBottom) score += 5; // Default variety
+            if (!hasTop && !hasBottom) score += 5;
 
             return { product: p, score };
           })
@@ -132,7 +136,6 @@ export function CartDrawer() {
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className="fixed top-[calc(64px+env(safe-area-inset-top,0px))] right-0 h-[calc(100%-64px-env(safe-area-inset-top,0px))] md:top-0 md:h-full w-[85%] md:w-[420px] bg-[#e5e7eb] z-[401] flex flex-col shadow-2xl rounded-l-[16px] overflow-hidden"
           >
-            {/* Header matches desktop grey aesthetic */}
             <div className="flex items-center gap-4 px-6 py-3 md:py-5 text-black bg-[#e5e7eb]">
               <button
                 onClick={closeCart}
@@ -144,172 +147,264 @@ export function CartDrawer() {
               <span className="text-[10px] font-semibold uppercase tracking-[0.2em] leading-none">Your Cart</span>
             </div>
 
-            {/* White body area - straightened as requested */}
             <div className="flex-1 bg-white text-black overflow-hidden flex flex-col relative">
-
-              {/* Main Cart Items Scroll Area */}
-              <div
-                className="flex-1 overflow-y-auto px-5 pt-6 pb-2 relative"
-                data-lenis-prevent
-              >
-                {items.length === 0 ? (
-                  <div className="h-64 flex flex-col items-center justify-center text-black/20">
-                    <ShoppingBag size={48} strokeWidth={1} className="mb-4 drop-shadow-sm" />
-                    <p className="font-bold tracking-widest text-[10px] uppercase text-black/40">Your bag is empty.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {items.map((item: CartItem, index: number) => (
-                      <div key={item.id} className="flex gap-4 group">
-                        {/* Product Image Square (Tightened sizing) */}
-                        <div className="relative w-[72px] h-[72px] rounded-lg bg-[#f4f4f5] overflow-hidden shrink-0 border border-black/5 shadow-sm flex items-center justify-center">
-                          {/* Priority layout to avoid popping */}
-                          {item.product.src ? (
-                            <Image src={item.product.src} alt={item.product.title} fill className="object-contain hover:scale-105 transition-transform duration-500 p-1" priority={index === 0} />
-                          ) : (
-                            <ShoppingBag size={20} className="text-white/20" />
-                          )}
-                        </div>
-
-                        <div className="flex-1 flex flex-col">
-
-                          <div className="flex justify-between items-start mb-1">
-                            <div>
-                              <h4 className="font-extrabold text-[10px] tracking-tight text-black">{item.product.title}</h4>
-                              <p className="text-[9px] text-black/60 font-medium mt-1">
-                                {item.size.includes('/') ? item.size.split('/').pop()?.trim() : item.size}
-                              </p>
-                            </div>
-                            <span className="text-[9px] text-black font-medium">{item.product.price}</span>
-                          </div>
-
-                          {/* Horizontal Control Bar exactly mapped to image_10 syntax */}
-                          <div className="mt-auto border-y border-black/10 flex items-stretch h-8 text-[11px]">
-                            <div className="flex items-center border-r border-black/10 w-[70px] shrink-0">
-                              <button onClick={() => updateQuantity(item.id, -1)} className="flex-1 h-full flex items-center justify-center hover:bg-black/5 text-[15px] font-medium leading-none">-</button>
-                              <span className="flex-1 text-center font-medium text-[10px]">{item.quantity}</span>
-                              <button onClick={() => updateQuantity(item.id, 1)} className="flex-1 h-full flex items-center justify-center hover:bg-black/5 text-[15px] font-medium leading-none">+</button>
-                            </div>
-
-                            <button
-                              onClick={() => removeFromCart(item.id)}
-                              className="flex-1 h-full flex items-center justify-end pr-3 text-[11px] font-medium hover:bg-black/5 transition-colors"
-                            >
-                              Remove
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {/* Subtle fade to indicate more items below */}
-                {items.length > 2 && (
-                  <div className="sticky bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
-                )}
-              </div>
-
-                {/* Bottom Content Container - Anchored above checkout */}
-                <div className="mt-auto">
-                  {/* "You May Also Like" - Only show if cart is NOT empty */}
-                  {items.length > 0 && suggestions.length > 0 && (
-                    <div className="bg-[#fcfcfc] border-t border-black/5 pt-5 pb-4 px-5 relative">
-                       <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-black/40 flex items-center gap-2">
-                         <span className="w-4 h-[1px] bg-black/10" />
-                         You May Also Like
-                       </h3>
-                       
-                       <div className="relative group/scroll">
-                         <div 
-                           ref={scrollContainerRef}
-                           onScroll={checkScroll}
-                           className="flex gap-4 overflow-x-auto pb-4 no-scrollbar snap-x snap-mandatory"
-                         >
-                           {suggestions.map((product) => (
-                             <div key={product.id} className="min-w-[160px] max-w-[160px] snap-start group/suggestion relative">
-                               <div className="flex gap-3 items-center">
-                                 <div className="relative w-16 h-16 rounded-md bg-[#f4f4f5] border border-black/5 overflow-hidden shrink-0 shadow-sm">
-                                   {product.src && (
-                                     <button 
-                                       onClick={() => {
-                                         closeCart();
-                                         router.push(`/product/${encodeURIComponent(product.id)}`);
-                                       }}
-                                       className="absolute inset-0 z-10"
-                                     >
-                                       <Image src={product.src} alt={product.title} fill className="object-cover group-hover/suggestion:scale-110 transition-transform duration-500" />
-                                     </button>
-                                   )}
-                                 </div>
-                                 <div className="flex-1 min-w-0">
-                                   <button 
-                                     onClick={() => {
-                                       closeCart();
-                                       router.push(`/product/${encodeURIComponent(product.id)}`);
-                                     }}
-                                     className="text-left w-full"
-                                   >
-                                     <p className="text-[9px] font-bold text-black truncate uppercase tracking-tight hover:opacity-60 transition-opacity">{product.title}</p>
-                                   </button>
-                                   <p className="text-[9px] text-black/40 font-medium mt-0.5">{product.price}</p>
-                                   <button 
-                                     onClick={() => addToCart(product, "Free Size")}
-                                     className="mt-1.5 text-[8px] font-bold uppercase tracking-widest text-black/20 hover:text-black transition-colors"
-                                   >
-                                     Add +
-                                   </button>
-                                 </div>
-                               </div>
-                             </div>
-                           ))}
-                         </div>
-    
-                         {/* Scroll Indicator Arrow */}
-                         {showScrollArrow && (
-                           <div className="absolute right-[-10px] top-0 bottom-0 w-16 flex items-center justify-center pointer-events-none z-10 bg-gradient-to-l from-[#fcfcfc] via-[#fcfcfc]/80 to-transparent">
-                             <motion.div
-                               initial={{ opacity: 0, x: -5 }}
-                               animate={{ opacity: 1, x: 0 }}
-                               className="p-1.5 rounded-full bg-white shadow-md border border-black/5"
-                             >
-                               <ChevronRight size={14} className="text-black/40" />
-                             </motion.div>
-                           </div>
-                         )}
-                       </div>
-                    </div>
-                  )}
-
-
-                {/* Checkout Button Section */}
-                {items.length > 0 && (
-                  <div className="p-5 pt-0 bg-[#fcfcfc] border-t border-black/[0.02]">
+              <AnimatePresence mode="wait">
+                {showAuthPrompt ? (
+                  <motion.div
+                    key="auth-prompt"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 15 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute inset-0 bg-white z-[402] flex flex-col justify-center px-8 py-6"
+                  >
                     <button
-                      disabled={isCheckingOut}
-                      onClick={async () => {
-                        setIsCheckingOut(true);
-                        const state = useCartStore.getState();
-                        const result = await createShopifyCheckout(items, state.user?.email, state.accessToken);
-                        if (result.success && result.url) {
-                          window.location.href = result.url;
-                          // Reset state after a short delay so if user presses back button, it's not stuck on "Processing"
-                          setTimeout(() => setIsCheckingOut(false), 500);
-                        } else {
-                          alert(result.error || "Failed to initiate checkout");
-                          setIsCheckingOut(false);
-                        }
-                      }}
-                      className={`w-full bg-black text-white px-6 py-[18px] rounded-[2rem] flex justify-between items-center shadow-lg hover:scale-[1.02] transition-transform ${isCheckingOut ? 'opacity-70 pointer-events-none' : ''}`}
+                      onClick={() => setShowAuthPrompt(false)}
+                      className="absolute top-6 left-6 p-1.5 -ml-1.5 hover:opacity-60 transition-opacity flex items-center justify-center text-black"
+                      aria-label="Back to cart"
                     >
-                      <span className="text-[13px] font-medium">{isCheckingOut ? 'Processing...' : 'Check out'}</span>
-                      <span className="text-[10px] font-bold tracking-wide flex items-center gap-2">
-                        {formattedTotal}
-                        <ArrowRight size={14} />
-                      </span>
+                      <ArrowLeft size={16} strokeWidth={1.5} />
                     </button>
-                  </div>
+                    
+                    <div className="text-center max-w-[280px] mx-auto w-full">
+                      <h3 className="text-lg font-serif italic text-black mb-1">Archived Identity</h3>
+                      <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-black/40 mb-8">
+                        Sign in for a premium, swifter checkout
+                      </p>
+                      
+                      <div className="space-y-3 w-full">
+                        <button
+                          type="button"
+                          disabled={isSocialLoading}
+                          onClick={async () => {
+                            setIsSocialLoading(true);
+                            try {
+                              await socialSignIn('google', { callbackUrl: window.location.href });
+                            } catch (error) {
+                              setIsSocialLoading(false);
+                            }
+                          }}
+                          className="w-full border border-black/10 py-3 rounded-full text-[9px] font-bold uppercase tracking-[0.15em] flex items-center justify-center gap-3 hover:bg-black/5 transition-colors text-black/60 disabled:opacity-50 cursor-pointer"
+                        >
+                          {isSocialLoading ? (
+                            <Loader2 size={13} className="animate-spin text-black/40" />
+                          ) : (
+                            <>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.07-3.71 1.07-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                                <path d="M5.84 14.11c-.22-.66-.35-1.36-.35-2.11s.13-1.45.35-2.11V7.05H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.95l3.66-2.84z" fill="#FBBC05" />
+                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.05l3.66 2.84c.87-2.6 3.3-4.51 6.16-4.51z" fill="#EA4335" />
+                              </svg>
+                              Sign in with Google
+                            </>
+                          )}
+                        </button>
+                        
+                        <button
+                          onClick={() => {
+                            closeCart();
+                            router.push('/login');
+                          }}
+                          className="w-full bg-black text-white py-3 rounded-full text-[9px] font-bold uppercase tracking-[0.2em] flex items-center justify-center hover:bg-black/80 transition-colors shadow-sm cursor-pointer"
+                        >
+                          Sign In / Register
+                        </button>
+                      </div>
+                      
+                      <div className="flex items-center gap-4 py-6">
+                        <div className="h-[1px] bg-black/10 flex-1" />
+                        <span className="text-[8px] font-bold text-black/20 uppercase tracking-widest">or</span>
+                        <div className="h-[1px] bg-black/10 flex-1" />
+                      </div>
+                      
+                      <button
+                        onClick={async () => {
+                          setShowAuthPrompt(false);
+                          setIsCheckingOut(true);
+                          const state = useCartStore.getState();
+                          const result = await createShopifyCheckout(items, state.user?.email, state.accessToken);
+                          if (result.success && result.url) {
+                            window.location.href = result.url;
+                            setTimeout(() => setIsCheckingOut(false), 500);
+                          } else {
+                            alert(result.error || "Failed to initiate checkout");
+                            setIsCheckingOut(false);
+                          }
+                        }}
+                        className="text-[9px] font-bold uppercase tracking-[0.25em] text-black/40 hover:text-black transition-colors cursor-pointer"
+                      >
+                        Continue as Guest →
+                      </button>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="cart-content"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="flex-1 flex flex-col overflow-hidden"
+                  >
+                    <div
+                      className="flex-1 overflow-y-auto px-5 pt-6 pb-2 relative"
+                      data-lenis-prevent
+                    >
+                      {items.length === 0 ? (
+                        <div className="h-64 flex flex-col items-center justify-center text-black/20">
+                          <ShoppingBag size={48} strokeWidth={1} className="mb-4 drop-shadow-sm" />
+                          <p className="font-bold tracking-widest text-[10px] uppercase text-black/40">Your bag is empty.</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-6">
+                          {items.map((item: CartItem, index: number) => (
+                            <div key={item.id} className="flex gap-4 group">
+                              <div className="relative w-[72px] h-[72px] rounded-lg bg-[#f4f4f5] overflow-hidden shrink-0 border border-black/5 shadow-sm flex items-center justify-center">
+                                {item.product.src ? (
+                                  <Image src={item.product.src} alt={item.product.title} fill className="object-contain hover:scale-105 transition-transform duration-500 p-1" priority={index === 0} />
+                                ) : (
+                                  <ShoppingBag size={20} className="text-white/20" />
+                                )}
+                              </div>
+
+                              <div className="flex-1 flex flex-col">
+                                <div className="flex justify-between items-start mb-1">
+                                  <div>
+                                    <h4 className="font-extrabold text-[10px] tracking-tight text-black">{item.product.title}</h4>
+                                    <p className="text-[9px] text-black/60 font-medium mt-1">
+                                      {item.size.includes('/') ? item.size.split('/').pop()?.trim() : item.size}
+                                    </p>
+                                  </div>
+                                  <span className="text-[9px] text-black font-medium">{item.product.price}</span>
+                                </div>
+
+                                <div className="mt-auto border-y border-black/10 flex items-stretch h-8 text-[11px]">
+                                  <div className="flex items-center border-r border-black/10 w-[70px] shrink-0">
+                                    <button onClick={() => updateQuantity(item.id, -1)} className="flex-1 h-full flex items-center justify-center hover:bg-black/5 text-[15px] font-medium leading-none">-</button>
+                                    <span className="flex-1 text-center font-medium text-[10px]">{item.quantity}</span>
+                                    <button onClick={() => updateQuantity(item.id, 1)} className="flex-1 h-full flex items-center justify-center hover:bg-black/5 text-[15px] font-medium leading-none">+</button>
+                                  </div>
+
+                                  <button
+                                    onClick={() => removeFromCart(item.id)}
+                                    className="flex-1 h-full flex items-center justify-end pr-3 text-[11px] font-medium hover:bg-black/5 transition-colors"
+                                  >
+                                    Remove
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {items.length > 2 && (
+                        <div className="sticky bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
+                      )}
+                    </div>
+
+                    <div className="mt-auto">
+                      {items.length > 0 && suggestions.length > 0 && (
+                        <div className="bg-[#fcfcfc] border-t border-black/5 pt-5 pb-4 px-5 relative">
+                           <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-black/40 flex items-center gap-2">
+                             <span className="w-4 h-[1px] bg-black/10" />
+                             You May Also Like
+                           </h3>
+                           
+                           <div className="relative group/scroll">
+                             <div 
+                               ref={scrollContainerRef}
+                               onScroll={checkScroll}
+                               className="flex gap-4 overflow-x-auto pb-4 no-scrollbar snap-x snap-mandatory"
+                             >
+                               {suggestions.map((product) => (
+                                 <div key={product.id} className="min-w-[160px] max-w-[160px] snap-start group/suggestion relative">
+                                   <div className="flex gap-3 items-center">
+                                     <div className="relative w-16 h-16 rounded-md bg-[#f4f4f5] border border-black/5 overflow-hidden shrink-0 shadow-sm">
+                                       {product.src && (
+                                         <button 
+                                           onClick={() => {
+                                             closeCart();
+                                             router.push(`/product/${encodeURIComponent(product.id)}`);
+                                           }}
+                                           className="absolute inset-0 z-10"
+                                         >
+                                           <Image src={product.src} alt={product.title} fill className="object-cover group-hover/suggestion:scale-110 transition-transform duration-500" />
+                                         </button>
+                                       )}
+                                     </div>
+                                     <div className="flex-1 min-w-0">
+                                       <button 
+                                         onClick={() => {
+                                           closeCart();
+                                           router.push(`/product/${encodeURIComponent(product.id)}`);
+                                         }}
+                                         className="text-left w-full"
+                                       >
+                                         <p className="text-[9px] font-bold text-black truncate uppercase tracking-tight hover:opacity-60 transition-opacity">{product.title}</p>
+                                       </button>
+                                       <p className="text-[9px] text-black/40 font-medium mt-0.5">{product.price}</p>
+                                       <button 
+                                         onClick={() => addToCart(product, "Free Size")}
+                                         className="mt-1.5 text-[8px] font-bold uppercase tracking-widest text-black/20 hover:text-black transition-colors"
+                                       >
+                                         Add +
+                                       </button>
+                                     </div>
+                                   </div>
+                                 </div>
+                               ))}
+                             </div>
+        
+                             {showScrollArrow && (
+                               <div className="absolute right-[-10px] top-0 bottom-0 w-16 flex items-center justify-center pointer-events-none z-10 bg-gradient-to-l from-[#fcfcfc] via-[#fcfcfc]/80 to-transparent">
+                                 <motion.div
+                                   initial={{ opacity: 0, x: -5 }}
+                                   animate={{ opacity: 1, x: 0 }}
+                                   className="p-1.5 rounded-full bg-white shadow-md border border-black/5"
+                                 >
+                                   <ChevronRight size={14} className="text-black/40" />
+                                 </motion.div>
+                               </div>
+                             )}
+                           </div>
+                        </div>
+                      )}
+
+                      {items.length > 0 && (
+                        <div className="p-5 pt-0 bg-[#fcfcfc] border-t border-black/[0.02]">
+                          <button
+                            disabled={isCheckingOut}
+                            onClick={async () => {
+                              const state = useCartStore.getState();
+                              if (!state.isLoggedIn) {
+                                setShowAuthPrompt(true);
+                                return;
+                              }
+
+                              setIsCheckingOut(true);
+                              const result = await createShopifyCheckout(items, state.user?.email, state.accessToken);
+                              if (result.success && result.url) {
+                                window.location.href = result.url;
+                                setTimeout(() => setIsCheckingOut(false), 500);
+                              } else {
+                                alert(result.error || "Failed to initiate checkout");
+                                setIsCheckingOut(false);
+                              }
+                            }}
+                            className={`w-full bg-black text-white px-6 py-[18px] rounded-[2rem] flex justify-between items-center shadow-lg hover:scale-[1.02] transition-transform ${isCheckingOut ? 'opacity-70 pointer-events-none' : ''} cursor-pointer`}
+                          >
+                            <span className="text-[13px] font-medium">{isCheckingOut ? 'Processing...' : 'Check out'}</span>
+                            <span className="text-[10px] font-bold tracking-wide flex items-center gap-2">
+                              {formattedTotal}
+                              <ArrowRight size={14} />
+                            </span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
                 )}
-              </div>
+              </AnimatePresence>
             </div>
           </motion.div>
         </>
