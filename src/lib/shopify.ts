@@ -867,13 +867,38 @@ export async function createShopifyCheckout(items: any[], email?: string, custom
     let variantId = item.variantId;
     
     // Resolve variant ID from product object if not explicitly provided
-    if (!variantId && item.product?.variants && item.product.variants.length > 0) {
-      const variant = item.product.variants.find((v: any) => v.title === item.size || v.node?.title === item.size);
-      if (variant) variantId = variant.id || variant.node?.id;
-      
-      // Fallback for single-variant products
-      if (!variantId && item.product.variants.length === 1) {
-        variantId = item.product.variants[0].id || item.product.variants[0].node?.id;
+    if (!variantId && item.product) {
+      // Flatten Shopify's GraphQL nested `{ edges: [...] }` structure or use standard array
+      let variantsArray: any[] = [];
+      if (Array.isArray(item.product.variants)) {
+        variantsArray = item.product.variants;
+      } else if (item.product.variants?.edges) {
+        variantsArray = item.product.variants.edges.map((edge: any) => edge.node);
+      } else if (item.product.variants?.nodes) {
+        variantsArray = item.product.variants.nodes;
+      }
+
+      if (variantsArray.length > 0) {
+        // Try finding matching variant by size title
+        const variant = variantsArray.find((v: any) => {
+          const vTitle = (v.title || v.node?.title || "").toLowerCase();
+          const itemSize = (item.size || "").toLowerCase();
+          return vTitle === itemSize || vTitle.includes(itemSize);
+        });
+
+        if (variant) {
+          variantId = variant.id || variant.node?.id;
+        }
+
+        // Fallback: If no size match, but there is only 1 variant (e.g. Free Size / Default Title)
+        if (!variantId && variantsArray.length === 1) {
+          variantId = variantsArray[0].id || variantsArray[0].node?.id;
+        }
+
+        // Ultimate Fallback: If still not resolved, use the first available variant
+        if (!variantId) {
+          variantId = variantsArray[0].id || variantsArray[0].node?.id;
+        }
       }
     }
 
