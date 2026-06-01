@@ -862,7 +862,7 @@ export async function customerAddressCreate(customerAccessToken: string, address
   return response.data?.customerAddressCreate;
 }
 
-export async function createShopifyCheckout(items: any[], email?: string) {
+export async function createShopifyCheckout(items: any[], email?: string, customerAccessToken?: string | null) {
   const lineItems = items.map(item => {
     let variantId = item.variantId;
     
@@ -900,10 +900,14 @@ export async function createShopifyCheckout(items: any[], email?: string) {
     }
   `;
 
+  const buyerIdentity: any = {};
+  if (email) buyerIdentity.email = email;
+  if (customerAccessToken) buyerIdentity.customerAccessToken = customerAccessToken;
+
   const variables = {
     input: {
       lines: lineItems,
-      buyerIdentity: email ? { email } : undefined
+      ...(Object.keys(buyerIdentity).length > 0 ? { buyerIdentity } : {})
     }
   };
 

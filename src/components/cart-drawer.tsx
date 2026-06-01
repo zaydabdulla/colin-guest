@@ -288,7 +288,8 @@ export function CartDrawer() {
                       disabled={isCheckingOut}
                       onClick={async () => {
                         setIsCheckingOut(true);
-                        const result = await createShopifyCheckout(items, useCartStore.getState().user?.email);
+                        const state = useCartStore.getState();
+                        const result = await createShopifyCheckout(items, state.user?.email, state.accessToken);
                         if (result.success && result.url) {
                           window.location.href = result.url;
                           // Reset state after a short delay so if user presses back button, it's not stuck on "Processing"
