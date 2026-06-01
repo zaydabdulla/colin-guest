@@ -21,6 +21,10 @@ const nextConfig: NextConfig = {
         source: "/checkouts/:path*",
         destination: `https://${domain}/checkouts/:path*`,
       },
+      {
+        source: "/cart/c/:path*",
+        destination: `https://${domain}/cart/c/:path*`,
+      },
     ];
   },
 };
