@@ -961,7 +961,12 @@ export async function createShopifyCheckout(items: any[], email?: string, custom
   const checkoutUrl = response.data?.cartCreate?.cart?.checkoutUrl;
 
   if (checkoutUrl) {
-    return { success: true, url: checkoutUrl };
+    // Return relative URL so Next.js rewrites can transparently reverse-proxy checkout on the storefront domain!
+    let formattedUrl = checkoutUrl;
+    if (domain) {
+      formattedUrl = checkoutUrl.replace(`https://${domain}`, "");
+    }
+    return { success: true, url: formattedUrl };
   }
 
   return { success: false, error: "Failed to generate checkout URL." };
