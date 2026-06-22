@@ -251,7 +251,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
             {/* Continuous Black Neon Light Border */}
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
               className="absolute inset-[-250%] bg-[conic-gradient(from_0deg,transparent_0deg,transparent_330deg,#000_360deg)] opacity-30"
             />
 
