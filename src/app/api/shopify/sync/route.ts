@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { syncWishlist, getWishlist, getAdminToken } from '@/app/actions/shopify';
+import { syncWishlist, getWishlist } from '@/app/actions/shopify';
+import { getAdminToken } from '@/lib/shopify-admin';
 import { checkRateLimit } from '@/lib/rate-limit';
 
 const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
