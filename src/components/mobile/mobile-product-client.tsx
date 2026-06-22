@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Product } from "@/lib/data";
 import { useCartStore } from "@/lib/store";
 import { Bookmark, ChevronRight } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ProductCard } from "../product-card";
 import { ShopTheLook } from "../shop-the-look";
 
@@ -57,6 +57,17 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
 
   return (
     <div className="bg-white min-h-screen pb-[120px] pt-[64px] relative overflow-x-hidden w-full max-w-full">
+      {/* Breadcrumbs */}
+      <div className="px-6 py-3 bg-white flex items-center gap-1.5 text-[8px] font-bold text-black/30 uppercase tracking-[0.2em]">
+        <Link href="/" className="hover:text-black transition-colors">Home</Link>
+        <span className="text-black/20">&gt;</span>
+        <Link href="/collections/all" className="hover:text-black transition-colors">
+          {(product.category || product.type || "BESTSELLERS").toUpperCase()}
+        </Link>
+        <span className="text-black/20">&gt;</span>
+        <span className="text-black/60 font-semibold truncate max-w-[150px]">{product.title}</span>
+      </div>
+
       {/* 1. Image Slider */}
       <div className="w-full aspect-[4/5] bg-[#f4f4f4] overflow-hidden relative">
         <div
@@ -92,38 +103,40 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
       </div>
 
       {/* 2. Product Info Section */}
-      <div className="px-6 pt-8 pb-6 bg-white relative z-10">
-        <div className="flex justify-between items-start mb-1">
-          <h1 className="text-xl font-bold tracking-tight text-[#1a1a1a] flex-1 pr-4">
-            {product.title}
-          </h1>
+      <div className="px-6 pt-4 pb-3 bg-white relative z-10">
+        <div className="flex justify-between items-center mb-1 w-full">
+          <div className="flex items-center gap-1.5 flex-1 min-w-0">
+            <h1 className="text-xs font-bold tracking-tight text-[#1a1a1a] truncate">
+              {product.title}
+            </h1>
+            <button
+              type="button"
+              onClick={() => toggleWishlist(product)}
+              className="active:opacity-50 transition-opacity shrink-0 pb-0.5"
+            >
+              <Bookmark
+                size={11}
+                className={`transition-colors pointer-events-none ${isWishlisted ? "fill-black text-black" : "text-black/30"}`}
+              />
+            </button>
+          </div>
           <button
             type="button"
             onClick={() => alert("Size Guide: " + (product.sizeGuide || "Standard fitting."))}
-            className="text-[7px] font-black text-black/40 uppercase tracking-[0.2em] hover:text-black transition-colors pt-2 shrink-0"
+            className="px-2 py-1 bg-black/5 rounded text-[8px] font-bold text-black/50 tracking-wider hover:bg-black/10 transition-colors shrink-0"
           >
             Size Guide
           </button>
         </div>
 
-        <div className="flex justify-between items-center mb-2">
-          <p className="text-sm font-semibold text-black/50 uppercase tracking-wide">
+        <div className="mb-2">
+          <p className="text-[9.5px] font-bold text-black/40">
             {product.price}
           </p>
-          <button
-            type="button"
-            onClick={() => toggleWishlist(product)}
-            className="active:opacity-50 transition-opacity"
-          >
-            <Bookmark
-              size={18}
-              className={`transition-colors pointer-events-none ${isWishlisted ? "fill-black text-black" : "text-black/20"}`}
-            />
-          </button>
         </div>
 
         {/* 3. Size Selection */}
-        <div className="mt-8">
+        <div className="mt-4">
           <div className="grid grid-cols-5 gap-2">
             {product.variants && product.variants.length > 0 ? (
               product.variants.map(variant => (
@@ -131,7 +144,7 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
                   key={variant.id}
                   type="button"
                   onClick={() => variant.availableForSale && setSelectedSize(variant.title)}
-                  className={`py-4 text-[10px] rounded-full font-bold transition-all duration-200 active:scale-95 ${selectedSize === variant.title
+                  className={`py-2.5 text-[9px] rounded-full font-bold transition-all duration-200 active:scale-95 ${selectedSize === variant.title
                     ? 'bg-black text-white border-black'
                     : !variant.availableForSale
                       ? 'bg-[#f5f5f5] text-black/20 pointer-events-none line-through'
@@ -155,12 +168,12 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
         </div>
 
         {/* 4. Action Buttons */}
-        <div className="mt-10 space-y-3">
+        <div className="mt-4 space-y-2">
           <button
             type="button"
             disabled={isAllSoldOut || !selectedSize}
             onClick={() => product && selectedSize && addToCart(product, selectedSize)}
-            className={`w-full py-5 rounded-full border border-black text-[11px] font-black uppercase tracking-[0.2em] transition-all active:scale-[0.98] ${isAllSoldOut || !selectedSize ? 'bg-black/5 text-black/40 border-black/10 cursor-not-allowed' : 'bg-white text-black active:bg-gray-50'
+            className={`w-full py-3.5 rounded-full border border-black text-[9px] font-bold uppercase tracking-[0.2em] transition-all active:scale-[0.98] ${isAllSoldOut || !selectedSize ? 'bg-black/5 text-black/40 border-black/10 cursor-not-allowed' : 'bg-white text-black active:bg-gray-50'
               }`}
           >
             {isAllSoldOut ? 'SOLD OUT' : 'ADD TO BAG'}
@@ -176,7 +189,7 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
                   setTimeout(openCart, 100);
                 }
               }}
-              className={`w-full py-5 rounded-full bg-black text-white text-[11px] font-black uppercase tracking-[0.2em] transition-all active:scale-[0.98] active:bg-black/80 ${!selectedSize ? 'opacity-50 cursor-not-allowed' : ''
+              className={`w-full py-3.5 rounded-full bg-black text-white text-[9px] font-bold uppercase tracking-[0.2em] transition-all active:scale-[0.98] active:bg-black/80 ${!selectedSize ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
             >
               BUY NOW
@@ -185,51 +198,65 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
         </div>
 
         {/* 5. Tabs / Accordion */}
-        <div className="mt-12 bg-[#f8f8f8] rounded-3xl border border-[#eeeeee] overflow-hidden">
-          <div className="flex border-b border-black/5 bg-[#f8f8f8]">
+        <div className="mt-5 bg-[#f8f8f8] rounded-3xl border border-[#eeeeee] overflow-hidden">
+          <div className="flex border-b border-black/5 bg-[#f8f8f8] relative">
             {['Details & Description', 'Washcare', 'Shipping'].map(tab => (
               <button
                 key={tab}
                 type="button"
                 onClick={() => setActiveTab(tab)}
-                className={`flex-1 py-5 px-1 text-[8px] sm:text-[9px] font-black uppercase tracking-widest relative transition-all active:bg-black/5 ${activeTab === tab ? 'text-black' : 'text-black/30'
+                className={`flex-1 py-3 px-1 text-[7px] font-bold uppercase tracking-wide relative transition-all active:bg-black/5 ${activeTab === tab ? 'text-black' : 'text-black/30'
                   }`}
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               >
-                <span className="truncate block w-full px-0.5">{tab}</span>
+                <span className="truncate block w-full px-0.5 relative z-10">{tab}</span>
                 {activeTab === tab && (
-                  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-black" />
+                  <motion.div
+                    layoutId="activeTabUnderline"
+                    className="absolute bottom-0 left-0 right-0 h-[2px] bg-black"
+                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                  />
                 )}
               </button>
             ))}
           </div>
 
-          <div className="p-6 text-[11px] leading-relaxed text-black/60 font-medium min-h-[200px] bg-white">
-            {activeTab === 'Details & Description' && (
-              <div className="space-y-6">
-                <div>
-                  <h4 className="text-black font-bold mb-2">Details</h4>
-                  <p>{product.details || "100% premium cotton construction. Heavyweight fabric (260 gsm). High-definition graphic print."}</p>
-                </div>
-                <div>
-                  <h4 className="text-black font-bold mb-2">Description</h4>
-                  {product.descriptionHtml ? (
-                    <div
-                      className="prose prose-sm max-w-none text-black/60"
-                      dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
-                    />
-                  ) : (
-                    <p>{product.desc || `A signature piece from the Colin Guest collection. Designed for a relaxed, architectural fit that maintains its structure.`}</p>
-                  )}
-                </div>
-              </div>
-            )}
-            {activeTab === 'Washcare' && (
-              <p>{product.washcare || "Machine wash cold inside out. Tumble dry low or hang dry to preserve structural integrity."}</p>
-            )}
-            {activeTab === 'Shipping' && (
-              <p>{product.shipping || "Complimentary express worldwide shipping on orders above $500. Secure tracking provided upon dispatch."}</p>
-            )}
+          <div className="p-5 text-[9px] leading-relaxed text-black/60 font-medium bg-white [&_p]:text-[9px] [&_p]:leading-relaxed [&_ul]:text-[9px] [&_li]:text-[9px] overflow-hidden relative">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, x: 8 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -8 }}
+                transition={{ duration: 0.18, ease: "easeInOut" }}
+              >
+                {activeTab === 'Details & Description' && (
+                  <div className="space-y-6">
+                    <div>
+                      <h4 className="text-black text-[9px] font-bold mb-2">Details</h4>
+                      <p>{product.details || "100% premium cotton construction. Heavyweight fabric (260 gsm). High-definition graphic print."}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-black text-[9px] font-bold mb-2">Description</h4>
+                      {product.descriptionHtml ? (
+                        <div
+                          className="text-[9px] leading-relaxed text-black/60 font-medium [&_p]:text-[9px] [&_p]:leading-relaxed [&_ul]:text-[9px] [&_li]:text-[9px]"
+                          dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+                        />
+                      ) : (
+                        <p>{product.desc || `A signature piece from the Colin Guest collection. Designed for a relaxed, architectural fit that maintains its structure.`}</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+                {activeTab === 'Washcare' && (
+                  <p>{product.washcare || "Machine wash cold inside out. Tumble dry low or hang dry to preserve structural integrity."}</p>
+                )}
+                {activeTab === 'Shipping' && (
+                  <p>{product.shipping || "Complimentary express worldwide shipping on orders above $500. Secure tracking provided upon dispatch."}</p>
+                )}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </div>
