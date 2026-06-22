@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
-import { Search, ShoppingBag, Menu, X, User, Home, Bookmark, Compass, Camera, Send, ChevronRight } from "lucide-react";
+import { Search, ShoppingBag, Menu, X, User, Bookmark, Compass, Film, Send, ChevronRight } from "lucide-react";
 
 import { useCartStore } from "@/lib/store";
 import { getAllCollections, searchProducts } from "@/lib/shopify";
@@ -291,7 +291,7 @@ export function MobileNavbar() {
                 }}
                 className="p-1"
               >
-                <Home className="w-5.5 h-5.5" strokeWidth={1.5} />
+                <Film className="w-5.5 h-5.5" strokeWidth={1.5} />
               </motion.div>
             </Link>
           </div>

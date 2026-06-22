@@ -241,6 +241,26 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
             </div>
           ))}
         </div>
+
+        {/* Discover All Button with rotating black neon border */}
+        <div className="flex justify-center mt-8">
+          <Link
+            href="/collections/all"
+            className="relative group p-[1.2px] overflow-hidden rounded-full active:scale-95 transition-transform"
+          >
+            {/* Continuous Black Neon Light Border */}
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-[-250%] bg-[conic-gradient(from_0deg,transparent_0deg,transparent_330deg,#000_360deg)] opacity-30"
+            />
+
+            {/* Glossy Button Surface */}
+            <div className="relative px-6 py-2.5 bg-white/40 backdrop-blur-[10px] rounded-full border border-black/10 shadow-[0_5px_15px_rgba(0,0,0,0.05)] flex items-center justify-center">
+              <span className="text-black text-[8px] font-bold uppercase tracking-[0.4em] whitespace-nowrap">Discover all</span>
+            </div>
+          </Link>
+        </div>
       </section>
 
     </div>

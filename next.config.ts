@@ -14,19 +14,6 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve("."),
   },
-  async rewrites() {
-    const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || "colinguest-2.myshopify.com";
-    return [
-      {
-        source: "/checkouts/:path*",
-        destination: `https://${domain}/checkouts/:path*`,
-      },
-      {
-        source: "/cart/c/:path*",
-        destination: `https://${domain}/cart/c/:path*`,
-      },
-    ];
-  },
 };
 
 export default nextConfig;
