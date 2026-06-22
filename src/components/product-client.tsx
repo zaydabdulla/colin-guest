@@ -3,12 +3,14 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Bookmark } from "lucide-react";
 import { Product } from "@/lib/data";
 import { useCartStore } from "@/lib/store";
 import { ProductCard } from "@/components/product-card";
 import { MobileProductClient } from "@/components/mobile/mobile-product-client";
 import { ShopTheLook } from "@/components/shop-the-look";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ProductClientProps {
   product: Product;
@@ -74,136 +76,164 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
 
           {/* Rightmost Column: Sticky Checkout Panel */}
           <div className="flex-1 sticky top-[80px] h-[calc(100vh-80px)] pb-4 shrink-0 overflow-y-auto hide-scrollbar">
-             <div className="bg-[#fcfcfc] rounded-2xl p-6 min-h-full flex flex-col border border-black/5 shadow-sm">
-                
-                <div className="flex items-center justify-between mb-2">
-                  <h1 className="text-xl font-bold tracking-tight">{product.title}</h1>
-                  <button onClick={() => toggleWishlist(product)} className="text-black/40 hover:text-black transition-colors">
-                    <Bookmark size={20} className={isWishlisted ? "fill-black text-black" : ""} />
+             <div className="bg-[#fcfcfc] rounded-2xl p-5 min-h-full flex flex-col border border-black/5 shadow-sm">
+
+                <div className="flex justify-between items-center mb-1 w-full">
+                  <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                    <h1 className="text-xs font-bold tracking-tight text-[#1a1a1a] truncate">
+                      {product.title}
+                    </h1>
+                    <button
+                      type="button"
+                      onClick={() => toggleWishlist(product)}
+                      className="active:opacity-50 transition-opacity shrink-0 pb-0.5"
+                    >
+                      <Bookmark
+                        size={11}
+                        className={`transition-colors pointer-events-none ${isWishlisted ? "fill-black text-black" : "text-black/30"}`}
+                      />
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => alert("Size Guide: " + (product.sizeGuide || "Standard fitting."))}
+                    className="px-2 py-1 bg-black/5 rounded text-[8px] font-bold text-black/50 tracking-wider hover:bg-black/10 transition-colors shrink-0"
+                  >
+                    Size Guide
                   </button>
                 </div>
-                <div className="flex justify-between items-center mb-6">
-                  <p className="text-xs font-semibold text-black/60">{product.price}</p>
-                  {product.sizeGuide ? (
-                    <div 
-                      onClick={() => {
-                        // Logic for size guide - maybe a popup or scroll to section
-                        alert("Size Guide: " + product.sizeGuide);
-                      }}
-                      className="bg-black/10 px-3 py-1.5 rounded text-[8px] font-extrabold cursor-pointer hover:bg-black/20 uppercase tracking-widest text-black/70"
-                    >
-                      Size Guide
-                    </div>
-                  ) : (
-                    <div className="bg-black/10 px-3 py-1.5 rounded text-[8px] font-extrabold cursor-not-allowed uppercase tracking-widest text-black/30">Size Guide</div>
-                  )}
+
+                <div className="mb-2">
+                  <p className="text-[9.5px] font-bold text-black/40">
+                    {product.price}
+                  </p>
                 </div>
                 
-                <div className="grid grid-cols-4 lg:grid-cols-5 gap-2 mb-6">
-                  {product.variants && product.variants.length > 0 ? (
-                    product.variants.map(variant => (
-                      <button 
-                        key={variant.id} 
-                        onClick={() => variant.availableForSale && setSelectedSize(variant.title)}
-                        className={`py-2 text-[9px] rounded-full font-bold transition-all duration-300 ${
-                          selectedSize === variant.title 
-                            ? 'border border-black bg-black text-white' 
-                            : !variant.availableForSale
-                              ? 'bg-[rgba(0,0,0,0.05)] text-black/30 pointer-events-none line-through decoration-black/30'
-                              : 'border border-black/10 bg-white hover:border-black'
-                        }`}
-                      >
-                        {(() => {
-                          // 1. Try to find the explicit "Size" option value
-                          const sizeOpt = variant.selectedOptions?.find((opt: any) => opt.name.toLowerCase() === 'size');
-                          if (sizeOpt) return sizeOpt.value;
-                          
-                          // 2. If no explicit size option, but it's a multi-option title (e.g. "White / S")
-                          if (variant.title.includes('/')) {
-                            const parts = variant.title.split('/').map((p: string) => p.trim());
-                            // We take the last part assuming it's the size
-                            return parts.pop();
-                          }
-                          
-                          // 3. If it's a single option and looks like a color, or we can't find a size, return "ONE SIZE"
-                          // This handles products that might only have color variants or are "Universal" fit
-                          const colorNames = ['white', 'black', 'blue', 'red', 'green', 'grey', 'gray', 'yellow', 'brown', 'purple', 'navy', 'orange', 'olive', 'khaki', 'acid wash', 'faded'];
-                          if (colorNames.some(color => variant.title.toLowerCase().includes(color))) {
-                            return "ONE SIZE";
-                          }
-                          
-                          return variant.title;
-                        })()}
-                      </button>
-                    ))
-                  ) : (
-                    <div className="col-span-full py-2 text-[9px] font-bold text-black/40 uppercase tracking-[0.2em] italic">
-                      Standard Archival Fit / One Size
-                    </div>
-                  )}
+                {/* Size Selection */}
+                <div className="mt-4 mb-4">
+                  <div className="grid grid-cols-4 lg:grid-cols-5 gap-2">
+                    {product.variants && product.variants.length > 0 ? (
+                      product.variants.map(variant => (
+                        <button 
+                          key={variant.id} 
+                          onClick={() => variant.availableForSale && setSelectedSize(variant.title)}
+                          className={`py-2 text-[9px] rounded-full font-bold transition-all duration-300 ${
+                            selectedSize === variant.title 
+                              ? 'border border-black bg-black text-white' 
+                              : !variant.availableForSale
+                                ? 'bg-[rgba(0,0,0,0.05)] text-black/30 pointer-events-none line-through decoration-black/30'
+                                : 'border border-black/10 bg-white hover:border-black'
+                          }`}
+                        >
+                          {(() => {
+                            // 1. Try to find the explicit "Size" option value
+                            const sizeOpt = variant.selectedOptions?.find((opt: any) => opt.name.toLowerCase() === 'size');
+                            if (sizeOpt) return sizeOpt.value;
+                            
+                            // 2. If no explicit size option, but it's a multi-option title (e.g. "White / S")
+                            if (variant.title.includes('/')) {
+                              const parts = variant.title.split('/').map((p: string) => p.trim());
+                              // We take the last part assuming it's the size
+                              return parts.pop();
+                            }
+                            
+                            // 3. If it's a single option and looks like a color, or we can't find a size, return "ONE SIZE"
+                            // This handles products that might only have color variants or are "Universal" fit
+                            const colorNames = ['white', 'black', 'blue', 'red', 'green', 'grey', 'gray', 'yellow', 'brown', 'purple', 'navy', 'orange', 'olive', 'khaki', 'acid wash', 'faded'];
+                            if (colorNames.some(color => variant.title.toLowerCase().includes(color))) {
+                              return "ONE SIZE";
+                            }
+                            
+                            return variant.title;
+                          })()}
+                        </button>
+                      ))
+                    ) : (
+                      <div className="col-span-full py-2 text-[9px] font-bold text-black/40 uppercase tracking-[0.2em] italic">
+                        Standard Archival Fit / One Size
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <div className="flex gap-3 mb-6">
+                <div className="flex gap-3 mb-4">
                   <button 
                     disabled={isAllSoldOut || !selectedSize}
                     onClick={() => product && selectedSize && addToCart(product, selectedSize)}
-                    className={`flex-1 border border-black/10 bg-white text-black py-3 rounded-full text-[9px] font-extrabold uppercase hover:border-black transition-colors shadow-sm tracking-[0.1em] ${isAllSoldOut ? 'opacity-30 cursor-not-allowed' : ''}`}
+                    className={`flex-1 border border-black/10 bg-white text-black py-3 rounded-full text-[9px] font-bold uppercase hover:border-black transition-colors shadow-sm tracking-[0.1em] ${isAllSoldOut ? 'opacity-30 cursor-not-allowed' : ''}`}
                   >
                     {isAllSoldOut ? 'SOLD OUT' : 'ADD TO BAG'}
                   </button>
                   {!isAllSoldOut && (
                     <button 
                       onClick={() => { product && selectedSize && addToCart(product, selectedSize || 'M'); setTimeout(openCart, 100); }}
-                      className="flex-1 bg-black border border-black text-white py-3 rounded-full text-[9px] font-extrabold uppercase hover:bg-black/80 transition-colors shadow-sm tracking-[0.1em]"
+                      className="flex-1 bg-black border border-black text-white py-3 rounded-full text-[9px] font-bold uppercase hover:bg-black/80 transition-colors shadow-sm tracking-[0.1em]"
                     >
                       BUY NOW
                     </button>
                   )}
                 </div>
 
-                <div className="mt-0 bg-white rounded-2xl border border-black/5 overflow-hidden shadow-sm mb-4">
-                  <div className="flex">
+                {/* Tabs / Accordion */}
+                <div className="mt-2 bg-[#f8f8f8] rounded-3xl border border-[#eeeeee] overflow-hidden">
+                  <div className="flex border-b border-black/5 bg-[#f8f8f8] relative">
                     {['Details & Description', 'Washcare', 'Shipping'].map(tab => (
-                      <button 
+                      <button
                         key={tab}
+                        type="button"
                         onClick={() => setActiveTab(tab)}
-                        className={`flex-1 py-4 text-[9px] font-extrabold uppercase tracking-widest transition-colors ${activeTab === tab ? 'border-b-2 border-black text-black' : 'border-b-2 border-transparent text-black/40 hover:text-black bg-[#fafafa]'}`}
+                        className={`flex-1 py-3 px-1 text-[7px] font-bold uppercase tracking-wide relative transition-all active:bg-black/5 ${activeTab === tab ? 'text-black' : 'text-black/30'
+                          }`}
+                        style={{ WebkitTapHighlightColor: 'transparent' }}
                       >
-                        {tab}
+                        <span className="truncate block w-full px-0.5 relative z-10">{tab}</span>
+                        {activeTab === tab && (
+                          <motion.div
+                            layoutId="activeTabUnderlineDesktop"
+                            className="absolute bottom-0 left-0 right-0 h-[2px] bg-black"
+                            transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                          />
+                        )}
                       </button>
                     ))}
                   </div>
-                  
-                  <div className="p-5 text-[10px] font-medium text-black/50 leading-relaxed">
-                    {activeTab === 'Details & Description' && (
-                      <div className="space-y-4">
-                        <div>
-                          <strong className="text-black block mb-1 font-bold">Details</strong>
-                          {product.details || "100% premium quality. Weight - 250 gsm. Screen print."}
-                        </div>
-                        <div>
-                          <strong className="text-black block mb-1 font-bold">Description</strong>
-                          {product.descriptionHtml ? (
-                            <div 
-                              className="prose prose-sm max-w-none text-black/50"
-                              dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
-                            />
-                          ) : (
-                            <>Strong, clean, and easy to style. The {product.title.toLowerCase()} is designed for everyday luxury with a bold edge. {product.desc}</>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                    {activeTab === 'Washcare' && (
-                      <div className="space-y-4">
-                        {product.washcare || "Dry clean only. Avoid abrasive surfaces. Machine wash cold inside out if necessary. Hang dry to preserve perfectly tailored structural integrity. Do not bleach."}
-                      </div>
-                    )}
-                    {activeTab === 'Shipping' && (
-                      <div className="space-y-4">
-                        {product.shipping || "Complimentary express shipping on all orders. Dispatch within 24 hours. Returns guaranteed within 30 days of standard receipt. Items must be in pristine condition."}
-                      </div>
-                    )}
+
+                  <div className="p-5 text-[9px] leading-relaxed text-black/60 font-medium bg-white [&_p]:text-[9px] [&_p]:leading-relaxed [&_ul]:text-[9px] [&_li]:text-[9px] overflow-hidden relative">
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={activeTab}
+                        initial={{ opacity: 0, x: 8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -8 }}
+                        transition={{ duration: 0.18, ease: "easeInOut" }}
+                      >
+                        {activeTab === 'Details & Description' && (
+                          <div className="space-y-6">
+                            <div>
+                              <h4 className="text-black text-[9px] font-bold mb-2">Details</h4>
+                              <p>{product.details || "100% premium cotton construction. Heavyweight fabric (260 gsm). High-definition graphic print."}</p>
+                            </div>
+                            <div>
+                              <h4 className="text-black text-[9px] font-bold mb-2">Description</h4>
+                              {product.descriptionHtml ? (
+                                <div
+                                  className="text-[9px] leading-relaxed text-black/60 font-medium [&_p]:text-[9px] [&_p]:leading-relaxed [&_ul]:text-[9px] [&_li]:text-[9px]"
+                                  dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+                                />
+                              ) : (
+                                <p>{product.desc || `A signature piece from the Colin Guest collection. Designed for a relaxed, architectural fit that maintains its structure.`}</p>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {activeTab === 'Washcare' && (
+                          <p>{product.washcare || "Machine wash cold inside out. Tumble dry low or hang dry to preserve structural integrity."}</p>
+                        )}
+                        {activeTab === 'Shipping' && (
+                          <p>{product.shipping || "Complimentary express worldwide shipping on orders above $500. Secure tracking provided upon dispatch."}</p>
+                        )}
+                      </motion.div>
+                    </AnimatePresence>
                   </div>
                 </div>
              </div>
@@ -218,6 +248,26 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                {suggestedProducts.map((suggested, i) => (
                  <ProductCard key={suggested.id} product={suggested} index={i} />
                ))}
+            </div>
+
+            {/* Discover All Button with rotating black neon border */}
+            <div className="flex justify-center mt-12 relative z-10">
+              <Link
+                href="/collections/all"
+                className="relative group p-[1.2px] overflow-hidden rounded-full active:scale-95 transition-transform"
+              >
+                {/* Continuous Black Neon Light Border */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 4.2, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-[-250%] bg-[conic-gradient(from_0deg,transparent_0deg,transparent_330deg,#000_360deg)] opacity-30"
+                />
+
+                {/* Glossy Button Surface */}
+                <div className="relative px-6 py-2.5 bg-white/40 backdrop-blur-[10px] rounded-full border border-black/10 shadow-[0_5px_15px_rgba(0,0,0,0.05)] flex items-center justify-center">
+                  <span className="text-black text-[8px] font-bold uppercase tracking-[0.4em] whitespace-nowrap">Discover all</span>
+                </div>
+              </Link>
             </div>
           </div>
         </section>
