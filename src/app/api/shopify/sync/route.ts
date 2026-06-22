@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { syncWishlist, getWishlist, getAdminToken } from '@/app/actions/shopify';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
 
@@ -79,7 +80,12 @@ async function saveShopifySyncData(customerId: string, wishlist: any[], cart: an
 
 export async function POST(request: Request) {
   try {
-    const { customerId, wishlist, cart } = await request.json();
+    const body = await request.json();
+    const { customerId, wishlist, cart } = body;
+
+    // Rate Limit Check
+    const rateLimitResponse = await checkRateLimit(request, { userId: customerId });
+    if (rateLimitResponse) return rateLimitResponse;
 
     if (!customerId) {
       return NextResponse.json({ error: 'Missing customerId' }, { status: 400 });
@@ -97,6 +103,10 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const customerId = searchParams.get('customerId');
+
+    // Rate Limit Check
+    const rateLimitResponse = await checkRateLimit(request, { userId: customerId });
+    if (rateLimitResponse) return rateLimitResponse;
 
     if (!customerId) {
       return NextResponse.json({ error: 'Missing customerId' }, { status: 400 });
