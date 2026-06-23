@@ -11,6 +11,7 @@ import { ProductCard } from "@/components/product-card";
 import { MobileProductClient } from "@/components/mobile/mobile-product-client";
 import { ShopTheLook } from "@/components/shop-the-look";
 import { motion, AnimatePresence } from "framer-motion";
+import { PincodeChecker } from "@/components/pincode-checker";
 
 interface ProductClientProps {
   product: Product;
@@ -173,6 +174,9 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                     </button>
                   )}
                 </div>
+
+                {/* Pincode Checker */}
+                <PincodeChecker />
 
                 {/* Tabs / Accordion */}
                 <div className="mt-2 bg-[#f8f8f8] rounded-3xl border border-[#eeeeee] overflow-hidden">

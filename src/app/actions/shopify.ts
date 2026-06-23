@@ -452,6 +452,14 @@ export async function getCustomerOrders(email: string) {
                 }
               }
               displayFulfillmentStatus
+              fulfillments(first: 2) {
+                id
+                trackingInfo {
+                  company
+                  number
+                  url
+                }
+              }
               lineItems(first: 10) {
                 edges {
                   node {
@@ -499,6 +507,11 @@ export async function getCustomerOrders(email: string) {
       total: edge.node.totalPriceSet.shopMoney.amount,
       currency: edge.node.totalPriceSet.shopMoney.currencyCode,
       status: edge.node.displayFulfillmentStatus,
+      fulfillments: edge.node.fulfillments?.map((f: any) => ({
+        company: f.trackingInfo?.[0]?.company || 'Delhivery',
+        number: f.trackingInfo?.[0]?.number,
+        url: f.trackingInfo?.[0]?.url || (f.trackingInfo?.[0]?.number ? `https://www.delhivery.com/track/package/${f.trackingInfo[0].number}` : null)
+      })).filter((f: any) => f.number) || [],
       items: edge.node.lineItems.edges.map((li: any) => ({
         title: li.node.title,
         quantity: li.node.quantity,

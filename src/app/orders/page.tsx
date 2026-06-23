@@ -27,6 +27,12 @@ interface OrderItem {
   handle: string | null;
 }
 
+interface FulfillmentInfo {
+  company: string;
+  number: string;
+  url: string | null;
+}
+
 interface Order {
   id: string;
   name: string;
@@ -34,6 +40,7 @@ interface Order {
   total: string;
   currency: string;
   status: string;
+  fulfillments?: FulfillmentInfo[];
   items: OrderItem[];
 }
 
@@ -209,7 +216,19 @@ export default function OrdersPage() {
                 </div>
 
                 {/* Footer Action */}
-                <div className="px-6 py-4 bg-[#f9f9f9]/30 border-t border-black/5 flex justify-end">
+                <div className="px-6 py-4 bg-[#f9f9f9]/30 border-t border-black/5 flex justify-between items-center">
+                   <div>
+                     {order.fulfillments && order.fulfillments.length > 0 && order.fulfillments[0].number && (
+                       <a 
+                         href={order.fulfillments[0].url || `https://www.delhivery.com/track/package/${order.fulfillments[0].number}`} 
+                         target="_blank" 
+                         rel="noopener noreferrer"
+                         className="text-[9px] font-bold uppercase tracking-widest bg-black text-white px-4 py-2 rounded-full hover:bg-black/80 transition-colors flex items-center gap-1.5"
+                       >
+                         Track Shipment ({order.fulfillments[0].number}) <ExternalLink size={10} />
+                       </a>
+                     )}
+                   </div>
                    <button className="text-[9px] font-bold uppercase tracking-widest text-black/30 hover:text-black transition-colors flex items-center gap-1.5">
                      Digital Invoice <ExternalLink size={10} />
                    </button>

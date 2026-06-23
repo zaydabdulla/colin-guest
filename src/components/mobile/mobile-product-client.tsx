@@ -9,6 +9,7 @@ import { Bookmark, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ProductCard } from "../product-card";
 import { ShopTheLook } from "../shop-the-look";
+import { PincodeChecker } from "@/components/pincode-checker";
 
 interface MobileProductClientProps {
   product: Product;
@@ -196,6 +197,9 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
             </button>
           )}
         </div>
+
+        {/* Pincode Checker */}
+        <PincodeChecker />
 
         {/* 5. Tabs / Accordion */}
         <div className="mt-5 bg-[#f8f8f8] rounded-3xl border border-[#eeeeee] overflow-hidden">
