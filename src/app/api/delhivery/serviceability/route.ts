@@ -37,8 +37,9 @@ export async function GET(request: Request) {
     }
 
     // Handle both boolean and "Y"/"N" format representation from Delhivery's API
-    const isServiceable = item.is_serviceable === true || item.is_serviceable === 'Y' || String(item.is_serviceable).toLowerCase() === 'true';
-    const isCod = item.cod === true || item.cod === 'Y' || String(item.cod).toLowerCase() === 'true';
+    const isCod = item.cod === 'Y' || item.cod === true || String(item.cod).toLowerCase() === 'true';
+    const isPrepaid = item.pre_paid === 'Y' || item.pre_paid === true || String(item.pre_paid).toLowerCase() === 'true';
+    const isServiceable = isPrepaid || isCod || item.is_serviceable === 'Y' || item.is_serviceable === true;
 
     return NextResponse.json({
       deliverable: isServiceable,
