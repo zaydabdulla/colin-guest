@@ -23,7 +23,11 @@ export function PincodeChecker() {
     try {
       const res = await fetch(`/api/delhivery/serviceability?pincode=${pincode}&t=${Date.now()}`);
       const data = await res.json();
-      setResult(data);
+      if (!res.ok || data.error) {
+        setError(data.error || 'Verification failed. Try again.');
+      } else {
+        setResult(data);
+      }
     } catch (err) {
       setError('Verification failed. Try again.');
     } finally {
