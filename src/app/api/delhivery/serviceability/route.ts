@@ -2,6 +2,32 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
+function getTransitDays(stateCode?: string): { minDays: number; maxDays: number; label: string } {
+  if (!stateCode) return { minDays: 3, maxDays: 5, label: '3-5 business days' };
+  
+  const code = stateCode.toUpperCase();
+  
+  // Local (Kerala)
+  if (code === 'KL') {
+    return { minDays: 2, maxDays: 3, label: '2-3 business days' };
+  }
+  
+  // South India Regional (Tamil Nadu, Karnataka, Andhra Pradesh, Telangana, Goa, Pondicherry)
+  const southIndia = ['TN', 'KA', 'AP', 'TG', 'GA', 'PY'];
+  if (southIndia.includes(code)) {
+    return { minDays: 3, maxDays: 4, label: '3-4 business days' };
+  }
+  
+  // Remote / North-East / J&K / Islands
+  const remoteStates = ['JK', 'AR', 'AS', 'MN', 'ML', 'MZ', 'NL', 'SK', 'TR', 'AN', 'LD', 'HP', 'UT'];
+  if (remoteStates.includes(code)) {
+    return { minDays: 7, maxDays: 10, label: '7-10 business days' };
+  }
+  
+  // Standard National (Rest of India - UP, Delhi, Maharashtra, Karnataka, etc.)
+  return { minDays: 5, maxDays: 7, label: '5-7 business days' };
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const pincode = searchParams.get('pincode');
@@ -43,12 +69,16 @@ export async function GET(request: Request) {
     const isPrepaid = item.pre_paid === 'Y' || item.pre_paid === true || String(item.pre_paid).toLowerCase() === 'true';
     const isServiceable = isPrepaid || isCod || item.is_serviceable === 'Y' || item.is_serviceable === true;
 
+    const transit = getTransitDays(item.state_code);
+
     return NextResponse.json({
       deliverable: isServiceable,
       cod: isCod,
       district: item.district,
       state: item.state_code,
-      eta: '3-5 business days'
+      eta: transit.label,
+      minDays: transit.minDays,
+      maxDays: transit.maxDays
     }, {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
