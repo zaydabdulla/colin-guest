@@ -21,7 +21,7 @@ export function PincodeChecker() {
     setResult(null);
 
     try {
-      const res = await fetch(`/api/delhivery/serviceability?pincode=${pincode}`);
+      const res = await fetch(`/api/delhivery/serviceability?pincode=${pincode}&t=${Date.now()}`);
       const data = await res.json();
       setResult(data);
     } catch (err) {

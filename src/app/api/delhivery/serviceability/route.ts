@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const pincode = searchParams.get('pincode');
@@ -47,6 +49,12 @@ export async function GET(request: Request) {
       district: item.district,
       state: item.state_code,
       eta: '3-5 business days'
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
     });
   } catch (error) {
     console.error("Delhivery API error:", error);
