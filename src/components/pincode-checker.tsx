@@ -115,8 +115,8 @@ export function PincodeChecker() {
   };
 
   return (
-    <div className="w-full mt-4 font-sans pt-4 border-t border-black/5">
-      <h4 className="text-[7px] font-bold uppercase tracking-[0.25em] text-black/30 mb-2.5 flex items-center gap-1">
+    <div className="w-full mt-2.5 font-sans pt-2.5 border-t border-black/5">
+      <h4 className="text-[7px] font-bold uppercase tracking-[0.25em] text-black/30 mb-2 flex items-center gap-1">
         <Truck size={9} strokeWidth={2.5} /> Check Delivery Details
       </h4>
       <form onSubmit={handleCheck} className="flex gap-2">
@@ -158,9 +158,9 @@ export function PincodeChecker() {
             className="overflow-hidden"
           >
             {result.deliverable ? (
-              <div className="mt-5 pt-4 border-t border-black/5">
+              <div className="mt-3.5 pt-2.5 border-t border-black/5">
                 {/* Header Status */}
-                <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center justify-between mb-3.5">
                   <div className="flex items-center gap-1 text-green-600 font-extrabold text-[8px] uppercase tracking-wider">
                     <Check size={9} strokeWidth={3} /> 
                     <span>Deliverable to {result.district || 'Your Pincode'}</span>
@@ -171,14 +171,14 @@ export function PincodeChecker() {
                 </div>
 
                 {/* Horizontal Timeline Graphic */}
-                <div className="relative flex justify-between items-start px-1 py-2 mb-2">
+                <div className="relative flex justify-between items-start px-1 py-1 mb-1">
                   {/* Connecting Line */}
-                  <div className="absolute top-[17px] left-[12%] right-[12%] h-[1.5px] bg-black/10 z-0" />
+                  <div className="absolute top-[14px] left-[12%] right-[12%] h-[1.5px] bg-black/10 z-0" />
                   
                   {/* Step 1: Ordered */}
                   <motion.div variants={stepVariants} className="flex flex-col items-center text-center w-[30%] z-10">
-                    <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white mb-2 border border-black/10 shadow-sm">
-                      <ClipboardList size={11} strokeWidth={2.2} />
+                    <div className="w-[26px] h-[26px] rounded-full bg-black flex items-center justify-center text-white mb-1.5 border border-black/10 shadow-sm">
+                      <ClipboardList size={9} strokeWidth={2.2} />
                     </div>
                     <span className="text-[7.5px] font-bold text-black uppercase tracking-wider">Ordered</span>
                     <span className="text-[7px] text-black/40 font-semibold mt-0.5 whitespace-nowrap">
@@ -188,8 +188,8 @@ export function PincodeChecker() {
 
                   {/* Step 2: Dispatch */}
                   <motion.div variants={stepVariants} className="flex flex-col items-center text-center w-[30%] z-10">
-                    <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white mb-2 border border-black/10 shadow-sm">
-                      <Truck size={11} strokeWidth={2.2} />
+                    <div className="w-[26px] h-[26px] rounded-full bg-black flex items-center justify-center text-white mb-1.5 border border-black/10 shadow-sm">
+                      <Truck size={9} strokeWidth={2.2} />
                     </div>
                     <span className="text-[7.5px] font-bold text-black uppercase tracking-wider">Ready to Ship</span>
                     <span className="text-[7px] text-black/40 font-semibold mt-0.5 whitespace-nowrap">
@@ -202,9 +202,9 @@ export function PincodeChecker() {
                     <motion.div 
                       variants={pulseVariants}
                       animate="pulse"
-                      className="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white mb-2 border border-black/10 shadow-sm relative"
+                      className="w-[26px] h-[26px] rounded-full bg-black flex items-center justify-center text-white mb-1.5 border border-black/10 shadow-sm relative"
                     >
-                      <Package size={11} strokeWidth={2.2} />
+                      <Package size={9} strokeWidth={2.2} />
                     </motion.div>
                     <span className="text-[7.5px] font-bold text-black uppercase tracking-wider">Delivered</span>
                     <span className="text-[7px] text-black font-bold mt-0.5 whitespace-nowrap">
@@ -217,7 +217,7 @@ export function PincodeChecker() {
               <motion.div 
                 initial={{ opacity: 0, y: -2 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-1 text-red-500 font-extrabold text-[8px] uppercase tracking-wider mt-3"
+                className="flex items-center gap-1 text-red-500 font-extrabold text-[8px] uppercase tracking-wider mt-2.5"
               >
                 <AlertCircle size={9} strokeWidth={3} /> <span>NON-SERVICEABLE PINCODE</span>
               </motion.div>

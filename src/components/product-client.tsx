@@ -43,7 +43,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
 
       {/* Desktop View - Strict Isolation */}
       <main className="hidden md:block bg-[#fcfcfc] text-black font-sans relative">
-        <div className="flex w-full min-h-screen pt-[80px] px-4 gap-4">
+        <div className="flex w-full min-h-screen pt-[80px] px-4 gap-4 items-start">
           
           {/* Leftmost Column: Static Anchor */}
           <div className="flex-1 sticky top-[80px] h-[calc(100vh-80px)] pb-4 shrink-0 flex items-center justify-center">
@@ -76,8 +76,8 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
           </div>
 
           {/* Rightmost Column: Sticky Checkout Panel */}
-          <div className="flex-1 sticky top-[80px] h-[calc(100vh-80px)] pb-4 shrink-0 overflow-y-auto hide-scrollbar">
-             <div className="bg-[#fcfcfc] rounded-2xl p-5 min-h-full flex flex-col border border-black/5 shadow-sm">
+          <div className="flex-1 sticky top-[80px] h-[calc(100vh-80px)] pb-4 shrink-0 overflow-y-auto custom-scrollbar">
+             <div className="bg-[#fcfcfc] rounded-2xl p-5 min-h-full border border-black/5 shadow-sm">
 
                 <div className="flex justify-between items-center mb-1 w-full">
                   <div className="flex items-center gap-1.5 flex-1 min-w-0">
@@ -111,7 +111,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                 </div>
                 
                 {/* Size Selection */}
-                <div className="mt-4 mb-4">
+                <div className="mt-3 mb-3">
                   <div className="grid grid-cols-4 lg:grid-cols-5 gap-2">
                     {product.variants && product.variants.length > 0 ? (
                       product.variants.map(variant => (
@@ -157,7 +157,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                   </div>
                 </div>
 
-                <div className="flex gap-3 mb-4">
+                <div className="flex gap-3 mb-3">
                   <button 
                     disabled={isAllSoldOut || !selectedSize}
                     onClick={() => product && selectedSize && addToCart(product, selectedSize)}
@@ -202,7 +202,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                     ))}
                   </div>
 
-                  <div className="p-5 text-[9px] leading-relaxed text-black/60 font-medium bg-white [&_p]:text-[9px] [&_p]:leading-relaxed [&_ul]:text-[9px] [&_li]:text-[9px] overflow-hidden relative">
+                  <div className="py-3 px-4 text-[9px] leading-relaxed text-black/60 font-medium bg-white [&_p]:text-[9px] [&_p]:leading-relaxed [&_ul]:text-[9px] [&_li]:text-[9px] overflow-hidden relative">
                     <AnimatePresence mode="wait">
                       <motion.div
                         key={activeTab}
@@ -277,6 +277,20 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
         </section>
 
         <style dangerouslySetInnerHTML={{__html: `
+          .custom-scrollbar::-webkit-scrollbar {
+            width: 2.5px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.12);
+            border-radius: 99px;
+            transition: background 0.2s ease;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.25);
+          }
           .hide-scrollbar::-webkit-scrollbar { display: none; }
           .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         `}} />
