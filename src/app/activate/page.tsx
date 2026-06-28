@@ -35,6 +35,8 @@ function ActivateContent() {
       
       if (!id || !token) {
         setError("This link is incomplete or invalid. Please request a new " + (isReset ? "password reset" : "activation") + " email.");
+      } else {
+        setError(null);
       }
     }
   }, [id, token, isReset, mode, searchParams]);
