@@ -50,6 +50,39 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isHydrated, setIsHydrated] = useState(false);
+  
+  const [activeTrackingAwb, setActiveTrackingAwb] = useState<string | null>(null);
+  const [trackingDetails, setTrackingDetails] = useState<any | null>(null);
+  const [trackingLoading, setTrackingLoading] = useState(false);
+  const [trackingError, setTrackingError] = useState<string | null>(null);
+
+  const handleTrackShipment = async (awb: string) => {
+    if (activeTrackingAwb === awb) {
+      setActiveTrackingAwb(null);
+      setTrackingDetails(null);
+      return;
+    }
+
+    setActiveTrackingAwb(awb);
+    setTrackingLoading(true);
+    setTrackingError(null);
+    setTrackingDetails(null);
+
+    try {
+      const res = await fetch(`/api/delhivery/track?awb=${awb}`);
+      if (!res.ok) throw new Error("Failed to load tracking data");
+      const data = await res.json();
+      if (data.found) {
+        setTrackingDetails(data);
+      } else {
+        setTrackingError("Shipment details not found yet. Courier update pending.");
+      }
+    } catch (err) {
+      setTrackingError("Error fetching tracking details. Please try again.");
+    } finally {
+      setTrackingLoading(false);
+    }
+  };
 
   useEffect(() => {
     setIsHydrated(true);
@@ -215,18 +248,114 @@ export default function OrdersPage() {
                   </div>
                 </div>
 
+                {/* Real-time Tracking Timeline */}
+                <AnimatePresence>
+                  {activeTrackingAwb && order.fulfillments && order.fulfillments.length > 0 && activeTrackingAwb === order.fulfillments[0].number && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="border-t border-black/5 bg-[#fcfcfc] overflow-hidden"
+                    >
+                      <div className="p-6 font-sans">
+                        <div className="flex items-center justify-between mb-4 pb-2 border-b border-black/[0.04]">
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-[8px] font-extrabold uppercase tracking-widest text-black/40">Status:</span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-black">
+                              {trackingLoading ? "Retrieving..." : trackingDetails?.status || "In Transit"}
+                            </span>
+                          </div>
+                          {trackingDetails?.awb && (
+                            <span className="text-[8px] font-bold text-black/30 tracking-widest uppercase">
+                              AWB: {trackingDetails.awb}
+                            </span>
+                          )}
+                        </div>
+
+                        {trackingLoading && (
+                          <div className="flex items-center justify-center py-8 gap-2">
+                            <Loader2 size={12} className="animate-spin text-black/40" />
+                            <span className="text-[8px] font-bold uppercase tracking-widest text-black/30">Connecting to Delhivery...</span>
+                          </div>
+                        )}
+
+                        {trackingError && (
+                          <div className="py-4 text-center">
+                            <span className="text-[9px] font-semibold text-black/40 uppercase tracking-wider">{trackingError}</span>
+                          </div>
+                        )}
+
+                        {trackingDetails && trackingDetails.scans && trackingDetails.scans.length > 0 ? (
+                          <div className="relative pl-4 border-l border-black/10 space-y-5 py-2">
+                            {trackingDetails.scans.map((scan: any, sIdx: number) => (
+                              <div key={sIdx} className="relative group/scan">
+                                {/* Dot on the vertical line */}
+                                <div className={`absolute -left-[20.5px] top-1 w-[9px] h-[9px] rounded-full border-2 border-white transition-colors duration-300 ${sIdx === 0 ? 'bg-black' : 'bg-black/25'}`} />
+                                
+                                <div className="flex flex-col gap-0.5">
+                                  <div className="flex items-baseline justify-between gap-4">
+                                    <span className={`text-[9.5px] font-bold uppercase tracking-wide ${sIdx === 0 ? 'text-black' : 'text-black/60'}`}>
+                                      {scan.status}
+                                    </span>
+                                    {scan.dateTime && (
+                                      <span className="text-[8px] font-bold text-black/30 uppercase tracking-widest whitespace-nowrap">
+                                        {new Date(scan.dateTime).toLocaleString('en-US', {
+                                          month: 'short',
+                                          day: 'numeric',
+                                          hour: '2-digit',
+                                          minute: '2-digit',
+                                          hour12: true
+                                        })}
+                                      </span>
+                                    )}
+                                  </div>
+                                  
+                                  {scan.location && (
+                                    <span className="text-[8.5px] font-semibold text-black/40 uppercase tracking-widest">
+                                      {scan.location}
+                                    </span>
+                                  )}
+
+                                  {scan.instructions && (
+                                    <p className="text-[8.5px] text-black/45 mt-0.5 leading-relaxed font-medium italic">
+                                      {scan.instructions}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          !trackingLoading && !trackingError && (
+                            <div className="py-4 text-center">
+                              <span className="text-[9px] font-semibold text-black/40 uppercase tracking-wider">Courier update pending. Please check back later.</span>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 {/* Footer Action */}
                 <div className="px-6 py-4 bg-[#f9f9f9]/30 border-t border-black/5 flex justify-between items-center">
                    <div>
                      {order.fulfillments && order.fulfillments.length > 0 && order.fulfillments[0].number && (
-                       <a 
-                         href={order.fulfillments[0].url || `https://www.delhivery.com/track/package/${order.fulfillments[0].number}`} 
-                         target="_blank" 
-                         rel="noopener noreferrer"
-                         className="text-[9px] font-bold uppercase tracking-widest bg-black text-white px-4 py-2 rounded-full hover:bg-black/80 transition-colors flex items-center gap-1.5"
+                       <button
+                         onClick={() => handleTrackShipment(order.fulfillments![0].number)}
+                         className={`text-[9px] font-bold uppercase tracking-widest px-4 py-2 rounded-full transition-all flex items-center gap-1.5 ${
+                           activeTrackingAwb === order.fulfillments[0].number
+                             ? 'bg-black/5 text-black border border-black/10'
+                             : 'bg-black text-white hover:bg-black/85 shadow-sm'
+                         }`}
                        >
-                         Track Shipment ({order.fulfillments[0].number}) <ExternalLink size={10} />
-                       </a>
+                         {activeTrackingAwb === order.fulfillments[0].number ? 'Close Tracker' : `Track Status (${order.fulfillments[0].number})`}
+                         {activeTrackingAwb === order.fulfillments[0].number ? (
+                           <ChevronRight size={10} className="rotate-90 transition-transform duration-300" />
+                         ) : (
+                           <ExternalLink size={10} />
+                         )}
+                       </button>
                      )}
                    </div>
                    <button className="text-[9px] font-bold uppercase tracking-widest text-black/30 hover:text-black transition-colors flex items-center gap-1.5">
