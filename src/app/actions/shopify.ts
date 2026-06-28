@@ -1,6 +1,7 @@
 "use server";
 
 import { getAdminToken } from "@/lib/shopify-admin";
+import { customerRecover } from "@/lib/shopify";
 
 const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
 const clientId = process.env.SHOPIFY_CLIENT_ID;
@@ -547,5 +548,102 @@ export async function checkEmailExists(email: string) {
     };
   } catch (error) {
     return { exists: false };
+  }
+}
+
+export async function recoverPasswordAction(email: string) {
+  if (!domain || !clientId || !clientSecret) {
+    return { success: false, error: "Shopify Admin API is not configured." };
+  }
+
+  try {
+    const adminToken = await getAdminToken();
+
+    // 1. Find customer by email
+    const query = `
+      query {
+        customers(first: 1, query: "email:${email}") {
+          edges {
+            node {
+              id
+              state
+            }
+          }
+        }
+      }
+    `;
+
+    const findResponse = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': adminToken,
+      },
+      body: JSON.stringify({ query }),
+    });
+
+    const findData = await findResponse.json();
+    const customer = findData.data?.customers?.edges?.[0]?.node;
+
+    if (!customer) {
+      return { success: false, error: "No account found with this email address." };
+    }
+
+    const { id: customerId, state } = customer;
+
+    // 2. Determine action based on customer state
+    if (state === "DISABLED" || state === "INVITED") {
+      // Send invite email using Admin API
+      const inviteMutation = `
+        mutation customerSendAccountInviteEmail($customerId: ID!) {
+          customerSendAccountInviteEmail(customerId: $customerId) {
+            customer {
+              id
+            }
+            userErrors {
+              field
+              message
+            }
+          }
+        }
+      `;
+
+      const inviteResponse = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Access-Token': adminToken,
+        },
+        body: JSON.stringify({
+          query: inviteMutation,
+          variables: { customerId }
+        }),
+      });
+
+      const inviteData = await inviteResponse.json();
+      const userErrors = inviteData.data?.customerSendAccountInviteEmail?.userErrors;
+
+      if (userErrors && userErrors.length > 0) {
+        return { success: false, error: userErrors[0].message };
+      }
+
+      return { success: true, mode: "invite" };
+
+    } else if (state === "ENABLED") {
+      // Call standard Storefront recovery
+      const storefrontResult = await customerRecover(email);
+      
+      if (storefrontResult?.customerUserErrors && storefrontResult.customerUserErrors.length > 0) {
+        return { success: false, error: storefrontResult.customerUserErrors[0].message };
+      }
+
+      return { success: true, mode: "recover" };
+    }
+
+    return { success: false, error: "Unknown customer state." };
+
+  } catch (error: any) {
+    console.error("Password recovery action error:", error);
+    return { success: false, error: "An error occurred during password recovery." };
   }
 }

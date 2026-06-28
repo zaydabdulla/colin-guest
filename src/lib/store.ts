@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import { type Product } from './data';
 import { customerLogin, getCustomer, getProductsByIds, customerCreate, customerRecover, customerUpdate, customerAddressCreate, customerActivate, customerReset } from './shopify';
 import { signOut } from 'next-auth/react';
-import { adminAddAddress, syncWishlist, getWishlist, checkEmailExists } from '@/app/actions/shopify';
+import { adminAddAddress, syncWishlist, getWishlist, checkEmailExists, recoverPasswordAction } from '@/app/actions/shopify';
 
 
 
@@ -222,13 +222,13 @@ export const useCartStore = create<CartState>()(
       recoverPassword: async (email) => {
         set({ isSyncing: true });
         try {
-          const result = await customerRecover(email);
+          const result = await recoverPasswordAction(email);
           set({ isSyncing: false });
 
-          if (result?.customerUserErrors?.length > 0) {
+          if (!result.success) {
             return {
               success: false,
-              error: result.customerUserErrors[0].message
+              error: result.error || "Failed to process recovery request."
             };
           }
 
