@@ -144,7 +144,7 @@ export default function SignupPage() {
                       Creating...
                     </>
                   ) : (
-                    "Authorize Account"
+                    "Create Account"
                   )}
                </button>
 

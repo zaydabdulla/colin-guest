@@ -152,7 +152,7 @@ export default function LoginPage() {
                         if (email.includes('@')) {
                           const res = await checkEmailExists(email);
                           if (res.exists) {
-                            setMessage("Account recognized. Please authorize below.");
+                            setMessage("Account recognized. Please log in below.");
                           }
                         }
                       }}
@@ -186,7 +186,7 @@ export default function LoginPage() {
                     disabled={isSyncing}
                     className="w-full bg-black text-white py-2.5 rounded-full text-[9px] font-bold uppercase tracking-[0.25em] hover:bg-black/80 transition-all shadow-md flex items-center justify-center gap-2 mt-2"
                   >
-                    {isSyncing ? <Loader2 size={13} className="animate-spin" /> : "Authorize"}
+                    {isSyncing ? <Loader2 size={13} className="animate-spin" /> : "Log In"}
                   </button>
 
                   <div className="flex items-center gap-4 py-0.5">
@@ -268,7 +268,7 @@ export default function LoginPage() {
                     onClick={() => setView('login')}
                     className="w-full text-[9px] font-bold uppercase tracking-[0.2em] text-black/40 hover:text-black transition-all pt-2 text-center"
                   >
-                    Back to Authorize
+                    Back to Login
                   </button>
                 </form>
               </motion.div>
