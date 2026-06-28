@@ -109,7 +109,7 @@ function ActivateContent() {
             required 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border-b border-black/10 py-1.5 text-sm text-black focus:border-black outline-none transition-colors bg-transparent px-0 placeholder:text-black/40" 
+            className="w-full border-b border-black/10 py-1.5 text-base text-black focus:border-black outline-none transition-colors bg-transparent px-0 placeholder:text-black/40" 
             placeholder="••••••••"
           />
         </div>
@@ -121,8 +121,8 @@ function ActivateContent() {
             required 
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full border-b border-black/10 py-1.5 text-sm text-black focus:border-black outline-none transition-colors bg-transparent px-0 placeholder:text-black/40" 
-            placeholder="••••••••"
+            className="w-full border-b border-black/10 py-1.5 text-base text-black focus:border-black outline-none transition-colors bg-transparent px-0 placeholder:text-black/40" 
+            placeholder="••••••••" 
           />
         </div>
 

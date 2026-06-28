@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartDrawer } from "@/components/cart-drawer";
@@ -25,6 +25,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Colin Guest",
   description: "Discover the exclusive world of Colin Guest, where heritage meets haute couture. Explore timeless elegance and modern craftsmanship in every stitch.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 import { SessionProvider } from "next-auth/react";
