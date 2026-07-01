@@ -38,27 +38,27 @@ export function ComingSoonWrapper({ children }: ComingSoonWrapperProps) {
 
   return (
     <div className="min-h-screen bg-black text-[#fcfcfc] flex flex-col items-center justify-center font-sans select-none px-6">
-      <div className="text-center space-y-6 flex flex-col items-center">
-        {/* Brand logo exactly as it appears in the top bar, but scaled larger */}
-        <div className="relative h-24 w-80 sm:h-28 sm:w-96 invert brightness-200">
+      <div className="text-center space-y-8 flex flex-col items-center w-full max-w-4xl">
+        {/* Brand logo scaled larger and affecting other content naturally using the original image */}
+        <div className="relative w-[85vw] sm:w-[75vw] md:w-[65vw] max-w-[700px] aspect-[8/1] overflow-hidden invert brightness-200">
           <Image
             src="/logo_cg.png"
             alt="COLIN GUEST"
             fill
-            className="object-contain"
+            className="object-cover object-center scale-[1.5]"
             priority
           />
         </div>
 
         {/* Minimal divider line */}
-        <div className="h-[1px] w-6 bg-white/10 mx-auto" />
+        <div className="h-[1px] w-8 bg-white/10 mx-auto" />
 
         {/* Coming Soon information */}
-        <div className="space-y-3">
-          <h2 className="text-[10px] font-bold uppercase tracking-[0.35em] text-white/40">
+        <div className="space-y-4">
+          <h2 className="text-[11px] font-bold uppercase tracking-[0.4em] text-white/40">
             COMING SOON
           </h2>
-          <p className="text-[10px] text-white/30 uppercase tracking-widest leading-relaxed max-w-xs mx-auto">
+          <p className="text-[11px] text-white/30 uppercase tracking-widest leading-relaxed max-w-sm mx-auto">
             We are currently preparing the unveiling. Access will be granted shortly.
           </p>
         </div>
