@@ -39,8 +39,8 @@ export function ComingSoonWrapper({ children }: ComingSoonWrapperProps) {
   return (
     <div className="min-h-screen bg-black text-[#fcfcfc] flex flex-col items-center justify-center font-sans select-none px-6">
       <div className="text-center space-y-6 flex flex-col items-center">
-        {/* Brand logo exactly as it appears in the top bar (inverted for black background) */}
-        <div className="relative h-[72px] w-64 invert brightness-200">
+        {/* Brand logo exactly as it appears in the top bar, but scaled larger */}
+        <div className="relative h-24 w-80 sm:h-28 sm:w-96 invert brightness-200">
           <Image
             src="/logo_cg.png"
             alt="COLIN GUEST"
