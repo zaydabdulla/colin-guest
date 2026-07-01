@@ -36,6 +36,7 @@ export const viewport: Viewport = {
 import { SessionProvider } from "next-auth/react";
 
 import { ScrollToTop } from "@/components/scroll-to-top";
+import { ComingSoonWrapper } from "@/components/coming-soon-wrapper";
 
 export default function RootLayout({
   children,
@@ -50,37 +51,39 @@ export default function RootLayout({
     >
       <body className="antialiased overflow-x-hidden max-w-full w-full">
         <SessionProvider>
-          {/* Desktop Navbar - Strict Isolation */}
-          <div className="hidden md:block">
-            <Navbar />
-          </div>
-
-          {/* Mobile Navbar - Strict Isolation */}
-          <div className="block md:hidden">
-            <MobileNavbar />
-          </div>
-
-          <SmoothScroll>
-            <div className="flex flex-col min-h-screen relative">
-              {/* Footers - Rendered before children for layering priority */}
-              <div className="block md:hidden order-last relative z-50">
-                <MobileFooter />
-              </div>
-              <div className="hidden md:block order-last relative z-50">
-                <Footer />
-              </div>
-
-              {/* Main content wrapper */}
-              <main className="flex-1 order-first">
-                {children}
-              </main>
+          <ComingSoonWrapper>
+            {/* Desktop Navbar - Strict Isolation */}
+            <div className="hidden md:block">
+              <Navbar />
             </div>
-          </SmoothScroll>
 
-          <CartDrawer />
-          <WishlistPopup />
-          <SyncManager />
-          <ScrollToTop />
+            {/* Mobile Navbar - Strict Isolation */}
+            <div className="block md:hidden">
+              <MobileNavbar />
+            </div>
+
+            <SmoothScroll>
+              <div className="flex flex-col min-h-screen relative">
+                {/* Footers - Rendered before children for layering priority */}
+                <div className="block md:hidden order-last relative z-50">
+                  <MobileFooter />
+                </div>
+                <div className="hidden md:block order-last relative z-50">
+                  <Footer />
+                </div>
+
+                {/* Main content wrapper */}
+                <main className="flex-1 order-first">
+                  {children}
+                </main>
+              </div>
+            </SmoothScroll>
+
+            <CartDrawer />
+            <WishlistPopup />
+            <SyncManager />
+            <ScrollToTop />
+          </ComingSoonWrapper>
         </SessionProvider>
       </body>
     </html>
