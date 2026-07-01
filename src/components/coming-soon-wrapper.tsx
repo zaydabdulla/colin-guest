@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Loader2 } from "lucide-react";
 
 interface ComingSoonWrapperProps {
@@ -37,11 +38,17 @@ export function ComingSoonWrapper({ children }: ComingSoonWrapperProps) {
 
   return (
     <div className="min-h-screen bg-black text-[#fcfcfc] flex flex-col items-center justify-center font-sans select-none px-6">
-      <div className="text-center space-y-6">
-        {/* Brand logo exactly as it appears in the top bar */}
-        <h1 className="text-xl font-bold tracking-[0.25em] uppercase text-white">
-          COLIN GUEST
-        </h1>
+      <div className="text-center space-y-6 flex flex-col items-center">
+        {/* Brand logo exactly as it appears in the top bar (inverted for black background) */}
+        <div className="relative h-[72px] w-64 invert brightness-200">
+          <Image
+            src="/logo_cg.png"
+            alt="COLIN GUEST"
+            fill
+            className="object-contain"
+            priority
+          />
+        </div>
 
         {/* Minimal divider line */}
         <div className="h-[1px] w-6 bg-white/10 mx-auto" />
