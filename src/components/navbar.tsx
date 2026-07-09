@@ -325,7 +325,7 @@ export function Navbar() {
                         className="snap-start"
                       >
                         <Link
-                          href={`/product/${encodeURIComponent(product.id)}`}
+                          href={`/product/${product.handle || encodeURIComponent(product.id)}`}
                           onClick={() => setIsSearchOpen(false)}
                           className="group flex-shrink-0 w-[140px] block"
                         >

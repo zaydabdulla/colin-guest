@@ -1,5 +1,5 @@
 import { Product } from "@/lib/data";
-import { getProductById, getProductRecommendations, getAllProducts } from "@/lib/shopify";
+import { getProductById, getProductRecommendations, getAllProducts, getProductByHandle } from "@/lib/shopify";
 import ProductClient from "@/components/product-client";
 import { notFound } from "next/navigation";
 
@@ -13,11 +13,16 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   // If not found in mock data, try Shopify (if ID looks like a Shopify ID or mock failed)
   if (!product) {
     try {
-      const shopifyProduct = await getProductById(decodeURIComponent(id));
+      const decodedId = decodeURIComponent(id);
+      const isGid = decodedId.startsWith("gid://shopify/Product/");
+      const shopifyProduct = isGid
+        ? await getProductById(decodedId)
+        : await getProductByHandle(decodedId);
       
       if (shopifyProduct) {
         product = {
           id: shopifyProduct.id,
+          handle: shopifyProduct.handle,
           src: shopifyProduct.images[0]?.url || "/placeholder.jpg",
           secondarySrc: shopifyProduct.images[1]?.url,
           srcs: shopifyProduct.images.map((img: any) => img.url),
@@ -105,6 +110,76 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     notFound();
   }
 
-  return <ProductClient product={product} suggestedProducts={suggestedProducts} allProducts={allProducts} />;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.title,
+    "image": product.srcs || [product.src],
+    "description": product.desc,
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "INR",
+      "price": product.amount,
+      "availability": product.variants?.some(v => v.availableForSale)
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      "url": `https://www.colinguest.com/product/${product.handle || product.id}`,
+    }
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ProductClient product={product} suggestedProducts={suggestedProducts} allProducts={allProducts} />
+    </>
+  );
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
+  const { id } = resolvedParams;
+  
+  try {
+    const decodedId = decodeURIComponent(id);
+    const isGid = decodedId.startsWith("gid://shopify/Product/");
+    const shopifyProduct = isGid
+      ? await getProductById(decodedId)
+      : await getProductByHandle(decodedId);
+
+    if (shopifyProduct) {
+      const imageUrls = shopifyProduct.images?.edges.map((e: any) => e.node.url) || [];
+      return {
+        title: `${shopifyProduct.title} | COLIN GUEST`,
+        description: shopifyProduct.description?.slice(0, 160) || `Buy ${shopifyProduct.title} online at COLIN GUEST. Premium designer clothing.`,
+        openGraph: {
+          title: shopifyProduct.title,
+          description: shopifyProduct.description || `Buy ${shopifyProduct.title} online at COLIN GUEST.`,
+          images: imageUrls.map((url: string) => ({
+            url,
+            width: 800,
+            height: 1000,
+            alt: shopifyProduct.title,
+          })),
+          type: 'website',
+        },
+        twitter: {
+          card: 'summary_large_image',
+          title: shopifyProduct.title,
+          description: shopifyProduct.description || `Buy ${shopifyProduct.title} online at COLIN GUEST.`,
+          images: imageUrls,
+        }
+      };
+    }
+  } catch (error) {
+    console.error("Error generating product metadata:", error);
+  }
+  
+  return {
+    title: "Product | COLIN GUEST",
+    description: "Premium clothing at COLIN GUEST",
+  };
 }
 

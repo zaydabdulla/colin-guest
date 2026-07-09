@@ -54,7 +54,7 @@ export function MobileWishlistClient() {
                     <div className="w-full h-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar relative">
                       {(product.srcs && product.srcs.length > 0 ? product.srcs : [product.src]).map((src, i) => (
                         <div key={i} className="w-full h-full flex-none snap-center relative">
-                          <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full h-full block">
+                          <Link href={`/product/${product.handle || encodeURIComponent(product.id)}`} className="w-full h-full block">
                             <Image
                               src={src || "/placeholder.jpg"}
                               alt={`${product.title} - view ${i + 1}`}
@@ -96,7 +96,7 @@ export function MobileWishlistClient() {
 
                 <div className="flex flex-col px-2 pb-4">
                   <div className="flex justify-between items-start w-full">
-                    <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full pr-1">
+                    <Link href={`/product/${product.handle || encodeURIComponent(product.id)}`} className="w-full pr-1">
                       <h3 className="text-[7px] font-bold uppercase tracking-widest text-black mb-0.5">
                         {product.title}
                       </h3>

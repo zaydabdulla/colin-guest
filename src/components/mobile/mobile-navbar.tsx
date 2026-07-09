@@ -481,7 +481,7 @@ export function MobileNavbar() {
                         className="snap-start flex-shrink-0 w-[110px]"
                       >
                         <Link
-                          href={`/product/${encodeURIComponent(product.id)}`}
+                          href={`/product/${product.handle || encodeURIComponent(product.id)}`}
                           onClick={() => setIsSearchOpen(false)}
                           className={`flex flex-col h-full rounded-[16px] p-1 pb-3 transition-all ${isTransparentPage
                               ? "bg-white/10 text-white"

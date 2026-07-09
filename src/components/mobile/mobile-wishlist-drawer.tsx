@@ -94,7 +94,7 @@ export function WishlistDrawer() {
 
                           <div className="mt-auto flex items-center gap-3">
                             <Link
-                              href={`/product/${encodeURIComponent(product.id)}`}
+                              href={`/product/${product.handle || encodeURIComponent(product.id)}`}
                               onClick={closeWishlist}
                               className="flex-1 bg-black text-white text-[9px] font-bold py-2 rounded-full text-center uppercase tracking-widest hover:bg-black/80 transition-colors"
                             >

@@ -324,7 +324,7 @@ export function CartDrawer() {
                                          <button 
                                            onClick={() => {
                                              closeCart();
-                                             router.push(`/product/${encodeURIComponent(product.id)}`);
+                                             router.push(`/product/${product.handle || encodeURIComponent(product.id)}`);
                                            }}
                                            className="absolute inset-0 z-10"
                                          >
@@ -336,7 +336,7 @@ export function CartDrawer() {
                                        <button 
                                          onClick={() => {
                                            closeCart();
-                                           router.push(`/product/${encodeURIComponent(product.id)}`);
+                                           router.push(`/product/${product.handle || encodeURIComponent(product.id)}`);
                                          }}
                                          className="text-left w-full"
                                        >

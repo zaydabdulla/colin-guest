@@ -43,7 +43,7 @@ export default function LookbookClient({ products }: LookbookClientProps) {
            <div className="flex flex-col">
               {repeatedProducts.map((listModel, index) => (
                 <div key={`sidebar-${listModel.id}-${index}`} className="min-h-screen p-6 border-b border-black/5 flex flex-col justify-center items-center group snap-start snap-always">
-                  <Link href={`/product/${encodeURIComponent(listModel.id)}`} className="relative w-[75%] aspect-[3/4] mb-8 overflow-hidden rounded-sm bg-[#fafafa] flex items-center justify-center pt-8">
+                  <Link href={`/product/${listModel.handle || encodeURIComponent(listModel.id)}`} className="relative w-[75%] aspect-[3/4] mb-8 overflow-hidden rounded-sm bg-[#fafafa] flex items-center justify-center pt-8">
                     <div className="relative w-[90%] h-[90%]">
                         <Image 
                         src={listModel.src}
@@ -55,13 +55,13 @@ export default function LookbookClient({ products }: LookbookClientProps) {
                     </div>
                   </Link>
                   <div className="w-full text-center flex flex-col items-center">
-                    <Link href={`/product/${encodeURIComponent(listModel.id)}`}>
+                    <Link href={`/product/${listModel.handle || encodeURIComponent(listModel.id)}`}>
                       <h4 className="text-sm font-bold uppercase tracking-widest mb-3 hover:opacity-60 transition-opacity">{listModel.title}</h4>
                     </Link>
                     <p className="text-[11px] font-medium text-black/50 leading-relaxed mb-4 px-4 max-w-[90%]">{listModel.desc}</p>
                     <p className="text-sm font-semibold tracking-wider mb-6">{listModel.price}</p>
                     
-                    <Link href={`/product/${encodeURIComponent(listModel.id)}`}>
+                    <Link href={`/product/${listModel.handle || encodeURIComponent(listModel.id)}`}>
                       <button className="px-10 py-3 bg-black text-white text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-black/80 transition-colors rounded-sm">
                         Shop The Look
                       </button>

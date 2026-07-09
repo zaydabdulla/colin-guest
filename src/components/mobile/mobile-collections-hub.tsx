@@ -125,7 +125,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
           {latestProducts.map((product) => (
             <div key={product.id} className="flex flex-col">
               <div className="relative aspect-[2/3] bg-[#e8e8e8] rounded-xl overflow-hidden mb-1.5">
-                <Link href={`/product/${encodeURIComponent(product.id)}`}>
+                <Link href={`/product/${product.handle || encodeURIComponent(product.id)}`}>
                   <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-cover" />
                 </Link>
                 <button onClick={() => toggleWishlist(product)} className="absolute top-1.5 right-1.5 p-2 z-10 text-white transition-opacity active:opacity-50">
@@ -139,7 +139,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
               </div>
               <div className="px-3 flex flex-col pb-6">
                 <div className="flex justify-between items-start w-full">
-                  <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full pr-1">
+                  <Link href={`/product/${product.handle || encodeURIComponent(product.id)}`} className="w-full pr-1">
                     <h3 className="text-[7px] font-bold uppercase tracking-widest text-black mb-0.5 truncate">{product.title}</h3>
                   </Link>
                   <button className="text-black/40 shrink-0 mt-[-4px]"><Plus size={12} strokeWidth={1.5} /></button>
@@ -217,7 +217,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
           {importedProducts.map((product) => (
             <div key={product.id} className="flex flex-col">
               <div className="relative aspect-[2/3] bg-[#e8e8e8] rounded-xl overflow-hidden mb-1.5">
-                <Link href={`/product/${encodeURIComponent(product.id)}`}>
+                <Link href={`/product/${product.handle || encodeURIComponent(product.id)}`}>
                   <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-cover" />
                 </Link>
                 <button onClick={() => toggleWishlist(product)} className="absolute top-1.5 right-1.5 p-2 z-10 text-white transition-opacity active:opacity-50">
@@ -231,7 +231,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
               </div>
               <div className="px-3 flex flex-col pb-6">
                 <div className="flex justify-between items-start w-full">
-                  <Link href={`/product/${encodeURIComponent(product.id)}`} className="w-full pr-1">
+                  <Link href={`/product/${product.handle || encodeURIComponent(product.id)}`} className="w-full pr-1">
                     <h3 className="text-[7px] font-bold uppercase tracking-widest text-black mb-0.5 truncate">{product.title}</h3>
                   </Link>
                   <button className="text-black/40 shrink-0 mt-[-4px]"><Plus size={12} strokeWidth={1.5} /></button>

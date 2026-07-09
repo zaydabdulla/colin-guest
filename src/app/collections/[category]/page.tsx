@@ -87,3 +87,15 @@ export default async function CategoryGrid({ params }: { params: Promise<{ categ
   );
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ category: string }> }) {
+  const { category } = await params;
+  const formattedCategory = category.toLowerCase() === 'all'
+    ? 'All Products'
+    : category.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+
+  return {
+    title: `${formattedCategory} | COLIN GUEST`,
+    description: `Explore our curated selection of ${formattedCategory} at COLIN GUEST. Timeless luxury designer silhouettes.`,
+  };
+}
+

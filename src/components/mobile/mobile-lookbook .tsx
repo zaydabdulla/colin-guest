@@ -95,7 +95,7 @@ export default function MobileLookbook({ products }: MobileLookbookProps) {
                   className="flex-1 w-full bg-white flex flex-col items-center justify-start px-8 pt-4 pb-[env(safe-area-inset-bottom,20px)] border-t border-black/[0.02] shadow-[0_-10px_30px_rgba(0,0,0,0.02)]"
                 >
                   <Link
-                    href={`/product/${encodeURIComponent(product.id)}`}
+                    href={`/product/${product.handle || encodeURIComponent(product.id)}`}
                     className="flex flex-col items-center active:opacity-70 transition-opacity w-full max-w-[280px]"
                   >
                     <h2 className="text-[12px] sm:text-[14px] font-bold uppercase tracking-[0.25em] text-black mb-1.5 text-center leading-tight">

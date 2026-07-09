@@ -223,6 +223,74 @@ export async function getProductById(id: string) {
   return null;
 }
 
+export async function getProductByHandle(handle: string) {
+  const query = `
+    query getProduct($handle: String!) {
+      product(handle: $handle) {
+        id
+        title
+        handle
+        description
+        descriptionHtml
+        productType
+        priceRange {
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+        }
+        images(first: 10) {
+          edges {
+            node {
+              url
+              altText
+            }
+          }
+        }
+        details: metafield(namespace: "custom", key: "details") {
+          value
+        }
+        sizeGuide: metafield(namespace: "custom", key: "size_guide") {
+          value
+        }
+        washcare: metafield(namespace: "custom", key: "washcare") {
+          value
+        }
+        shipping: metafield(namespace: "custom", key: "shipping") {
+          value
+        }
+        variants(first: 20) {
+          edges {
+            node {
+              id
+              title
+              availableForSale
+              selectedOptions {
+                name
+                value
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const response = await shopifyFetch({
+    query,
+    variables: { handle },
+  });
+
+  const product = response.data?.product;
+  if (product) {
+    return {
+      ...product,
+      images: product.images?.edges.map((e: any) => e.node) || []
+    };
+  }
+  return null;
+}
+
 export async function getAllProducts(sortKey: string = 'BEST_SELLING'): Promise<any[]> {
   const query = `
     query getProducts($sortKey: ProductSortKeys) {

@@ -82,7 +82,7 @@ export function ProductCard({
           {srcs.map((src, i) => (
             <div key={i} className="flex-none w-full h-full snap-center relative">
               <Link 
-                href={`/product/${encodeURIComponent(product.id)}`} 
+                href={`/product/${product.handle || encodeURIComponent(product.id)}`} 
                 className="relative w-full h-full mix-blend-multiply drop-shadow-2xl flex items-center justify-center"
               >
                 <Image 
@@ -118,7 +118,7 @@ export function ProductCard({
       
       {/* Product Details - Hidden in Dense View */}
       {!isDense && (
-        <Link href={`/product/${encodeURIComponent(product.id)}`} className="flex justify-between items-end px-2 z-10">
+        <Link href={`/product/${product.handle || encodeURIComponent(product.id)}`} className="flex justify-between items-end px-2 z-10">
           <div>
             <h4 className="md:text-[10px] text-[7px] font-bold tracking-wide mb-0.5 truncate max-w-[200px] hover:underline cursor-pointer text-black">{product.title}</h4>
             <p className="md:text-[9px] text-[6.5px] font-medium tracking-widest text-black/80 uppercase">{product.price}</p>
