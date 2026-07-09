@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { syncWishlist, getWishlist } from '@/app/actions/shopify';
 import { getAdminToken } from '@/lib/shopify-admin';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { getCustomer } from '@/lib/shopify';
 
 const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
 
@@ -92,6 +93,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing customerId' }, { status: 400 });
     }
 
+    // Authorization Check
+    const authHeader = request.headers.get('Authorization');
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null;
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized: Missing token' }, { status: 401 });
+    }
+    const customer = await getCustomer(token);
+    if (!customer || customer.id !== customerId) {
+      return NextResponse.json({ error: 'Unauthorized: Invalid token' }, { status: 401 });
+    }
+
     const success = await saveShopifySyncData(customerId, wishlist, cart);
     
     return NextResponse.json({ success });
@@ -111,6 +123,17 @@ export async function GET(request: Request) {
 
     if (!customerId) {
       return NextResponse.json({ error: 'Missing customerId' }, { status: 400 });
+    }
+
+    // Authorization Check
+    const authHeader = request.headers.get('Authorization');
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null;
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized: Missing token' }, { status: 401 });
+    }
+    const customer = await getCustomer(token);
+    if (!customer || customer.id !== customerId) {
+      return NextResponse.json({ error: 'Unauthorized: Invalid token' }, { status: 401 });
     }
 
     const userData = await getShopifySyncData(customerId);

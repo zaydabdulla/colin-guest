@@ -385,12 +385,16 @@ export const useCartStore = create<CartState>()(
       },
 
       syncData: async (merge?: boolean) => {
-        const { customerId, isLoggedIn } = get();
+        const { customerId, isLoggedIn, accessToken } = get();
         if (!isLoggedIn || !customerId) return;
 
         set({ isSyncing: true });
         try {
-          const response = await fetch(`/api/shopify/sync?customerId=${encodeURIComponent(customerId)}`);
+          const response = await fetch(`/api/shopify/sync?customerId=${encodeURIComponent(customerId)}`, {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`
+            }
+          });
           if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
           
           const data = await response.json();
@@ -513,7 +517,7 @@ export const useCartStore = create<CartState>()(
       },
 
       saveData: async () => {
-        const { customerId, isLoggedIn, wishlistItems, items } = get();
+        const { customerId, isLoggedIn, accessToken, wishlistItems, items } = get();
         if (!isLoggedIn || !customerId) return;
 
         try {
@@ -526,7 +530,10 @@ export const useCartStore = create<CartState>()(
 
           await fetch('/api/shopify/sync', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`
+            },
             body: JSON.stringify({ customerId, wishlist, cart })
           });
         } catch (error) {
