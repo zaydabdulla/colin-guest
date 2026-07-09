@@ -34,14 +34,30 @@ export default function LoginPage() {
     setError(null);
     setMessage(null);
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email.trim())) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (!password) {
+      setError("Please enter your password.");
+      return;
+    }
+
     // 1. Pro-active check for Google accounts to prevent confusion
-    const exists = await checkEmailExists(email);
+    const exists = await checkEmailExists(email.trim());
+    if (exists.error) {
+      setError(exists.error);
+      return;
+    }
+
     if (exists.exists && (exists.state === 'INVITED' || exists.state === 'ENABLED')) {
        // We can't know for 100% sure if they have a password without trying,
        // but if login fails, we'll give them the Google hint.
     }
 
-    const result = await login(email, password);
+    const result = await login(email.trim(), password);
     if (result.success) {
       router.push("/");
     } else {
@@ -58,7 +74,14 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     setMessage(null);
-    const result = await recoverPassword(email);
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email.trim())) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    const result = await recoverPassword(email.trim());
     if (result.success) {
       setMessage("Recovery details sent to your email.");
       setView('login');

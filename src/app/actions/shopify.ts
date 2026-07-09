@@ -2,6 +2,8 @@
 
 import { getAdminToken } from "@/lib/shopify-admin";
 import { customerRecover } from "@/lib/shopify";
+import { headers } from "next/headers";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
 const clientId = process.env.SHOPIFY_CLIENT_ID;
@@ -532,6 +534,16 @@ export async function checkEmailExists(email: string) {
   if (!domain || !clientId || !clientSecret) return { exists: false };
 
   try {
+    // Rate limit check: max 15 requests per minute per IP for email checking
+    const headersList = await headers();
+    const mockRequest = new Request("http://localhost", { headers: headersList });
+    const rateLimitResponse = await checkRateLimit(mockRequest, {
+      ipConfig: { limit: 15, windowMs: 60 * 1000 }
+    });
+    if (rateLimitResponse) {
+      return { exists: false, error: "Too many requests. Please try again later." };
+    }
+
     const adminToken = await getAdminToken();
     const findQuery = `query { customers(first: 1, query: "email:${email}") { edges { node { id state } } } }`;
     const findResponse = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
@@ -557,6 +569,16 @@ export async function recoverPasswordAction(email: string) {
   }
 
   try {
+    // Rate limit check: max 5 requests per minute per IP for password recovery
+    const headersList = await headers();
+    const mockRequest = new Request("http://localhost", { headers: headersList });
+    const rateLimitResponse = await checkRateLimit(mockRequest, {
+      ipConfig: { limit: 5, windowMs: 60 * 1000 }
+    });
+    if (rateLimitResponse) {
+      return { success: false, error: "Too many password recovery requests. Please try again later." };
+    }
+
     const adminToken = await getAdminToken();
 
     // 1. Find customer by email
