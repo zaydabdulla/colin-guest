@@ -31,7 +31,7 @@ export function ComingSoonWrapper({ children }: ComingSoonWrapperProps) {
   }
 
   const comingSoonEnabled = process.env.NEXT_PUBLIC_COMING_SOON === "true";
-  
+
   if (isBypassed || !comingSoonEnabled) {
     return <>{children}</>;
   }

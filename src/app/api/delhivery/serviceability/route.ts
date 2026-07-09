@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,6 +30,12 @@ function getTransitDays(stateCode?: string): { minDays: number; maxDays: number;
 }
 
 export async function GET(request: Request) {
+  // Rate Limit Check (max 30 requests/minute per IP)
+  const rateLimitResponse = await checkRateLimit(request, {
+    ipConfig: { limit: 30, windowMs: 60 * 1000 }
+  });
+  if (rateLimitResponse) return rateLimitResponse;
+
   const { searchParams } = new URL(request.url);
   const pincode = searchParams.get('pincode');
   
