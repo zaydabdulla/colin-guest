@@ -25,6 +25,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Colin Guest",
   description: "Discover the exclusive world of Colin Guest, where heritage meets haute couture. Explore timeless elegance and modern craftsmanship in every stitch.",
+  verification: {
+    google: "2Cm8VuAZnwF8LlOdE37dkF_4fuDzEv1_mxuIoNOcib8",
+  },
 };
 
 export const viewport: Viewport = {
