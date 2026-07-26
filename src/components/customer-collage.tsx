@@ -17,7 +17,7 @@ interface CustomerReview {
   rating: number;
   comment: string;
   image: string;
-  aspectRatio: string; // Tighter staggered height
+  productTitle: string;
 }
 
 const REVIEWS: CustomerReview[] = [
@@ -25,33 +25,33 @@ const REVIEWS: CustomerReview[] = [
     id: "1",
     name: "Zayd Abdulla",
     rating: 5,
-    comment: "These are the best tank tops out there! I HIGHLY recommend! Will buy more.",
+    productTitle: "Acid Wash Heavyweight",
+    comment: "The acid wash finish and heavyweight 450gsm drape are absolute perfection. Standing ovation for the cut.",
     image: "/black_acid_wash_hoodies.jpg",
-    aspectRatio: "aspect-[3/3.6]",
   },
   {
     id: "2",
     name: "Fidel Shaan",
     rating: 5,
-    comment: "Bought 6 black, they look insane.",
+    productTitle: "Faded Utility Denim",
+    comment: "Distressing and subtle faded noir tone look insane in hand. Ideal structural silhouette.",
     image: "/black_faded_jean.jpg",
-    aspectRatio: "aspect-[3/4.4]", // Taller card matching reference screenshot right column
   },
   {
     id: "3",
     name: "Farhan Ahammed",
     rating: 5,
-    comment: "Heavyweight fabric is unmatched. Cut sits perfectly on shoulders.",
+    productTitle: "Monochrome Noir Set",
+    comment: "The full monochrome set is next-level editorial fashion. Exceptional fabric structure.",
     image: "/blacks_set.jpg",
-    aspectRatio: "aspect-[3/3.8]",
   },
   {
     id: "4",
     name: "Mowfaq Rahman",
     rating: 5,
-    comment: "The wash finish looks even better in person. 10/10 quality.",
+    productTitle: "Studio Grey Look",
+    comment: "Paired the studio grey hoodie with the washed indigo denim. The proportions are unmatched.",
     image: "/grey_hoodie_washed_jean.jpg",
-    aspectRatio: "aspect-[3/3.5]",
   },
 ];
 
@@ -69,29 +69,29 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
   }
 
   return (
-    <section className={`w-full py-6 md:py-10 bg-white relative z-10 ${className}`}>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+    <section className={`w-full py-4 sm:py-6 bg-white relative z-10 ${className}`}>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
         
-        {/* Section Header - Compact & Brand Font */}
-        <div className="text-center mb-6 md:mb-8">
-          <h2 className="text-lg sm:text-xl md:text-2xl font-black tracking-tight text-black uppercase font-sans">
+        {/* Section Header - Exact PDP Typography & Micro Sizing */}
+        <div className="text-center mb-4 sm:mb-5">
+          <h3 className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.3em] text-black/30">
             HEAR FROM OUR CUSTOMERS
-          </h2>
-          <p className="mt-1 text-[9.5px] sm:text-[10.5px] font-bold tracking-[0.25em] text-neutral-500 uppercase font-sans">
+          </h3>
+          <p className="mt-1 text-[8px] sm:text-[8.5px] font-bold uppercase tracking-[0.2em] text-black/20">
             REAL REVIEWS. REAL PEOPLE.
           </p>
         </div>
 
-        {/* 2-Column Mobile / 4-Column Desktop Compact Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5 md:gap-4 items-start max-w-4xl mx-auto">
+        {/* Compact 2-Column Mobile / 4-Column Desktop Micro Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 items-stretch">
           {REVIEWS.map((review) => (
             <div
               key={review.id}
               onClick={() => setActiveImageModal(review)}
-              className="bg-white border border-neutral-200/80 rounded-lg overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow duration-300 flex flex-col cursor-pointer"
+              className="bg-[#fcfcfc] border border-black/5 rounded-xl overflow-hidden shadow-sm hover:border-black/20 transition-all duration-200 flex flex-col cursor-pointer"
             >
-              {/* Customer Photo - Product images from website */}
-              <div className={`relative w-full ${review.aspectRatio} bg-neutral-100 overflow-hidden`}>
+              {/* Ultra-Compact Product Image */}
+              <div className="relative w-full aspect-[4/4.2] bg-[#f4f4f4] overflow-hidden">
                 <Image
                   src={review.image}
                   alt={`${review.name}'s review photo`}
@@ -101,29 +101,34 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
                 />
               </div>
 
-              {/* Card Bottom Section - Compact Padding & Website Font */}
-              <div className="p-2.5 sm:p-3 flex flex-col flex-1 justify-between bg-white min-h-[130px] sm:min-h-[150px]">
+              {/* Card Details - Micro PDP Font Sizes */}
+              <div className="p-2 sm:p-2.5 flex flex-col flex-1 justify-between bg-white">
                 <div>
-                  {/* 5 Solid Black Stars */}
-                  <div className="flex items-center gap-0.5 mb-2">
+                  {/* Stars */}
+                  <div className="flex items-center gap-0.5 mb-1">
                     {[...Array(review.rating)].map((_, i) => (
                       <Star
                         key={i}
-                        size={13}
+                        size={10}
                         className="fill-black text-black shrink-0"
                       />
                     ))}
                   </div>
 
-                  {/* Review Text */}
-                  <p className="text-[11px] sm:text-[12px] text-neutral-900 font-medium leading-snug font-sans mb-3">
-                    {review.comment}
+                  {/* Product Title Tag */}
+                  <span className="text-[8px] font-bold uppercase tracking-[0.15em] text-black/40 block truncate mb-1">
+                    {review.productTitle}
+                  </span>
+
+                  {/* Review Text - Exact PDP Body Font Size */}
+                  <p className="text-[9px] sm:text-[9.5px] leading-relaxed text-black/60 font-medium line-clamp-3 mb-2">
+                    "{review.comment}"
                   </p>
                 </div>
 
-                {/* Customer Name at Bottom */}
-                <div className="mt-auto pt-1.5 border-t border-neutral-100">
-                  <span className="text-xs sm:text-sm font-semibold text-neutral-900 font-sans tracking-tight block truncate">
+                {/* Customer Name - Exact PDP Micro Header */}
+                <div className="mt-auto pt-1 border-t border-black/5">
+                  <span className="text-[9px] sm:text-[9.5px] font-bold tracking-tight text-[#1a1a1a] truncate block">
                     {review.name}
                   </span>
                 </div>
@@ -133,7 +138,7 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
         </div>
       </div>
 
-      {/* Lightbox Modal on Image Click */}
+      {/* Lightbox Modal */}
       <AnimatePresence>
         {activeImageModal && (
           <motion.div
@@ -141,23 +146,23 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setActiveImageModal(null)}
-            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4"
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-xl overflow-hidden max-w-sm w-full shadow-2xl relative flex flex-col max-h-[90vh]"
+              className="bg-white rounded-xl overflow-hidden max-w-xs w-full shadow-2xl relative flex flex-col max-h-[85vh]"
             >
               <button
                 onClick={() => setActiveImageModal(null)}
-                className="absolute top-3 right-3 z-10 p-2 bg-black/70 text-white rounded-full hover:bg-black transition-colors"
+                className="absolute top-2.5 right-2.5 z-10 p-1.5 bg-black/60 text-white rounded-full hover:bg-black transition-colors"
               >
-                <X size={16} />
+                <X size={13} />
               </button>
 
-              <div className="relative w-full aspect-[3/4] bg-neutral-900">
+              <div className="relative w-full aspect-[4/5] bg-neutral-900">
                 <Image
                   src={activeImageModal.image}
                   alt={activeImageModal.name}
@@ -166,16 +171,19 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
                 />
               </div>
 
-              <div className="p-4 bg-white flex flex-col gap-2">
+              <div className="p-3 bg-white flex flex-col gap-1">
                 <div className="flex items-center gap-0.5">
                   {[...Array(activeImageModal.rating)].map((_, i) => (
-                    <Star key={i} size={14} className="fill-black text-black" />
+                    <Star key={i} size={11} className="fill-black text-black" />
                   ))}
                 </div>
-                <p className="text-sm font-medium text-black leading-snug">
+                <span className="text-[8px] font-bold uppercase tracking-[0.15em] text-black/40">
+                  {activeImageModal.productTitle}
+                </span>
+                <p className="text-[9.5px] leading-relaxed text-black/60 font-medium">
                   "{activeImageModal.comment}"
                 </p>
-                <span className="text-sm font-semibold text-neutral-900 mt-1">
+                <span className="text-[9.5px] font-bold tracking-tight text-[#1a1a1a] mt-1">
                   {activeImageModal.name}
                 </span>
               </div>
