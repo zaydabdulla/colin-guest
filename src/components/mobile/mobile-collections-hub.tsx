@@ -8,6 +8,7 @@ import { Collection, Product } from "@/lib/data";
 import { Plus, Bookmark, ChevronRight, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { getAllProducts, getCollectionProducts } from "@/lib/shopify";
+import { OurStore } from "@/components/our-store";
 
 interface MobileCollectionsHubProps {
   collections: Collection[];
@@ -261,6 +262,8 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
             </div>
           </Link>
         </div>
+        {/* Our Store Section */}
+        <OurStore />
       </section>
 
     </div>

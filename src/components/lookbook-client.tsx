@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/lib/data";
+import { OurStore } from "@/components/our-store";
 
 interface LookbookClientProps {
   products: Product[];
@@ -73,6 +74,7 @@ export default function LookbookClient({ products }: LookbookClientProps) {
            </div>
         </div>
       </div>
+      <OurStore />
       <style dangerouslySetInnerHTML={{ __html: `
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
