@@ -12,6 +12,7 @@ import { MobileProductClient } from "@/components/mobile/mobile-product-client";
 import { ShopTheLook } from "@/components/shop-the-look";
 import { motion, AnimatePresence } from "framer-motion";
 import { PincodeChecker } from "@/components/pincode-checker";
+import { CustomerCollage } from "@/components/customer-collage";
 
 interface ProductClientProps {
   product: Product;
@@ -246,6 +247,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
 
         <section className="bg-[#fcfcfc] w-full pt-12 pb-52 px-12 border-t border-black/5 z-20 relative">
           <div className="max-w-6xl mx-auto">
+            <CustomerCollage />
             <ShopTheLook currentProduct={product} allProducts={allProducts} />
             <h2 className="text-xl font-bold tracking-tight mt-16 mb-8">You may also like</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">

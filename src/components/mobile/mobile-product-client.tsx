@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ProductCard } from "../product-card";
 import { ShopTheLook } from "../shop-the-look";
 import { PincodeChecker } from "@/components/pincode-checker";
+import { CustomerCollage } from "@/components/customer-collage";
 
 interface MobileProductClientProps {
   product: Product;
@@ -265,7 +266,10 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
         </div>
       </div>
 
-      {/* 5.5 Shop the Look (Outfit pairing) */}
+      {/* 5.5 Customer UGC Collage */}
+      <CustomerCollage />
+
+      {/* 5.6 Shop the Look (Outfit pairing) */}
       <ShopTheLook currentProduct={product} allProducts={allProducts} />
 
       {/* 6. You May Also Like */}
