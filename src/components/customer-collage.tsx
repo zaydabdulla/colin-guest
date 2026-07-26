@@ -17,41 +17,41 @@ interface CustomerReview {
   rating: number;
   comment: string;
   image: string;
-  aspectRatio: string; // Staggered height matching reference screenshot
+  aspectRatio: string; // Tighter staggered height
 }
 
 const REVIEWS: CustomerReview[] = [
   {
     id: "1",
-    name: "Aachman",
+    name: "Zayd Abdulla",
     rating: 5,
     comment: "These are the best tank tops out there! I HIGHLY recommend! Will buy more.",
-    image: "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?q=80&w=800&auto=format&fit=crop",
-    aspectRatio: "aspect-[3/4]",
+    image: "/black_acid_wash_hoodies.jpg",
+    aspectRatio: "aspect-[3/3.6]",
   },
   {
     id: "2",
-    name: "Raj Kamal",
+    name: "Fidel Shaan",
     rating: 5,
     comment: "Bought 6 black, they look insane.",
-    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop",
-    aspectRatio: "aspect-[3/5]", // Taller right card matching reference screenshot
+    image: "/black_faded_jean.jpg",
+    aspectRatio: "aspect-[3/4.4]", // Taller card matching reference screenshot right column
   },
   {
     id: "3",
-    name: "Devansh",
+    name: "Farhan Ahammed",
     rating: 5,
     comment: "Heavyweight fabric is unmatched. Cut sits perfectly on shoulders.",
-    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=800&auto=format&fit=crop",
-    aspectRatio: "aspect-[3/4.2]",
+    image: "/blacks_set.jpg",
+    aspectRatio: "aspect-[3/3.8]",
   },
   {
     id: "4",
-    name: "Rohan",
+    name: "Mowfaq Rahman",
     rating: 5,
     comment: "The wash finish looks even better in person. 10/10 quality.",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop",
-    aspectRatio: "aspect-[3/3.8]",
+    image: "/grey_hoodie_washed_jean.jpg",
+    aspectRatio: "aspect-[3/3.5]",
   },
 ];
 
@@ -69,28 +69,28 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
   }
 
   return (
-    <section className={`w-full py-12 md:py-16 bg-white relative z-10 ${className}`}>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <section className={`w-full py-6 md:py-10 bg-white relative z-10 ${className}`}>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
         
-        {/* Section Header - Exact SuperSaint Typography & Spacing */}
-        <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-black uppercase font-sans">
-            WHAT OUR CUSTOMERS ARE SAYING
+        {/* Section Header - Compact & Brand Font */}
+        <div className="text-center mb-6 md:mb-8">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-black tracking-tight text-black uppercase font-sans">
+            HEAR FROM OUR CUSTOMERS
           </h2>
-          <p className="mt-2 text-[10.5px] sm:text-xs font-bold tracking-[0.25em] text-neutral-800 uppercase font-sans">
+          <p className="mt-1 text-[9.5px] sm:text-[10.5px] font-bold tracking-[0.25em] text-neutral-500 uppercase font-sans">
             REAL REVIEWS. REAL PEOPLE.
           </p>
         </div>
 
-        {/* 2-Column Mobile / 4-Column Desktop Grid matching exact SuperSaint design */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5 items-start">
+        {/* 2-Column Mobile / 4-Column Desktop Compact Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5 md:gap-4 items-start max-w-4xl mx-auto">
           {REVIEWS.map((review) => (
             <div
               key={review.id}
               onClick={() => setActiveImageModal(review)}
-              className="bg-white border border-neutral-200/80 rounded-xl overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.04)] hover:shadow-md transition-shadow duration-300 flex flex-col cursor-pointer"
+              className="bg-white border border-neutral-200/80 rounded-lg overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow duration-300 flex flex-col cursor-pointer"
             >
-              {/* Customer Photo - Raw, Unadorned, Crisp Aspect Ratio */}
+              {/* Customer Photo - Product images from website */}
               <div className={`relative w-full ${review.aspectRatio} bg-neutral-100 overflow-hidden`}>
                 <Image
                   src={review.image}
@@ -101,29 +101,29 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
                 />
               </div>
 
-              {/* Card Bottom Section */}
-              <div className="p-3.5 sm:p-4 flex flex-col flex-1 justify-between bg-white min-h-[160px] sm:min-h-[180px]">
+              {/* Card Bottom Section - Compact Padding & Website Font */}
+              <div className="p-2.5 sm:p-3 flex flex-col flex-1 justify-between bg-white min-h-[130px] sm:min-h-[150px]">
                 <div>
                   {/* 5 Solid Black Stars */}
-                  <div className="flex items-center gap-0.5 mb-3">
+                  <div className="flex items-center gap-0.5 mb-2">
                     {[...Array(review.rating)].map((_, i) => (
                       <Star
                         key={i}
-                        size={15}
+                        size={13}
                         className="fill-black text-black shrink-0"
                       />
                     ))}
                   </div>
 
                   {/* Review Text */}
-                  <p className="text-[12px] sm:text-[13px] text-black font-medium leading-snug font-sans mb-4">
+                  <p className="text-[11px] sm:text-[12px] text-neutral-900 font-medium leading-snug font-sans mb-3">
                     {review.comment}
                   </p>
                 </div>
 
                 {/* Customer Name at Bottom */}
-                <div className="mt-auto pt-2">
-                  <span className="text-sm sm:text-base font-semibold text-neutral-900 font-sans tracking-tight block">
+                <div className="mt-auto pt-1.5 border-t border-neutral-100">
+                  <span className="text-xs sm:text-sm font-semibold text-neutral-900 font-sans tracking-tight block truncate">
                     {review.name}
                   </span>
                 </div>
@@ -169,7 +169,7 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
               <div className="p-4 bg-white flex flex-col gap-2">
                 <div className="flex items-center gap-0.5">
                   {[...Array(activeImageModal.rating)].map((_, i) => (
-                    <Star key={i} size={15} className="fill-black text-black" />
+                    <Star key={i} size={14} className="fill-black text-black" />
                   ))}
                 </div>
                 <p className="text-sm font-medium text-black leading-snug">
