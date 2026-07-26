@@ -17,6 +17,7 @@ interface CustomerReview {
   rating: number;
   comment: string;
   image: string;
+  fallbackImage: string;
   aspectRatio: string; // Staggered height for true collage structure
 }
 
@@ -26,7 +27,8 @@ const REVIEWS_COL_1: CustomerReview[] = [
     name: "Zayd Abdulla",
     rating: 5,
     comment: "Heavyweight cotton with the perfect drop shoulder. Highly recommend.",
-    image: "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?q=80&w=800&auto=format&fit=crop",
+    image: "/customer1.jpg",
+    fallbackImage: "/collections_hero.jpg",
     aspectRatio: "aspect-[3/3.6]",
   },
   {
@@ -34,8 +36,9 @@ const REVIEWS_COL_1: CustomerReview[] = [
     name: "Farhan Ahammed",
     rating: 5,
     comment: "Quality is crazy good. Fits true to size and looks effortless.",
-    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=800&auto=format&fit=crop",
-    aspectRatio: "aspect-[3/3.6]",
+    image: "/customer3.jpg",
+    fallbackImage: "/mobile_hero.png",
+    aspectRatio: "aspect-[3/4.8]", // Taller bottom-left photo as requested!
   },
 ];
 
@@ -45,16 +48,18 @@ const REVIEWS_COL_2: CustomerReview[] = [
     name: "Fidel Shaan",
     rating: 5,
     comment: "Fit and wash are 10/10. Exactly the luxury aesthetic I wanted.",
-    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop",
-    aspectRatio: "aspect-[3/4.6]", // Taller card creating the staggered collage structure
+    image: "/customer2.jpg",
+    fallbackImage: "/login.jpg",
+    aspectRatio: "aspect-[3/4.6]",
   },
   {
     id: "4",
     name: "Mowfaq Rahman",
     rating: 5,
     comment: "Best fit in my wardrobe. Fast delivery too.",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop",
-    aspectRatio: "aspect-[3/3.8]",
+    image: "/customer4.jpg",
+    fallbackImage: "/collections_hero.jpg",
+    aspectRatio: "aspect-[3/3.6]",
   },
 ];
 
@@ -66,64 +71,70 @@ interface CustomerCollageProps {
 
 export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }: CustomerCollageProps) {
   const [activeImageModal, setActiveImageModal] = useState<CustomerReview | null>(null);
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
   if (!show) {
     return null;
   }
 
-  const renderCard = (review: CustomerReview) => (
-    <div
-      key={review.id}
-      onClick={() => setActiveImageModal(review)}
-      className="bg-white border border-black/5 rounded-lg overflow-hidden shadow-none hover:border-black/15 transition-all duration-200 flex flex-col cursor-pointer mb-2 sm:mb-2.5"
-    >
-      {/* Customer Photo - Guaranteed high-res load with unoptimized flag */}
-      <div className={`relative w-full ${review.aspectRatio} bg-[#f4f4f4] overflow-hidden`}>
-        <Image
-          src={review.image}
-          alt={`${review.name}'s try-on photo`}
-          fill
-          unoptimized
-          className="object-cover"
-          sizes="(max-width: 768px) 50vw, 25vw"
-        />
-      </div>
+  const renderCard = (review: CustomerReview) => {
+    const imgSrc = failedImages[review.id] ? review.fallbackImage : review.image;
 
-      {/* Card Details - Refined Micro Typography */}
-      <div className="p-2 sm:p-2.5 flex flex-col flex-1 justify-between bg-white min-h-[95px] sm:min-h-[110px]">
-        <div>
-          {/* Subtle Delicate Stars */}
-          <div className="flex items-center gap-0.5 mb-1">
-            {[...Array(review.rating)].map((_, i) => (
-              <Star
-                key={i}
-                size={9}
-                className="fill-black text-black shrink-0"
-              />
-            ))}
+    return (
+      <div
+        key={review.id}
+        onClick={() => setActiveImageModal(review)}
+        className="bg-white border border-black/5 rounded-lg overflow-hidden shadow-none hover:border-black/15 transition-all duration-200 flex flex-col cursor-pointer mb-2 sm:mb-2.5"
+      >
+        {/* Customer Photo with Staggered Ratio */}
+        <div className={`relative w-full ${review.aspectRatio} bg-[#f4f4f4] overflow-hidden`}>
+          <Image
+            src={imgSrc}
+            alt={`${review.name}'s try-on photo`}
+            fill
+            unoptimized
+            onError={() => setFailedImages((prev) => ({ ...prev, [review.id]: true }))}
+            className="object-cover"
+            sizes="(max-width: 768px) 50vw, 25vw"
+          />
+        </div>
+
+        {/* Card Details */}
+        <div className="p-2 sm:p-2.5 flex flex-col flex-1 justify-between bg-white min-h-[95px] sm:min-h-[110px]">
+          <div>
+            {/* Delicate Stars */}
+            <div className="flex items-center gap-0.5 mb-1">
+              {[...Array(review.rating)].map((_, i) => (
+                <Star
+                  key={i}
+                  size={9}
+                  className="fill-black text-black shrink-0"
+                />
+              ))}
+            </div>
+
+            {/* Micro Review Text */}
+            <p className="text-[8.5px] sm:text-[9px] text-black/65 font-normal leading-normal font-sans mb-2">
+              {review.comment}
+            </p>
           </div>
 
-          {/* Micro Review Text */}
-          <p className="text-[8.5px] sm:text-[9px] text-black/65 font-normal leading-normal font-sans mb-2">
-            {review.comment}
-          </p>
-        </div>
-
-        {/* Customer Name */}
-        <div className="mt-auto pt-1 border-t border-black/5">
-          <span className="text-[8.5px] sm:text-[9px] font-semibold uppercase tracking-wider text-black/80 truncate block">
-            {review.name}
-          </span>
+          {/* Customer Name */}
+          <div className="mt-auto pt-1 border-t border-black/5">
+            <span className="text-[8.5px] sm:text-[9px] font-semibold uppercase tracking-wider text-black/80 truncate block">
+              {review.name}
+            </span>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <section className={`w-full py-4 sm:py-6 bg-white relative z-10 ${className}`}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         
-        {/* Section Header - Refined Aesthetic PDP Font (Light/Medium, High Kerning) */}
+        {/* Section Header */}
         <div className="text-center mb-4 sm:mb-5">
           <h3 className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.3em] text-[#1a1a1a] font-sans">
             HEAR FROM OUR CUSTOMERS
@@ -140,7 +151,7 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
             {REVIEWS_COL_1.map((review) => renderCard(review))}
           </div>
 
-          {/* Right Column (Taller Staggered Collage) */}
+          {/* Right Column */}
           <div className="flex flex-col">
             {REVIEWS_COL_2.map((review) => renderCard(review))}
           </div>
@@ -181,7 +192,7 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
 
               <div className="relative w-full aspect-[3/4] bg-neutral-900">
                 <Image
-                  src={activeImageModal.image}
+                  src={failedImages[activeImageModal.id] ? activeImageModal.fallbackImage : activeImageModal.image}
                   alt={activeImageModal.name}
                   fill
                   unoptimized
