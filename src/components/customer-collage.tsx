@@ -27,7 +27,7 @@ const REVIEWS_COL_1: CustomerReview[] = [
     rating: 5,
     comment: "Heavyweight cotton with the perfect drop shoulder. Highly recommend.",
     image: "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?q=80&w=800&auto=format&fit=crop",
-    aspectRatio: "aspect-[3/3.8]",
+    aspectRatio: "aspect-[3/3.6]",
   },
   {
     id: "3",
@@ -35,7 +35,7 @@ const REVIEWS_COL_1: CustomerReview[] = [
     rating: 5,
     comment: "Quality is crazy good. Fits true to size and looks effortless.",
     image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=800&auto=format&fit=crop",
-    aspectRatio: "aspect-[3/3.8]",
+    aspectRatio: "aspect-[3/3.6]",
   },
 ];
 
@@ -46,7 +46,7 @@ const REVIEWS_COL_2: CustomerReview[] = [
     rating: 5,
     comment: "Fit and wash are 10/10. Exactly the luxury aesthetic I wanted.",
     image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop",
-    aspectRatio: "aspect-[3/4.8]", // Taller card creating the staggered collage structure
+    aspectRatio: "aspect-[3/4.6]", // Taller card creating the staggered collage structure
   },
   {
     id: "4",
@@ -54,7 +54,7 @@ const REVIEWS_COL_2: CustomerReview[] = [
     rating: 5,
     comment: "Best fit in my wardrobe. Fast delivery too.",
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop",
-    aspectRatio: "aspect-[3/4]",
+    aspectRatio: "aspect-[3/3.8]",
   },
 ];
 
@@ -75,10 +75,10 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
     <div
       key={review.id}
       onClick={() => setActiveImageModal(review)}
-      className="bg-white border border-neutral-200/90 rounded-xl overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.04)] hover:shadow-md transition-shadow duration-300 flex flex-col cursor-pointer mb-3 sm:mb-4"
+      className="bg-white border border-black/5 rounded-lg overflow-hidden shadow-none hover:border-black/15 transition-all duration-200 flex flex-col cursor-pointer mb-2 sm:mb-2.5"
     >
       {/* Customer Photo - Guaranteed high-res load with unoptimized flag */}
-      <div className={`relative w-full ${review.aspectRatio} bg-neutral-100 overflow-hidden`}>
+      <div className={`relative w-full ${review.aspectRatio} bg-[#f4f4f4] overflow-hidden`}>
         <Image
           src={review.image}
           alt={`${review.name}'s try-on photo`}
@@ -89,29 +89,29 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
         />
       </div>
 
-      {/* Card Details */}
-      <div className="p-3 sm:p-3.5 flex flex-col flex-1 justify-between bg-white min-h-[120px] sm:min-h-[135px]">
+      {/* Card Details - Refined Micro Typography */}
+      <div className="p-2 sm:p-2.5 flex flex-col flex-1 justify-between bg-white min-h-[95px] sm:min-h-[110px]">
         <div>
-          {/* 5 Solid Black Stars */}
-          <div className="flex items-center gap-0.5 mb-2">
+          {/* Subtle Delicate Stars */}
+          <div className="flex items-center gap-0.5 mb-1">
             {[...Array(review.rating)].map((_, i) => (
               <Star
                 key={i}
-                size={13}
+                size={9}
                 className="fill-black text-black shrink-0"
               />
             ))}
           </div>
 
-          {/* Short & Aesthetic Review Text */}
-          <p className="text-[11.5px] sm:text-xs text-neutral-900 font-medium leading-relaxed font-sans mb-3">
+          {/* Micro Review Text */}
+          <p className="text-[8.5px] sm:text-[9px] text-black/65 font-normal leading-normal font-sans mb-2">
             {review.comment}
           </p>
         </div>
 
-        {/* Customer Name at Bottom */}
-        <div className="mt-auto pt-2 border-t border-neutral-100">
-          <span className="text-xs sm:text-sm font-semibold text-neutral-900 font-sans tracking-tight block truncate">
+        {/* Customer Name */}
+        <div className="mt-auto pt-1 border-t border-black/5">
+          <span className="text-[8.5px] sm:text-[9px] font-semibold uppercase tracking-wider text-black/80 truncate block">
             {review.name}
           </span>
         </div>
@@ -120,21 +120,21 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
   );
 
   return (
-    <section className={`w-full py-8 md:py-12 bg-white relative z-10 ${className}`}>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+    <section className={`w-full py-4 sm:py-6 bg-white relative z-10 ${className}`}>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
         
-        {/* Section Header - Bold Solid Black Typography */}
-        <div className="text-center mb-8 md:mb-10">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-black uppercase font-sans">
+        {/* Section Header - Refined Aesthetic PDP Font (Light/Medium, High Kerning) */}
+        <div className="text-center mb-4 sm:mb-5">
+          <h3 className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.3em] text-[#1a1a1a] font-sans">
             HEAR FROM OUR CUSTOMERS
-          </h2>
-          <p className="mt-2 text-[10.5px] sm:text-xs font-bold tracking-[0.25em] text-black uppercase font-sans">
+          </h3>
+          <p className="mt-1 text-[8px] sm:text-[8.5px] font-normal uppercase tracking-[0.2em] text-black/40 font-sans">
             REAL REVIEWS. REAL PEOPLE.
           </p>
         </div>
 
         {/* 2-Column Staggered Collage Layout */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5 items-start max-w-4xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-2.5 items-start max-w-3xl mx-auto">
           {/* Left Column */}
           <div className="flex flex-col">
             {REVIEWS_COL_1.map((review) => renderCard(review))}
@@ -163,20 +163,20 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setActiveImageModal(null)}
-            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4"
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-xl overflow-hidden max-w-sm w-full shadow-2xl relative flex flex-col max-h-[85vh]"
+              className="bg-white rounded-xl overflow-hidden max-w-xs w-full shadow-2xl relative flex flex-col max-h-[85vh]"
             >
               <button
                 onClick={() => setActiveImageModal(null)}
-                className="absolute top-3 right-3 z-10 p-2 bg-black/70 text-white rounded-full hover:bg-black transition-colors"
+                className="absolute top-2.5 right-2.5 z-10 p-1.5 bg-black/60 text-white rounded-full hover:bg-black transition-colors"
               >
-                <X size={16} />
+                <X size={12} />
               </button>
 
               <div className="relative w-full aspect-[3/4] bg-neutral-900">
@@ -189,16 +189,16 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
                 />
               </div>
 
-              <div className="p-4 bg-white flex flex-col gap-1.5">
+              <div className="p-3 bg-white flex flex-col gap-1">
                 <div className="flex items-center gap-0.5">
                   {[...Array(activeImageModal.rating)].map((_, i) => (
-                    <Star key={i} size={14} className="fill-black text-black" />
+                    <Star key={i} size={10} className="fill-black text-black" />
                   ))}
                 </div>
-                <p className="text-xs font-medium text-neutral-900 leading-snug mt-1 font-sans">
+                <p className="text-[9px] leading-relaxed text-black/70 font-normal">
                   "{activeImageModal.comment}"
                 </p>
-                <span className="text-sm font-semibold text-neutral-900 font-sans tracking-tight mt-1">
+                <span className="text-[9px] font-semibold uppercase tracking-wider text-black mt-1">
                   {activeImageModal.name}
                 </span>
               </div>
