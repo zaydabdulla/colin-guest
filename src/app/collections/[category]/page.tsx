@@ -19,7 +19,21 @@ export default async function CategoryGrid({ params }: { params: Promise<{ categ
     let shopifyHandle = category;
     if (category.toLowerCase() === 'hoodies') shopifyHandle = 'hoodie';
     if (category.toLowerCase() === 'jeans') shopifyHandle = 'jeans';
+    if (category.toLowerCase() === 'jackets') shopifyHandle = 'jackets';
+    
     shopifyProducts = await getCollectionProducts(shopifyHandle);
+
+    // Fallback: If collection query returns empty, filter all products by productType or category
+    if (!shopifyProducts || shopifyProducts.length === 0) {
+      const allProds = await getAllProducts();
+      const catLower = category.toLowerCase().trim();
+      shopifyProducts = allProds.filter((p: any) => {
+        const pType = (p.productType || "").toLowerCase();
+        const pCat = (p.category?.name || "").toLowerCase();
+        const pTitle = (p.title || "").toLowerCase();
+        return pType.includes(catLower) || pCat.includes(catLower) || pTitle.includes(catLower);
+      });
+    }
   }
 
   // Fetch all collections for the "Browse Categories" section

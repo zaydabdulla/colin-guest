@@ -59,8 +59,9 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
   const carouselCollections = useMemo(() => {
     if (collections.length === 0) return [];
     let items = [...collections];
-    while (items.length < 6) items = [...items, ...collections];
-    return items.slice(0, 6);
+    // If fewer than 4 items, loop them for stack depth
+    while (items.length < 4) items = [...items, ...collections];
+    return items;
   }, [collections]);
 
   const [activeIndex, setActiveIndex] = useState(2);

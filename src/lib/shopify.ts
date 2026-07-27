@@ -662,7 +662,7 @@ export async function customerActivate(id: string, input: any) {
 export async function getAllCollections(): Promise<Collection[]> {
   const query = `
     query getCollections {
-      collections(first: 20) {
+      collections(first: 100) {
         edges {
           node {
             id
@@ -679,7 +679,39 @@ export async function getAllCollections(): Promise<Collection[]> {
   `;
 
   const response = await shopifyFetch({ query });
-  const collections = response.data?.collections?.edges.map((edge: any) => edge.node) || [];
+  let collections: Collection[] = response.data?.collections?.edges.map((edge: any) => edge.node) || [];
+
+  // Fallback / Auto-detection: Ensure product types & categories (e.g. Jackets) have category cards
+  try {
+    const products = await getAllProducts();
+    const existingHandles = new Set(collections.map(c => c.handle.toLowerCase()));
+    const existingTitles = new Set(collections.map(c => c.title.toLowerCase().trim()));
+
+    const categoryMap = new Map<string, { title: string; handle: string; imageUrl: string }>();
+
+    products.forEach((p: any) => {
+      const typeOrCat = (p.productType || p.category?.name || "").trim();
+      if (typeOrCat && typeOrCat.toLowerCase() !== 'general' && typeOrCat.toLowerCase() !== 'landing page') {
+        const handle = typeOrCat.toLowerCase().replace(/\s+/g, '-');
+        const title = typeOrCat;
+        if (!existingHandles.has(handle) && !existingTitles.has(title.toLowerCase()) && !categoryMap.has(handle)) {
+          const img = p.images?.[0]?.url || p.src || "/collections_hero.jpg";
+          categoryMap.set(handle, { title, handle, imageUrl: img });
+        }
+      }
+    });
+
+    categoryMap.forEach((val, handle) => {
+      collections.push({
+        id: `auto-${handle}`,
+        title: val.title,
+        handle: val.handle,
+        image: { url: val.imageUrl, altText: val.title }
+      });
+    });
+  } catch (err) {
+    console.error("Error generating fallback category cards:", err);
+  }
 
   // Sort logic: Best Sellers first, then New Arrivals
   const priorityOrder = ["best sellers", "new arrivals"];
@@ -695,7 +727,6 @@ export async function getAllCollections(): Promise<Collection[]> {
     if (indexA !== -1) return -1;
     if (indexB !== -1) return 1;
     
-    // Maintain original order for others
     return 0;
   });
 }
