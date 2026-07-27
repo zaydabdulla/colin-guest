@@ -662,7 +662,7 @@ export async function customerActivate(id: string, input: any) {
 export async function getAllCollections(): Promise<Collection[]> {
   const query = `
     query getCollections {
-      collections(first: 100) {
+      collections(first: 50) {
         edges {
           node {
             id
@@ -681,40 +681,40 @@ export async function getAllCollections(): Promise<Collection[]> {
   const response = await shopifyFetch({ query });
   let collections: Collection[] = response.data?.collections?.edges.map((edge: any) => edge.node) || [];
 
-  // Fallback / Auto-detection: Ensure product types & categories (e.g. Jackets) have category cards
-  try {
-    const products = await getAllProducts();
-    const existingHandles = new Set(collections.map(c => c.handle.toLowerCase()));
-    const existingTitles = new Set(collections.map(c => c.title.toLowerCase().trim()));
+  // Filter out any internal/system collections or unwanted sub-types
+  collections = collections.filter((c: Collection) => {
+    const title = c.title.toLowerCase().trim();
+    // Exclude landing page and internal tags
+    return title !== 'landing page' && title !== 'all products' && title !== 'all product';
+  });
 
-    const categoryMap = new Map<string, { title: string; handle: string; imageUrl: string }>();
-
-    products.forEach((p: any) => {
-      const typeOrCat = (p.productType || p.category?.name || "").trim();
-      if (typeOrCat && typeOrCat.toLowerCase() !== 'general' && typeOrCat.toLowerCase() !== 'landing page') {
-        const handle = typeOrCat.toLowerCase().replace(/\s+/g, '-');
-        const title = typeOrCat;
-        if (!existingHandles.has(handle) && !existingTitles.has(title.toLowerCase()) && !categoryMap.has(handle)) {
-          const img = p.images?.[0]?.url || p.src || "/collections_hero.jpg";
-          categoryMap.set(handle, { title, handle, imageUrl: img });
-        }
-      }
-    });
-
-    categoryMap.forEach((val, handle) => {
-      collections.push({
-        id: `auto-${handle}`,
-        title: val.title,
-        handle: val.handle,
-        image: { url: val.imageUrl, altText: val.title }
+  // Ensure "Jackets" collection is included cleanly if present in shopify or fallback
+  const hasJackets = collections.some(c => c.handle.toLowerCase() === 'jackets' || c.title.toLowerCase() === 'jackets');
+  if (!hasJackets) {
+    try {
+      const allProds = await getAllProducts();
+      const jacketProd = allProds.find((p: any) => {
+        const pType = (p.productType || "").toLowerCase();
+        const pCat = (p.category?.name || "").toLowerCase();
+        const pTitle = (p.title || "").toLowerCase();
+        return pType.includes('jacket') || pCat.includes('jacket') || pTitle.includes('jacket');
       });
-    });
-  } catch (err) {
-    console.error("Error generating fallback category cards:", err);
+
+      if (jacketProd) {
+        collections.push({
+          id: 'collection-jackets',
+          title: 'Jackets',
+          handle: 'jackets',
+          image: { url: jacketProd.images?.[0]?.url || jacketProd.src || '/collections_hero.jpg', altText: 'Jackets' }
+        });
+      }
+    } catch (err) {
+      console.error("Error adding Jackets collection card:", err);
+    }
   }
 
-  // Sort logic: Best Sellers first, then New Arrivals
-  const priorityOrder = ["best sellers", "new arrivals"];
+  // Sort logic: Best Sellers, New Arrivals, then core categories
+  const priorityOrder = ["best sellers", "new arrivals", "jeans", "hoodies", "co-ord sets", "shirts", "jackets"];
   
   return collections.sort((a: Collection, b: Collection) => {
     const titleA = a.title.toLowerCase().trim();
@@ -727,7 +727,7 @@ export async function getAllCollections(): Promise<Collection[]> {
     if (indexA !== -1) return -1;
     if (indexB !== -1) return 1;
     
-    return 0;
+    return titleA.localeCompare(titleB);
   });
 }
 
