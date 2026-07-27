@@ -681,12 +681,8 @@ export async function getAllCollections(): Promise<Collection[]> {
   const response = await shopifyFetch({ query });
   let collections: Collection[] = response.data?.collections?.edges.map((edge: any) => edge.node) || [];
 
-  // Filter out any internal/system collections or unwanted sub-types
-  collections = collections.filter((c: Collection) => {
-    const title = c.title.toLowerCase().trim();
-    // Exclude landing page and internal tags
-    return title !== 'landing page' && title !== 'all products' && title !== 'all product';
-  });
+  // Ensure Landing Page and other collections remain accessible for primary cover resolution
+  // We keep collections intact so page.tsx can resolve landingPageCollection?.image?.url
 
   // Ensure "Jackets" collection is included cleanly if present in shopify or fallback
   const hasJackets = collections.some(c => c.handle.toLowerCase() === 'jackets' || c.title.toLowerCase() === 'jackets');

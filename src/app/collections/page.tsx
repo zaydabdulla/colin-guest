@@ -1,21 +1,28 @@
-import { getAllCollections } from "@/lib/shopify";
+import { getAllCollections, getAllProducts } from "@/lib/shopify";
 import { CollectionsHubClient } from "@/components/collections-hub-client";
 import { MobileCollectionsHub } from "@/components/mobile/mobile-collections-hub";
 import Image from "next/image";
 import ExploreButton from "@/components/explore-button";
 
 export default async function CollectionsHub() {
-  // Fetch all collections dynamically
+  // Fetch all collections and products dynamically from Shopify
   const allCollections = await getAllCollections();
+  const allProds = await getAllProducts();
   
-  // Find Landing Page collection for the "All Products" cover
-  const landingPageCollection = allCollections.find(c => c.title.toLowerCase() === 'landing page');
-  const allProductsImage = landingPageCollection?.image?.url || "/collections_hero.jpg";
+  // Primary Source: Find "Landing Page" collection image from Shopify Admin
+  const landingPageCollection = allCollections.find(c => {
+    const title = (c.title || "").toLowerCase().trim();
+    const handle = (c.handle || "").toLowerCase().trim();
+    return title.includes('landing') || handle.includes('landing') || title.includes('frontpage') || handle.includes('frontpage');
+  });
+  
+  const allProductsImage = landingPageCollection?.image?.url || allProds[0]?.src || "/collections_hero.jpg";
 
-  // Filter out "Landing Page" and "All Product(s)" from the Browse Categories section
+  // Filter out "Landing Page" and "All Product(s)" from the Browse Categories cards list
   const filteredCollections = allCollections.filter(c => {
-    const title = c.title.toLowerCase();
-    return title !== 'landing page' && title !== 'all products' && title !== 'all product';
+    const title = (c.title || "").toLowerCase();
+    const handle = (c.handle || "").toLowerCase();
+    return !title.includes('landing') && !handle.includes('landing') && !title.includes('frontpage') && title !== 'all products' && title !== 'all product';
   });
 
   return (
