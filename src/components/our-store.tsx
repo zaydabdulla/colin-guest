@@ -184,10 +184,10 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
           <div className="px-1 pt-0.5 pb-0.5 flex flex-col gap-2">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-[#1a1a1a] tracking-tight font-sans">
+                <h3 className="text-sm sm:text-base md:text-lg font-bold text-[#1a1a1a] tracking-tight font-sans">
                   Areekode Flagship
                 </h3>
-                <p className="text-[9.5px] sm:text-[10px] text-neutral-500 font-medium leading-tight font-sans mt-0.5 max-w-[220px]">
+                <p className="text-[9.5px] sm:text-[10.5px] md:text-xs text-neutral-500 font-medium leading-normal font-sans mt-0.5 max-w-[260px]">
                   Main Road, Areekode, Malappuram, Kerala 673639
                 </p>
               </div>
@@ -196,10 +196,10 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
                 href={googleMapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3 py-1.5 bg-black text-white rounded-full text-[9px] font-bold uppercase tracking-wider hover:bg-black/80 transition-colors flex items-center gap-1 shrink-0 shadow-sm"
+                className="px-3.5 py-2 bg-black text-white rounded-full text-[9px] sm:text-[10px] md:text-[11px] font-bold uppercase tracking-wider hover:bg-black/80 transition-colors flex items-center gap-1 shrink-0 shadow-sm"
               >
                 <span>Get Direction</span>
-                <ArrowUpRight size={11} className="shrink-0" />
+                <ArrowUpRight size={12} className="shrink-0" />
               </a>
             </div>
           </div>
