@@ -82,7 +82,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
 
                  <div className="flex justify-between items-center mb-1 w-full">
                   <div className="flex items-center gap-1.5 flex-1 min-w-0">
-                    <h1 className="text-xs md:text-sm font-bold tracking-tight text-[#1a1a1a] truncate">
+                    <h1 className="text-xs font-bold tracking-tight text-[#1a1a1a] truncate">
                       {product.title}
                     </h1>
                     <button
@@ -91,7 +91,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                       className="active:opacity-50 transition-opacity shrink-0 pb-0.5"
                     >
                       <Bookmark
-                        size={13}
+                        size={11}
                         className={`transition-colors pointer-events-none ${isWishlisted ? "fill-black text-black" : "text-black/30"}`}
                       />
                     </button>
@@ -99,14 +99,14 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                   <button
                     type="button"
                     onClick={() => alert("Size Guide: " + (product.sizeGuide || "Standard fitting."))}
-                    className="px-2.5 py-1 bg-black/5 rounded text-[8px] md:text-[9.5px] font-bold text-black/50 tracking-wider hover:bg-black/10 transition-colors shrink-0"
+                    className="px-2 py-1 bg-black/5 rounded text-[8px] font-bold text-black/50 tracking-wider hover:bg-black/10 transition-colors shrink-0"
                   >
                     Size Guide
                   </button>
                 </div>
 
                 <div className="mb-2">
-                  <p className="text-[9.5px] md:text-xs font-bold text-black/50">
+                  <p className="text-[9.5px] font-bold text-black/45">
                     {product.price}
                   </p>
                 </div>
@@ -119,7 +119,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                         <button 
                           key={variant.id} 
                           onClick={() => variant.availableForSale && setSelectedSize(variant.title)}
-                          className={`py-2 text-[9px] md:text-[10.5px] rounded-full font-bold transition-all duration-300 ${
+                          className={`py-2 text-[9px] rounded-full font-bold transition-all duration-300 ${
                             selectedSize === variant.title 
                               ? 'border border-black bg-black text-white' 
                               : !variant.availableForSale
@@ -150,7 +150,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                         </button>
                       ))
                     ) : (
-                      <div className="col-span-full py-2 text-[9px] md:text-[10.5px] font-bold text-black/40 uppercase tracking-[0.2em] italic">
+                      <div className="col-span-full py-2 text-[9px] font-bold text-black/40 uppercase tracking-[0.2em] italic">
                         Standard Archival Fit / One Size
                       </div>
                     )}
@@ -161,14 +161,14 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                   <button 
                     disabled={isAllSoldOut || !selectedSize}
                     onClick={() => product && selectedSize && addToCart(product, selectedSize)}
-                    className={`flex-1 border border-black/10 bg-white text-black py-3 rounded-full text-[9px] md:text-[10.5px] font-bold uppercase hover:border-black transition-colors shadow-sm tracking-[0.1em] ${isAllSoldOut ? 'opacity-30 cursor-not-allowed' : ''}`}
+                    className={`flex-1 border border-black/10 bg-white text-black py-3 rounded-full text-[9px] font-bold uppercase hover:border-black transition-colors shadow-sm tracking-[0.1em] ${isAllSoldOut ? 'opacity-30 cursor-not-allowed' : ''}`}
                   >
                     {isAllSoldOut ? 'SOLD OUT' : 'ADD TO BAG'}
                   </button>
                   {!isAllSoldOut && (
                     <button 
                       onClick={() => { product && selectedSize && addToCart(product, selectedSize || 'M'); setTimeout(openCart, 100); }}
-                      className="flex-1 bg-black border border-black text-white py-3 rounded-full text-[9px] md:text-[10.5px] font-bold uppercase hover:bg-black/80 transition-colors shadow-sm tracking-[0.1em]"
+                      className="flex-1 bg-black border border-black text-white py-3 rounded-full text-[9px] font-bold uppercase hover:bg-black/80 transition-colors shadow-sm tracking-[0.1em]"
                     >
                       BUY NOW
                     </button>
@@ -186,7 +186,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                         key={tab}
                         type="button"
                         onClick={() => setActiveTab(tab)}
-                        className={`flex-1 py-3 px-1 text-[7.5px] md:text-[9.5px] font-bold uppercase tracking-wide relative transition-all active:bg-black/5 ${activeTab === tab ? 'text-black' : 'text-black/30'
+                        className={`flex-1 py-3 px-1 text-[7.5px] md:text-[8px] font-bold uppercase tracking-wide relative transition-all active:bg-black/5 ${activeTab === tab ? 'text-black' : 'text-black/30'
                           }`}
                         style={{ WebkitTapHighlightColor: 'transparent' }}
                       >
@@ -202,7 +202,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                     ))}
                   </div>
 
-                  <div className="py-3 px-4 text-[9px] md:text-[11px] leading-relaxed text-black/70 font-medium bg-white [&_p]:text-[9px] md:[&_p]:text-[11px] [&_p]:leading-relaxed [&_ul]:text-[9px] md:[&_ul]:text-[11px] [&_li]:text-[9px] md:[&_li]:text-[11px] overflow-hidden relative">
+                  <div className="py-3 px-4 text-[9px] leading-relaxed text-black/65 font-medium bg-white [&_p]:text-[9px] [&_p]:leading-relaxed [&_ul]:text-[9px] [&_li]:text-[9px] overflow-hidden relative">
                     <AnimatePresence mode="wait">
                       <motion.div
                         key={activeTab}
