@@ -57,32 +57,30 @@ interface OurStoreProps {
 
 export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   if (!show) return null;
 
   const currentPhoto = STORE_PHOTOS[activeIndex];
-  const currentSrc = failedImages[currentPhoto.id] ? currentPhoto.fallbackSrc : currentPhoto.src;
 
-  const prevIndex = (activeIndex - 1 + STORE_PHOTOS.length) % STORE_PHOTOS.length;
-  const nextIndex = (activeIndex + 1) % STORE_PHOTOS.length;
+  const moveCarousel = (direction: 'left' | 'right') => {
+    if (direction === 'left') {
+      setActiveIndex((prev) => (prev === 0 ? STORE_PHOTOS.length - 1 : prev - 1));
+    } else {
+      setActiveIndex((prev) => (prev === STORE_PHOTOS.length - 1 ? 0 : prev + 1));
+    }
+  };
 
-  const prevPhoto = STORE_PHOTOS[prevIndex];
-  const nextPhoto = STORE_PHOTOS[nextIndex];
-
-  const prevSrc = failedImages[prevPhoto.id] ? prevPhoto.fallbackSrc : prevPhoto.src;
-  const nextSrc = failedImages[nextPhoto.id] ? nextPhoto.fallbackSrc : nextPhoto.src;
+  const getPosition = (index: number) => {
+    const diff = index - activeIndex;
+    const count = STORE_PHOTOS.length;
+    let finalDiff = diff;
+    if (diff > count / 2) finalDiff -= count;
+    if (diff < -count / 2) finalDiff += count;
+    return finalDiff;
+  };
 
   const googleMapsUrl = "https://www.google.com/maps/search/?api=1&query=Areekode+Malappuram+Kerala";
-
-  const handleNext = () => {
-    setActiveIndex((prev) => (prev + 1) % STORE_PHOTOS.length);
-  };
-
-  const handlePrev = () => {
-    setActiveIndex((prev) => (prev - 1 + STORE_PHOTOS.length) % STORE_PHOTOS.length);
-  };
 
   return (
     <section className={`w-full py-6 md:py-10 bg-white relative z-10 font-sans ${className}`}>
@@ -106,7 +104,7 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
           <div className="flex items-center gap-1.5 shrink-0 pb-0.5">
             <button
               type="button"
-              onClick={handlePrev}
+              onClick={() => moveCarousel('left')}
               aria-label="Previous store photo"
               className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-black/15 bg-white text-black flex items-center justify-center hover:bg-neutral-100 active:scale-95 transition-all shadow-sm"
             >
@@ -114,7 +112,7 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
             </button>
             <button
               type="button"
-              onClick={handleNext}
+              onClick={() => moveCarousel('right')}
               aria-label="Next store photo"
               className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#1a1a1a] text-white flex items-center justify-center hover:bg-black active:scale-95 transition-all shadow-sm"
             >
@@ -123,84 +121,59 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
           </div>
         </div>
 
-        {/* Smooth 3D Carousel Frame with Swipe Support & Fallback Safety */}
-        <div className="relative w-full flex items-center justify-center overflow-hidden py-1">
-          
-          {/* Peek Left Card */}
-          <div 
-            onClick={handlePrev}
-            className="absolute left-[-16%] sm:left-[-10%] w-[42%] aspect-[3.8/4.6] rounded-2xl overflow-hidden opacity-50 scale-90 cursor-pointer border border-black/10 shadow-sm transition-all duration-300 z-0"
-          >
-            <Image
-              src={prevSrc}
-              alt={prevPhoto.label}
-              fill
-              unoptimized
-              onError={() => setFailedImages((prev) => ({ ...prev, [prevPhoto.id]: true }))}
-              className="object-cover"
-            />
+        {/* Silky Smooth Stacked Carousel Frame (Identical Physics to Top Category Swiper) */}
+        <div className="relative w-full h-[340px] sm:h-[380px] flex items-center justify-center overflow-hidden py-2">
+          <div className="relative w-full h-full flex items-center justify-center">
+            {STORE_PHOTOS.map((photo, index) => {
+              const pos = getPosition(index);
+              if (Math.abs(pos) > 2) return null;
+
+              return (
+                <motion.div
+                  key={photo.id}
+                  style={{ zIndex: 10 - Math.abs(pos) }}
+                  animate={{
+                    scale: 1 - Math.abs(pos) * 0.12,
+                    x: pos * 60,
+                    opacity: Math.abs(pos) === 2 ? 0.35 : Math.abs(pos) === 1 ? 0.75 : 1,
+                  }}
+                  transition={{ type: "spring", stiffness: 260, damping: 32 }}
+                  className="absolute w-[78%] sm:w-[75%] aspect-[3.8/4.6] rounded-[24px] overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.12)] border-[2px] border-white cursor-pointer select-none touch-pan-y"
+                  onClick={() => {
+                    if (pos !== 0) setActiveIndex(index);
+                    else setIsLightboxOpen(true);
+                  }}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x > 35) moveCarousel('left');
+                    if (info.offset.x < -35) moveCarousel('right');
+                  }}
+                >
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={photo.src}
+                      alt={photo.label}
+                      fill
+                      unoptimized
+                      className="object-cover pointer-events-none"
+                    />
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
-
-          {/* Active Main Center Card */}
-          <motion.div 
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.2}
-            onDragEnd={(_, info) => {
-              if (info.offset.x < -40) handleNext();
-              if (info.offset.x > 40) handlePrev();
-            }}
-            onClick={() => setIsLightboxOpen(true)}
-            className="relative w-[80%] sm:w-[78%] aspect-[3.8/4.6] rounded-[24px] overflow-hidden shadow-[0_15px_35px_rgba(0,0,0,0.1)] border-[2px] border-white z-10 cursor-pointer touch-pan-y"
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentPhoto.id}
-                initial={{ opacity: 0.8, scale: 1.01 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0.8, scale: 0.99 }}
-                transition={{ duration: 0.25, ease: "easeOut" }}
-                className="absolute inset-0 w-full h-full"
-              >
-                <Image
-                  src={currentSrc}
-                  alt={currentPhoto.label}
-                  fill
-                  unoptimized
-                  onError={() => setFailedImages((prev) => ({ ...prev, [currentPhoto.id]: true }))}
-                  className="object-cover"
-                  priority
-                />
-              </motion.div>
-            </AnimatePresence>
-          </motion.div>
-
-          {/* Peek Right Card */}
-          <div 
-            onClick={handleNext}
-            className="absolute right-[-16%] sm:right-[-10%] w-[42%] aspect-[3.8/4.6] rounded-2xl overflow-hidden opacity-50 scale-90 cursor-pointer border border-black/10 shadow-sm transition-all duration-300 z-0"
-          >
-            <Image
-              src={nextSrc}
-              alt={nextPhoto.label}
-              fill
-              unoptimized
-              onError={() => setFailedImages((prev) => ({ ...prev, [nextPhoto.id]: true }))}
-              className="object-cover"
-            />
-          </div>
-
         </div>
 
         {/* Pagination Dots */}
-        <div className="flex items-center justify-center gap-1.5 mt-4 mb-5">
+        <div className="flex items-center justify-center gap-1.5 mt-3 mb-5">
           {STORE_PHOTOS.map((_, i) => (
             <button
               key={i}
               onClick={() => setActiveIndex(i)}
               aria-label={`Go to slide ${i + 1}`}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === activeIndex ? "w-3.5 bg-[#1a1a1a]" : "w-1.5 bg-neutral-300 hover:bg-neutral-400"
+              className={`h-1.5 transition-all duration-500 rounded-full ${
+                activeIndex === i ? "w-4 bg-[#1a1a1a]" : "w-1.5 bg-neutral-300 hover:bg-neutral-400"
               }`}
             />
           ))}
@@ -281,11 +254,10 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
 
               <div className="relative w-full aspect-[4/5] bg-neutral-900">
                 <Image
-                  src={currentSrc}
+                  src={currentPhoto.src}
                   alt={currentPhoto.label}
                   fill
                   unoptimized
-                  onError={() => setFailedImages((prev) => ({ ...prev, [currentPhoto.id]: true }))}
                   className="object-cover"
                 />
               </div>
