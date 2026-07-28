@@ -80,7 +80,7 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
     return finalDiff;
   };
 
-  const googleMapsUrl = "https://www.google.com/maps/search/?api=1&query=Areekode+Malappuram+Kerala";
+  const googleMapsUrl = "https://maps.app.goo.gl/XoNamgJh3rDWnZHDA";
 
   return (
     <section className={`w-full py-6 md:py-10 bg-white relative z-10 font-sans ${className}`}>

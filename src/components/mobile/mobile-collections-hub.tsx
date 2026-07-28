@@ -245,7 +245,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
         </div>
 
         {/* Discover All Button with rotating black neon border */}
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center mt-8 mb-10 sm:mb-14">
           <Link
             href="/collections/all"
             className="relative group p-[1.2px] overflow-hidden rounded-full active:scale-95 transition-transform"
@@ -263,8 +263,9 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
             </div>
           </Link>
         </div>
+
         {/* Our Store Section */}
-        <OurStore />
+        <OurStore className="pt-2 sm:pt-4" />
       </section>
 
     </div>
