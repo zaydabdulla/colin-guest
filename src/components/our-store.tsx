@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ArrowUpRight, Maximize2, Clock, MapPin, X, ChevronRight, ChevronLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Clock, MapPin, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 /**
@@ -20,31 +20,31 @@ interface StorePhoto {
 const STORE_PHOTOS: StorePhoto[] = [
   {
     id: "1",
-    label: "01 / 05 • SANCTUARY LOUNGE",
-    src: "/store1.JPG",
-    fallbackSrc: "/store1.jpg",
-  },
-  {
-    id: "2",
-    label: "02 / 05 • ARCHIVAL GALLERY",
-    src: "/store2.JPG",
-    fallbackSrc: "/store2.jpg",
-  },
-  {
-    id: "3",
-    label: "03 / 05 • VIP FITTING SUITE",
-    src: "/store3.JPG",
-    fallbackSrc: "/store3.jpg",
-  },
-  {
-    id: "4",
-    label: "04 / 05 • ARCHITECTURAL FACADE",
+    label: "Boutique Facade",
     src: "/store4.JPG",
     fallbackSrc: "/store4.jpg",
   },
   {
+    id: "2",
+    label: "Sanctuary Lounge",
+    src: "/store1.JPG",
+    fallbackSrc: "/store1.jpg",
+  },
+  {
+    id: "3",
+    label: "Archival Gallery",
+    src: "/store2.JPG",
+    fallbackSrc: "/store2.jpg",
+  },
+  {
+    id: "4",
+    label: "VIP Fitting Suite",
+    src: "/store3.JPG",
+    fallbackSrc: "/store3.jpg",
+  },
+  {
     id: "5",
-    label: "05 / 05 • EDITORIAL COLLECTION",
+    label: "Editorial Display",
     src: "/store5.JPG",
     fallbackSrc: "/store5.jpg",
   },
@@ -65,46 +65,92 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
   const currentPhoto = STORE_PHOTOS[activeIndex];
   const currentSrc = failedImages[currentPhoto.id] ? currentPhoto.fallbackSrc : currentPhoto.src;
 
+  const prevIndex = (activeIndex - 1 + STORE_PHOTOS.length) % STORE_PHOTOS.length;
+  const nextIndex = (activeIndex + 1) % STORE_PHOTOS.length;
+
+  const prevPhoto = STORE_PHOTOS[prevIndex];
+  const nextPhoto = STORE_PHOTOS[nextIndex];
+
+  const prevSrc = failedImages[prevPhoto.id] ? prevPhoto.fallbackSrc : prevPhoto.src;
+  const nextSrc = failedImages[nextPhoto.id] ? nextPhoto.fallbackSrc : nextPhoto.src;
+
   const googleMapsUrl = "https://www.google.com/maps/search/?api=1&query=Areekode+Malappuram+Kerala";
 
-  const nextPhoto = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
+  const handleNext = () => {
     setActiveIndex((prev) => (prev + 1) % STORE_PHOTOS.length);
   };
 
-  const prevPhoto = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
+  const handlePrev = () => {
     setActiveIndex((prev) => (prev - 1 + STORE_PHOTOS.length) % STORE_PHOTOS.length);
   };
 
   return (
-    <section className={`w-full py-6 md:py-10 bg-white relative z-10 ${className}`}>
-      <div className="max-w-md sm:max-w-lg md:max-w-xl mx-auto px-4 sm:px-6">
+    <section className={`w-full py-8 md:py-14 bg-white relative z-10 font-sans ${className}`}>
+      <div className="max-w-xl sm:max-w-2xl md:max-w-3xl mx-auto px-4 sm:px-6">
         
-        {/* Section Header */}
-        <div className="text-center mb-4 sm:mb-5">
-          <h3 className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.3em] text-[#1a1a1a] font-sans">
-            OUR STORE
-          </h3>
-          <p className="mt-1 text-[8px] sm:text-[8.5px] font-normal uppercase tracking-[0.2em] text-black/40 font-sans">
-            FLAGSHIP BOUTIQUE
-          </p>
+        {/* Header matching AI Mockup */}
+        <div className="flex items-end justify-between mb-6 sm:mb-8">
+          <div>
+            <span className="text-[11px] sm:text-[12px] font-medium uppercase tracking-[0.18em] text-[#b89759] block mb-1 font-sans italic">
+              OUR STORE
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-normal text-[#1a1a1a] tracking-tight font-sans">
+              Visit Our Store
+            </h2>
+            <p className="text-xs sm:text-sm text-neutral-500 mt-1 font-normal font-sans">
+              Experience our collections in person.
+            </p>
+          </div>
+
+          {/* Navigation Arrows */}
+          <div className="flex items-center gap-2 shrink-0 pb-1">
+            <button
+              type="button"
+              onClick={handlePrev}
+              aria-label="Previous store photo"
+              className="w-10 h-10 rounded-full border border-black/15 bg-white text-black flex items-center justify-center hover:bg-neutral-100 active:scale-95 transition-all shadow-sm"
+            >
+              <ArrowLeft size={16} />
+            </button>
+            <button
+              type="button"
+              onClick={handleNext}
+              aria-label="Next store photo"
+              className="w-10 h-10 rounded-full bg-[#1c1c1c] text-white flex items-center justify-center hover:bg-black active:scale-95 transition-all shadow-sm"
+            >
+              <ArrowRight size={16} />
+            </button>
+          </div>
         </div>
 
-        {/* High-Fashion Interactive Kinetic Store Showcase Card */}
-        <div className="bg-[#fcfcfc] border border-black/10 rounded-3xl p-3 sm:p-4 shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex flex-col gap-3 group relative">
+        {/* 3D Peek Carousel Frame matching AI Mockup */}
+        <div className="relative w-full flex items-center justify-center overflow-hidden py-2">
           
-          {/* Interactive Photo Frame */}
+          {/* Peek Left Card */}
+          <div 
+            onClick={handlePrev}
+            className="absolute left-[-20%] sm:left-[-12%] w-[45%] sm:w-[42%] aspect-[3.8/4.8] sm:aspect-[4/4.8] rounded-3xl overflow-hidden opacity-60 scale-90 cursor-pointer pointer-events-auto border border-black/10 shadow-md transition-all duration-500 z-0"
+          >
+            <Image
+              src={prevSrc}
+              alt={prevPhoto.label}
+              fill
+              unoptimized
+              className="object-cover"
+            />
+          </div>
+
+          {/* Active Main Center Card */}
           <div 
             onClick={() => setIsLightboxOpen(true)}
-            className="relative w-full aspect-[4/4.5] sm:aspect-[16/11] bg-neutral-100 rounded-2xl overflow-hidden cursor-pointer border border-black/5"
+            className="relative w-[82%] sm:w-[80%] aspect-[3.8/4.8] sm:aspect-[4/4.8] rounded-[28px] sm:rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.14)] border-[2.5px] border-white z-10 cursor-pointer group"
           >
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentPhoto.id}
-                initial={{ opacity: 0.4, scale: 1.02 }}
+                initial={{ opacity: 0.5, scale: 1.02 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0.4, scale: 0.98 }}
+                exit={{ opacity: 0.5, scale: 0.98 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
                 className="absolute inset-0 w-full h-full"
               >
@@ -115,93 +161,92 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
                   unoptimized
                   onError={() => setFailedImages((prev) => ({ ...prev, [currentPhoto.id]: true }))}
                   className="object-cover"
-                  sizes="(max-width: 768px) 90vw, 50vw"
                   priority
                 />
               </motion.div>
             </AnimatePresence>
-
-            {/* Subtle Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/20 pointer-events-none" />
-
-            {/* Top Left Tag on Photo */}
-            <div className="absolute top-2.5 left-2.5 px-2.5 py-1 bg-black/50 backdrop-blur-md rounded-full border border-white/15">
-              <span className="text-[7.5px] font-bold text-white uppercase tracking-[0.2em]">
-                {currentPhoto.label}
-              </span>
-            </div>
-
-            {/* Top Right Expand Icon */}
-            <div className="absolute top-2.5 right-2.5 p-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/15 text-white/80 hover:text-white transition-colors">
-              <Maximize2 size={11} />
-            </div>
-
-            {/* Bottom Controls Bar */}
-            <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-white">
-              {/* Dot Indicators */}
-              <div className="flex items-center gap-1.5 px-2 py-1 bg-black/40 backdrop-blur-md rounded-full border border-white/15">
-                {STORE_PHOTOS.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={(e) => { e.stopPropagation(); setActiveIndex(i); }}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
-                      i === activeIndex ? "w-3.5 bg-white" : "w-1.5 bg-white/40"
-                    }`}
-                  />
-                ))}
-              </div>
-
-              {/* Arrow Swiper Controls */}
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={prevPhoto}
-                  className="p-1 bg-black/40 backdrop-blur-md rounded-full border border-white/15 hover:bg-black/70 transition-colors"
-                >
-                  <ChevronLeft size={12} />
-                </button>
-                <button
-                  type="button"
-                  onClick={nextPhoto}
-                  className="p-1 bg-black/40 backdrop-blur-md rounded-full border border-white/15 hover:bg-black/70 transition-colors"
-                >
-                  <ChevronRight size={12} />
-                </button>
-              </div>
-            </div>
-
           </div>
 
-          {/* Minimalist Details & Direct Directions */}
-          <div className="px-1 pt-0.5 pb-0.5 flex flex-col gap-2">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h3 className="text-xs sm:text-sm md:text-base font-bold text-[#1a1a1a] tracking-wider uppercase font-sans">
-                  AREEKODE, MALAPPURAM
-                </h3>
-                <div className="flex items-center gap-1.5 mt-1 text-[8.5px] sm:text-[9.5px] text-neutral-500 font-medium font-sans">
-                  <Clock size={11} className="text-black/50 shrink-0" />
-                  <span>OPEN DAILY 9:00 AM – 10:00 PM</span>
-                </div>
-              </div>
+          {/* Peek Right Card */}
+          <div 
+            onClick={handleNext}
+            className="absolute right-[-20%] sm:right-[-12%] w-[45%] sm:w-[42%] aspect-[3.8/4.8] sm:aspect-[4/4.8] rounded-3xl overflow-hidden opacity-60 scale-90 cursor-pointer pointer-events-auto border border-black/10 shadow-md transition-all duration-500 z-0"
+          >
+            <Image
+              src={nextSrc}
+              alt={nextPhoto.label}
+              fill
+              unoptimized
+              className="object-cover"
+            />
+          </div>
 
-              <a
-                href={googleMapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-3.5 py-2 bg-black text-white rounded-full text-[8.5px] sm:text-[9.5px] md:text-[10px] font-bold uppercase tracking-wider hover:bg-black/80 transition-colors flex items-center gap-1 shrink-0 shadow-sm"
-              >
-                <span>Get Directions</span>
-                <ArrowUpRight size={11} className="shrink-0" />
-              </a>
+        </div>
+
+        {/* Pagination Dots */}
+        <div className="flex items-center justify-center gap-2 mt-5 mb-7">
+          {STORE_PHOTOS.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveIndex(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                i === activeIndex ? "w-4 bg-[#1c1c1c]" : "w-2 bg-neutral-300 hover:bg-neutral-400"
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* Bottom Information Box matching AI Mockup */}
+        <div className="bg-[#f6f5f2] rounded-[28px] sm:rounded-[32px] p-5 sm:p-6 border border-black/5 shadow-sm flex flex-col gap-4">
+          
+          {/* Row 1: Location */}
+          <div className="flex items-center gap-3.5 pb-4 border-b border-black/8">
+            <div className="w-11 h-11 rounded-full bg-[#1c1c1c] text-white flex items-center justify-center shrink-0 shadow-sm">
+              <MapPin size={20} className="stroke-[1.75]" />
             </div>
+            <div>
+              <h4 className="text-sm sm:text-base font-bold text-[#1c1c1c] tracking-tight">
+                Areekode, Malappuram
+              </h4>
+              <p className="text-xs text-neutral-500 mt-0.5 font-normal">
+                Areekode, Malappuram District, Kerala, India
+              </p>
+            </div>
+          </div>
+
+          {/* Row 2: Hours & Directions Button */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
+            <div className="flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-full bg-[#1c1c1c] text-white flex items-center justify-center shrink-0 shadow-sm">
+                <Clock size={20} className="stroke-[1.75]" />
+              </div>
+              <div>
+                <h4 className="text-sm sm:text-base font-bold text-[#1c1c1c] tracking-tight">
+                  Open Daily
+                </h4>
+                <p className="text-xs text-neutral-500 mt-0.5 font-normal">
+                  10:00 AM – 09:00 PM
+                </p>
+              </div>
+            </div>
+
+            <a
+              href={googleMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3.5 bg-[#1c1c1c] text-white rounded-2xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 hover:bg-black active:scale-95 transition-all shadow-sm shrink-0"
+            >
+              <span>Get Directions</span>
+              <ArrowUpRight size={16} />
+            </a>
           </div>
 
         </div>
 
       </div>
 
-      {/* Lightbox Modal for Full Resolution Viewing */}
+      {/* Lightbox Modal */}
       <AnimatePresence>
         {isLightboxOpen && (
           <motion.div
@@ -216,13 +261,13 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl overflow-hidden max-w-sm w-full shadow-2xl relative flex flex-col max-h-[85vh]"
+              className="bg-white rounded-3xl overflow-hidden max-w-md w-full shadow-2xl relative flex flex-col max-h-[85vh]"
             >
               <button
                 onClick={() => setIsLightboxOpen(false)}
                 className="absolute top-3 right-3 z-10 p-2 bg-black/70 text-white rounded-full hover:bg-black transition-colors"
               >
-                <X size={15} />
+                <X size={16} />
               </button>
 
               <div className="relative w-full aspect-[4/5] bg-neutral-900">
@@ -235,18 +280,19 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
                 />
               </div>
 
-              <div className="p-4 bg-white flex items-center justify-between">
+              <div className="p-4 sm:p-5 bg-white flex items-center justify-between">
                 <div>
-                  <h4 className="text-xs font-bold text-[#1a1a1a]">OUR STORE</h4>
-                  <p className="text-[9.5px] text-black/50">Areekode, Malappuram • Open Daily 9-10</p>
+                  <h4 className="text-sm font-bold text-[#1a1a1a]">{currentPhoto.label}</h4>
+                  <p className="text-xs text-neutral-500">Areekode, Malappuram • Open Daily</p>
                 </div>
                 <a
                   href={googleMapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3.5 py-1.5 bg-black text-white rounded-full text-[8.5px] font-bold uppercase tracking-wider flex items-center gap-1"
+                  className="px-4 py-2 bg-[#1c1c1c] text-white rounded-xl text-xs font-semibold flex items-center gap-1.5"
                 >
-                  <ArrowUpRight size={10} /> Directions
+                  <span>Directions</span>
+                  <ArrowUpRight size={14} />
                 </a>
               </div>
             </motion.div>
