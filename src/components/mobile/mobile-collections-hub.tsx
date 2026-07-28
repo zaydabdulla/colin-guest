@@ -128,7 +128,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
             <div key={product.id} className="flex flex-col">
               <div className="relative aspect-[2/3] bg-[#e8e8e8] rounded-xl overflow-hidden mb-1.5">
                 <Link href={`/product/${product.handle || encodeURIComponent(product.id)}`}>
-                  <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-cover" />
+                  <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-contain p-1.5" />
                 </Link>
                 <button onClick={() => toggleWishlist(product)} className="absolute top-1.5 right-1.5 p-2 z-10 text-white transition-opacity active:opacity-50">
                   <Bookmark size={24} className={wishlistItems.some(item => item.id === product.id) ? "fill-white" : "fill-none"} strokeWidth={1.5} />
@@ -220,7 +220,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
             <div key={product.id} className="flex flex-col">
               <div className="relative aspect-[2/3] bg-[#e8e8e8] rounded-xl overflow-hidden mb-1.5">
                 <Link href={`/product/${product.handle || encodeURIComponent(product.id)}`}>
-                  <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-cover" />
+                  <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-contain p-1.5" />
                 </Link>
                 <button onClick={() => toggleWishlist(product)} className="absolute top-1.5 right-1.5 p-2 z-10 text-white transition-opacity active:opacity-50">
                   <Bookmark size={24} className={wishlistItems.some(item => item.id === product.id) ? "fill-white" : "fill-none"} strokeWidth={1.5} />

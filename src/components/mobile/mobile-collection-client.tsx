@@ -245,7 +245,7 @@ export function MobileCollectionClient({
                                   src={src || "/placeholder.jpg"}
                                   alt={`${product.title} - view ${i + 1}`}
                                   fill
-                                  className="object-cover"
+                                  className="object-contain p-1.5"
                                   sizes="50vw"
                                   priority={i === 0}
                                 />
