@@ -144,24 +144,29 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
           </p>
         </div>
 
-        {/* 2-Column Staggered Collage Layout */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-2.5 items-start max-w-3xl mx-auto">
-          {/* Left Column */}
+        {/* Mobile Layout: 2 Columns of 2 Cards */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-2.5 items-start max-w-3xl mx-auto md:hidden">
           <div className="flex flex-col">
             {REVIEWS_COL_1.map((review) => renderCard(review))}
           </div>
-
-          {/* Right Column */}
           <div className="flex flex-col">
             {REVIEWS_COL_2.map((review) => renderCard(review))}
           </div>
+        </div>
 
-          {/* Desktop Fill Columns */}
-          <div className="hidden md:flex flex-col">
-            {REVIEWS_COL_1.map((review) => renderCard({ ...review, id: `d1-${review.id}` }))}
+        {/* Desktop Layout: 4 Columns with 1 Unique Card Each (Zero Repetition) */}
+        <div className="hidden md:grid md:grid-cols-4 gap-3 items-start max-w-4xl mx-auto">
+          <div className="flex flex-col">
+            {renderCard(REVIEWS_COL_1[0])} {/* Zayd Abdulla */}
           </div>
-          <div className="hidden md:flex flex-col">
-            {REVIEWS_COL_2.map((review) => renderCard({ ...review, id: `d2-${review.id}` }))}
+          <div className="flex flex-col">
+            {renderCard(REVIEWS_COL_2[0])} {/* Fidel Shaan */}
+          </div>
+          <div className="flex flex-col pt-4">
+            {renderCard(REVIEWS_COL_1[1])} {/* Farhan Ahammed */}
+          </div>
+          <div className="flex flex-col pt-2">
+            {renderCard(REVIEWS_COL_2[1])} {/* Mowfaq Rahman */}
           </div>
         </div>
       </div>
