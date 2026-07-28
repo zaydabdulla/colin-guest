@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, ArrowUpRight, Clock, MapPin, Maximize2, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Clock, MapPin, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 /**
@@ -12,7 +12,6 @@ export const SHOW_OUR_STORE = true;
 
 interface StorePhoto {
   id: string;
-  tag: string;
   label: string;
   src: string;
   fallbackSrc: string;
@@ -21,35 +20,30 @@ interface StorePhoto {
 const STORE_PHOTOS: StorePhoto[] = [
   {
     id: "1",
-    tag: "01 / 05 • ARCHITECTURAL FACADE",
     label: "Boutique Facade",
     src: "/store4.JPG",
     fallbackSrc: "/collections_hero.jpg",
   },
   {
     id: "2",
-    tag: "02 / 05 • SANCTUARY LOUNGE",
     label: "Sanctuary Lounge",
     src: "/store1.JPG",
     fallbackSrc: "/collections_hero.jpg",
   },
   {
     id: "3",
-    tag: "03 / 05 • ARCHIVAL GALLERY",
     label: "Archival Gallery",
     src: "/store2.JPG",
     fallbackSrc: "/collections_hero.jpg",
   },
   {
     id: "4",
-    tag: "04 / 05 • VIP FITTING SUITE",
     label: "VIP Fitting Suite",
     src: "/store3.JPG",
     fallbackSrc: "/collections_hero.jpg",
   },
   {
     id: "5",
-    tag: "05 / 05 • EDITORIAL DISPLAY",
     label: "Editorial Display",
     src: "/store5.JPG",
     fallbackSrc: "/collections_hero.jpg",
@@ -89,24 +83,15 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
   const googleMapsUrl = "https://maps.app.goo.gl/XoNamgJh3rDWnZHDA";
 
   return (
-    <section className={`w-full py-6 md:py-10 bg-white relative z-10 font-sans ${className}`}>
+    <section className={`w-full py-6 md:py-10 bg-transparent relative z-10 font-sans ${className}`}>
       <div className="max-w-md sm:max-w-lg md:max-w-xl mx-auto px-4 sm:px-6">
         
-        {/* Header matching AI Mockup & Live Beacon */}
+        {/* Header matching AI Mockup & Brand Font */}
         <div className="flex items-end justify-between mb-4 sm:mb-5">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.2em] text-[#b89759] font-sans italic">
-                OUR STORE
-              </span>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-black/5 rounded-full border border-black/5 text-[8px] font-semibold text-black/50 tracking-wider">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-                </span>
-                OPEN NOW
-              </span>
-            </div>
+            <span className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.2em] text-[#b89759] block mb-1 font-sans italic">
+              OUR STORE
+            </span>
             <h2 className="text-xl sm:text-2xl md:text-3xl font-normal text-[#1a1a1a] tracking-tight font-sans">
               Visit Our Store
             </h2>
@@ -136,14 +121,12 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
           </div>
         </div>
 
-        {/* Silky Smooth Stacked Carousel Frame with Glassmorphic Badges */}
+        {/* Silky Smooth Stacked Carousel Frame (Identical Physics to Top Category Swiper) */}
         <div className="relative w-full h-[340px] sm:h-[380px] flex items-center justify-center overflow-hidden py-2">
           <div className="relative w-full h-full flex items-center justify-center">
             {STORE_PHOTOS.map((photo, index) => {
               const pos = getPosition(index);
               if (Math.abs(pos) > 2) return null;
-
-              const isCenter = pos === 0;
 
               return (
                 <motion.div
@@ -155,7 +138,7 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
                     opacity: Math.abs(pos) === 2 ? 0.35 : Math.abs(pos) === 1 ? 0.75 : 1,
                   }}
                   transition={{ type: "spring", stiffness: 260, damping: 32 }}
-                  className="absolute w-[78%] sm:w-[75%] aspect-[3.8/4.6] rounded-[24px] overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.12)] border-[2px] border-white cursor-pointer select-none touch-pan-y group"
+                  className="absolute w-[78%] sm:w-[75%] aspect-[3.8/4.6] rounded-[24px] overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.12)] border-[2px] border-white cursor-pointer select-none touch-pan-y"
                   onClick={() => {
                     if (pos !== 0) setActiveIndex(index);
                     else setIsLightboxOpen(true);
@@ -175,27 +158,6 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
                       unoptimized
                       className="object-cover pointer-events-none"
                     />
-
-                    {/* Ambient Gradient Overlay on Active Card */}
-                    {isCenter && (
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20 pointer-events-none transition-opacity duration-300" />
-                    )}
-
-                    {/* Glassmorphic Top Left Tag on Center Active Card */}
-                    {isCenter && (
-                      <div className="absolute top-2.5 left-2.5 px-2.5 py-1 bg-black/40 backdrop-blur-md rounded-full border border-white/20 shadow-sm pointer-events-none">
-                        <span className="text-[7.5px] font-bold text-white uppercase tracking-[0.2em]">
-                          {photo.tag}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Top Right Expand Icon Hint */}
-                    {isCenter && (
-                      <div className="absolute top-2.5 right-2.5 p-1.5 bg-black/35 backdrop-blur-md rounded-full border border-white/20 text-white/90 hover:text-white transition-colors">
-                        <Maximize2 size={11} />
-                      </div>
-                    )}
                   </div>
                 </motion.div>
               );
