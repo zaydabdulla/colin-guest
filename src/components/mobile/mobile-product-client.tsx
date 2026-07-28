@@ -71,7 +71,7 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
       </div>
 
       {/* 1. Image Slider */}
-      <div className="w-full aspect-[4/5] bg-[#f4f4f4] overflow-hidden relative">
+      <div className="w-full aspect-[4/5] bg-white border-b border-black/5 overflow-hidden relative">
         <div
           ref={scrollRef}
           onScroll={handleScroll}
@@ -84,11 +84,11 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
                   src={src}
                   alt={`${product.title} - Image ${i + 1}`}
                   fill
-                  className="object-cover"
+                  className="object-contain p-2 sm:p-3"
                   priority={i === 0}
                 />
               ) : (
-                <div className="w-full h-full bg-[#f4f4f4] flex items-center justify-center text-black/10 text-[10px] uppercase font-bold tracking-widest">
+                <div className="w-full h-full bg-white flex items-center justify-center text-black/10 text-[10px] uppercase font-bold tracking-widest">
                   No Image
                 </div>
               )}

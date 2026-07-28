@@ -54,7 +54,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                   src={displayImages[0]}
                   alt={product.title}
                   fill
-                  className="object-cover"
+                  className="object-contain p-3"
                   priority
                 />
               ) : (
@@ -68,7 +68,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
             {displayImages.map((src, i) => (
                <div key={i} className="relative w-full aspect-[2/3] bg-white border border-black/5 rounded-2xl overflow-hidden shadow-sm flex items-center justify-center">
                    {src ? (
-                     <Image src={src} alt={`Gallery ${i}`} fill className="object-cover" priority={i === 0} />
+                     <Image src={src} alt={`Gallery ${i}`} fill className="object-contain p-3" priority={i === 0} />
                    ) : (
                      <div className="text-black/5 font-bold uppercase tracking-widest text-[10px]">No Detail Image</div>
                    )}
