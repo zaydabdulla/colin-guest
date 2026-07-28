@@ -212,20 +212,24 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                         transition={{ duration: 0.18, ease: "easeInOut" }}
                       >
                         {activeTab === 'Details & Description' && (
-                          <div className="space-y-6">
+                          <div className="space-y-5">
                             <div>
-                              <h4 className="text-black text-[9.5px] md:text-xs font-bold mb-2">Details</h4>
-                              <p>{product.details || "100% premium cotton construction. Heavyweight fabric (260 gsm). High-definition graphic print."}</p>
+                              <h4 className="text-black text-[9.5px] font-bold uppercase tracking-wider mb-1.5">Details</h4>
+                              <p className="text-[9px] leading-relaxed text-black/65 font-medium">
+                                {product.details || "100% premium cotton construction. Heavyweight fabric (260 gsm). High-definition graphic print."}
+                              </p>
                             </div>
                             <div>
-                              <h4 className="text-black text-[9.5px] md:text-xs font-bold mb-2">Description</h4>
+                              <h4 className="text-black text-[9.5px] font-bold uppercase tracking-wider mb-1.5">Description</h4>
                               {product.descriptionHtml ? (
                                 <div
-                                  className="text-[9px] md:text-[11px] leading-relaxed text-black/70 font-medium [&_p]:text-[9px] md:[&_p]:text-[11px] [&_p]:leading-relaxed [&_ul]:text-[9px] md:[&_ul]:text-[11px] [&_li]:text-[9px] md:[&_li]:text-[11px]"
+                                  className="text-[9px] leading-relaxed text-black/65 font-medium [&_p]:text-[9px] [&_p]:leading-relaxed [&_ul]:text-[9px] [&_li]:text-[9px]"
                                   dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
                                 />
                               ) : (
-                                <p>{product.desc || `A signature piece from the Colin Guest collection. Designed for a relaxed, architectural fit that maintains its structure.`}</p>
+                                <p className="text-[9px] leading-relaxed text-black/65 font-medium">
+                                  {product.desc || `A signature piece from the Colin Guest collection. Designed for a relaxed, architectural fit that maintains its structure.`}
+                                </p>
                               )}
                             </div>
                           </div>
