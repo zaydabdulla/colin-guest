@@ -126,7 +126,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
         <div className="grid grid-cols-2 gap-1 w-full">
           {latestProducts.map((product) => (
             <div key={product.id} className="flex flex-col">
-              <div className="relative aspect-[2/3] bg-[#e8e8e8] rounded-xl overflow-hidden mb-1.5">
+              <div className="relative aspect-[2/3] bg-white border border-black/5 rounded-xl overflow-hidden mb-1.5">
                 <Link href={`/product/${product.handle || encodeURIComponent(product.id)}`}>
                   <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-contain p-1.5" />
                 </Link>
@@ -218,7 +218,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
         <div className="grid grid-cols-2 gap-1 w-full">
           {importedProducts.map((product) => (
             <div key={product.id} className="flex flex-col">
-              <div className="relative aspect-[2/3] bg-[#e8e8e8] rounded-xl overflow-hidden mb-1.5">
+              <div className="relative aspect-[2/3] bg-white border border-black/5 rounded-xl overflow-hidden mb-1.5">
                 <Link href={`/product/${product.handle || encodeURIComponent(product.id)}`}>
                   <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-contain p-1.5" />
                 </Link>

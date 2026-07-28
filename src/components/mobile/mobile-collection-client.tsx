@@ -233,7 +233,7 @@ export function MobileCollectionClient({
 
                   {/* Product Image Container */}
                   <div className="w-full">
-                    <div className="relative aspect-[2/3] w-full bg-[#e8e8e8] overflow-hidden rounded-xl mb-1.5">
+                    <div className="relative aspect-[2/3] w-full bg-white border border-black/5 overflow-hidden rounded-xl mb-1.5">
 
                       {!isDense ? (
                         /* Swipable Carousel for Standard View */
