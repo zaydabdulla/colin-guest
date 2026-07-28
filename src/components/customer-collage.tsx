@@ -100,7 +100,7 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
         </div>
 
         {/* Card Details */}
-        <div className="p-2 sm:p-2.5 flex flex-col flex-1 justify-between bg-white min-h-[90px] sm:min-h-[105px]">
+        <div className="p-2 sm:p-2.5 md:p-3 flex flex-col flex-1 justify-between bg-white min-h-[90px] sm:min-h-[105px] md:min-h-[115px]">
           <div>
             {/* Delicate Stars */}
             <div className="flex items-center gap-0.5 mb-1">
@@ -114,14 +114,14 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
             </div>
 
             {/* Review Text */}
-            <p className="text-[8.5px] sm:text-[9.5px] text-black/70 font-normal leading-normal font-sans mb-2">
+            <p className="text-[8.5px] md:text-[10px] text-black/70 font-normal leading-relaxed font-sans mb-2">
               {review.comment}
             </p>
           </div>
 
           {/* Customer Name */}
           <div className="mt-auto pt-1 border-t border-black/5">
-            <span className="text-[8.5px] sm:text-[9.5px] font-semibold uppercase tracking-wider text-black/85 truncate block">
+            <span className="text-[8.5px] md:text-[10px] font-semibold uppercase tracking-wider text-black/85 truncate block">
               {review.name}
             </span>
           </div>
@@ -131,15 +131,15 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
   };
 
   return (
-    <section className={`w-full py-4 sm:py-6 bg-white relative z-10 ${className}`}>
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+    <section className={`w-full py-4 sm:py-6 md:py-8 bg-white relative z-10 ${className}`}>
+      <div className="max-w-3xl md:max-w-4xl mx-auto px-4 sm:px-6">
         
         {/* Section Header */}
-        <div className="text-center mb-4 sm:mb-5">
-          <h3 className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.3em] text-[#1a1a1a] font-sans">
+        <div className="text-center mb-4 sm:mb-6">
+          <h3 className="text-[10px] md:text-[11.5px] font-medium uppercase tracking-[0.3em] text-[#1a1a1a] font-sans">
             HEAR FROM OUR CUSTOMERS
           </h3>
-          <p className="mt-1 text-[8px] sm:text-[8.5px] font-normal uppercase tracking-[0.2em] text-black/40 font-sans">
+          <p className="mt-1 text-[8px] md:text-[9.5px] font-normal uppercase tracking-[0.2em] text-black/40 font-sans">
             REAL REVIEWS. REAL PEOPLE.
           </p>
         </div>
