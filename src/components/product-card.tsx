@@ -68,7 +68,7 @@ export function ProductCard({
             onClick={(e) => { e.preventDefault(); toggleWishlist(product); }}
             className="absolute top-4 right-4 z-40 text-black hover:scale-110 transition-transform"
           >
-            <Bookmark size={20} strokeWidth={1.5} className={isWishlisted ? "fill-black" : ""} />
+            <Bookmark strokeWidth={1.5} className={`w-5 h-5 md:w-[22px] md:h-[22px] transition-colors ${isWishlisted ? "fill-black" : ""}`} />
           </button>
         )}
 
@@ -120,10 +120,10 @@ export function ProductCard({
       {!isDense && (
         <Link href={`/product/${product.handle || encodeURIComponent(product.id)}`} className="flex justify-between items-end px-2 z-10">
           <div>
-            <h4 className="md:text-[10px] text-[7px] font-bold tracking-wide mb-0.5 truncate max-w-[200px] hover:underline cursor-pointer text-black">{product.title}</h4>
-            <p className="md:text-[9px] text-[6.5px] font-medium tracking-widest text-black/80 uppercase">{product.price}</p>
+            <h4 className="text-[7.5px] md:text-[11.5px] font-bold tracking-wide mb-0.5 truncate max-w-[200px] hover:underline cursor-pointer text-black">{product.title}</h4>
+            <p className="text-[6.5px] md:text-[10.5px] font-medium tracking-widest text-black/80 uppercase">{product.price}</p>
           </div>
-          <span className="md:text-xs text-[9px] font-light text-black/60">+</span>
+          <span className="text-[9px] md:text-sm font-light text-black/60">+</span>
         </Link>
       )}
     </div>

@@ -60,7 +60,7 @@ export function CollectionsHubClient({ collections, allProductsImage }: Collecti
 
   return (
     <div id="categories" className="pt-12 pb-60 px-8 max-w-[1800px] mx-auto">
-      <h3 className="text-xs font-bold tracking-[0.3em] uppercase mb-12 opacity-40">Browse Categories</h3>
+      <h3 className="text-xs md:text-[13.5px] font-bold tracking-[0.3em] uppercase mb-12 opacity-40">Browse Categories</h3>
       <motion.div 
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         variants={containerVariants}
@@ -78,7 +78,7 @@ export function CollectionsHubClient({ collections, allProductsImage }: Collecti
                 className="object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-700" 
               />
             </div>
-            <div className="mt-6 flex items-center font-bold text-xs tracking-widest uppercase">
+            <div className="mt-6 flex items-center font-bold text-xs md:text-[13.5px] tracking-widest uppercase">
               View All <span className="ml-3 group-hover:translate-x-2 transition-transform">→</span>
             </div>
           </Link>
@@ -95,7 +95,7 @@ export function CollectionsHubClient({ collections, allProductsImage }: Collecti
                   className="object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="mt-6 flex items-center font-bold text-xs tracking-widest uppercase">
+              <div className="mt-6 flex items-center font-bold text-xs md:text-[13.5px] tracking-widest uppercase">
                 {collection.title} <span className="ml-3 group-hover:translate-x-2 transition-transform">→</span>
               </div>
             </Link>
