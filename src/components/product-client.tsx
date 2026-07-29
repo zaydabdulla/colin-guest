@@ -249,7 +249,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
           </div>
         </div>
 
-        <section className="bg-[#fcfcfc] w-full pt-12 pb-52 px-12 border-t border-black/5 z-20 relative">
+        <section className="bg-[#fcfcfc] w-full pt-12 pb-8 px-12 border-t border-black/5 z-20 relative">
           <div className="max-w-6xl mx-auto">
             <CustomerCollage />
             <ShopTheLook currentProduct={product} allProducts={allProducts} />
@@ -283,7 +283,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
         </section>
 
         {/* Visit Our Store Section */}
-        <OurStore className="max-w-[1400px] mx-auto pb-24 mt-12" />
+        <OurStore className="max-w-[1400px] mx-auto pb-16 mt-4" />
 
         <style dangerouslySetInnerHTML={{__html: `
           .custom-scrollbar::-webkit-scrollbar {
