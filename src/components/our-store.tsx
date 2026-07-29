@@ -87,46 +87,35 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
       <div className="max-w-md sm:max-w-lg md:max-w-6xl mx-auto px-4 sm:px-6 md:px-8">
         
         {/* Mobile Header (Visible on Mobile Only) */}
-        <div className="flex md:hidden items-end justify-between mb-4 sm:mb-5">
+        <div className="flex md:hidden items-center justify-between mb-4 sm:mb-5">
           <div>
-            <span className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.2em] text-[#b89759] block mb-1 font-sans italic">
+            <span className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.2em] text-[#b89759] block mb-0.5 font-sans italic">
               OUR STORE
             </span>
             <h2 className="text-xl sm:text-2xl font-normal text-[#1a1a1a] tracking-tight font-sans">
               Visit Our Store
             </h2>
-            <p className="text-[11px] sm:text-xs text-neutral-500 mt-0.5 font-normal font-sans">
-              Experience our collections in person.
-            </p>
-          </div>
-
-          {/* Navigation Arrows for Mobile */}
-          <div className="flex items-center gap-1.5 shrink-0 pb-0.5">
-            <button
-              type="button"
-              onClick={() => moveCarousel('left')}
-              aria-label="Previous store photo"
-              className="w-8 h-8 rounded-full border border-black/15 bg-white text-black flex items-center justify-center hover:bg-neutral-100 active:scale-95 transition-all shadow-sm"
-            >
-              <ArrowLeft size={14} />
-            </button>
-            <button
-              type="button"
-              onClick={() => moveCarousel('right')}
-              aria-label="Next store photo"
-              className="w-8 h-8 rounded-full bg-[#1a1a1a] text-white flex items-center justify-center hover:bg-black active:scale-95 transition-all shadow-sm"
-            >
-              <ArrowRight size={14} />
-            </button>
           </div>
         </div>
 
         {/* 2-Column Responsive Wrapper (Mobile: Column, Desktop: Carousel Left + Info Right) */}
         <div className="flex flex-col md:flex-row md:items-center md:gap-12 lg:gap-16">
           
-          {/* Left Column: Image Carousel */}
-          <div className="w-full md:w-1/2 flex flex-col items-center">
+          {/* Left Column: Image Carousel with Minimal Controls Directly on Frame */}
+          <div className="w-full md:w-1/2 flex flex-col items-center relative">
             <div className="relative w-full h-[340px] sm:h-[380px] md:h-[440px] flex items-center justify-center overflow-hidden py-2">
+              
+              {/* Minimal Left Arrow on Carousel Frame */}
+              <button
+                type="button"
+                onClick={() => moveCarousel('left')}
+                aria-label="Previous store photo"
+                className="absolute left-1 sm:left-2 z-30 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/90 backdrop-blur-md border border-black/10 text-black flex items-center justify-center hover:bg-white active:scale-95 transition-all shadow-md"
+              >
+                <ArrowLeft size={14} />
+              </button>
+
+              {/* Stacked Swiper Cards */}
               <div className="relative w-full h-full flex items-center justify-center">
                 {STORE_PHOTOS.map((photo, index) => {
                   const pos = getPosition(index);
@@ -167,6 +156,16 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
                   );
                 })}
               </div>
+
+              {/* Minimal Right Arrow on Carousel Frame */}
+              <button
+                type="button"
+                onClick={() => moveCarousel('right')}
+                aria-label="Next store photo"
+                className="absolute right-1 sm:right-2 z-30 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#1a1a1a] text-white flex items-center justify-center hover:bg-black active:scale-95 transition-all shadow-md"
+              >
+                <ArrowRight size={14} />
+              </button>
             </div>
 
             {/* Pagination Dots */}
@@ -188,7 +187,7 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
           <div className="w-full md:w-1/2 flex flex-col justify-center">
             
             {/* Desktop Header */}
-            <div className="hidden md:block mb-8">
+            <div className="hidden md:block mb-6">
               <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-[#b89759] block mb-2 font-sans italic">
                 OUR STORE
               </span>
@@ -198,31 +197,6 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
               <p className="text-sm text-neutral-500 font-normal font-sans">
                 Experience our curated collections in person with bespoke assistance.
               </p>
-            </div>
-
-            {/* Desktop Navigation Arrows Header Controls */}
-            <div className="hidden md:flex items-center justify-between mb-4">
-              <span className="text-xs font-bold uppercase tracking-widest text-black/40">
-                {currentPhoto.label} ({activeIndex + 1}/{STORE_PHOTOS.length})
-              </span>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => moveCarousel('left')}
-                  aria-label="Previous store photo"
-                  className="w-9 h-9 rounded-full border border-black/15 bg-white text-black flex items-center justify-center hover:bg-neutral-100 active:scale-95 transition-all shadow-sm"
-                >
-                  <ArrowLeft size={15} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => moveCarousel('right')}
-                  aria-label="Next store photo"
-                  className="w-9 h-9 rounded-full bg-[#1a1a1a] text-white flex items-center justify-center hover:bg-black active:scale-95 transition-all shadow-sm"
-                >
-                  <ArrowRight size={15} />
-                </button>
-              </div>
             </div>
 
             {/* Location & Hours Card (Refined Editorial Card) */}
