@@ -127,16 +127,45 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
           {latestProducts.map((product) => (
             <div key={product.id} className="flex flex-col">
               <div className="relative aspect-[2/3] bg-white border border-black/5 rounded-xl overflow-hidden mb-1.5">
-                <Link href={`/product/${product.handle || encodeURIComponent(product.id)}`}>
-                  <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-contain p-1.5" />
-                </Link>
-                <button onClick={() => toggleWishlist(product)} className="absolute top-1.5 right-1.5 p-2 z-10 text-white transition-opacity active:opacity-50">
-                  <Bookmark size={24} className={wishlistItems.some(item => item.id === product.id) ? "fill-white" : "fill-none"} strokeWidth={1.5} />
-                </button>
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1 z-10 pointer-events-none">
-                  <div className="w-1.5 h-1.5 rounded-full bg-white/60 shadow-sm" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-sm" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-sm" />
+                <div className="w-full h-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar relative">
+                  {(product.srcs && product.srcs.length > 0 ? product.srcs : [product.src]).map((src: string, i: number) => (
+                    <div key={i} className="w-full h-full flex-none snap-center relative">
+                      <Link href={`/product/${product.handle || encodeURIComponent(product.id)}`} className="w-full h-full block">
+                        <Image
+                          src={src || "/placeholder.jpg"}
+                          alt={`${product.title} - view ${i + 1}`}
+                          fill
+                          className="object-contain p-1.5"
+                          sizes="50vw"
+                          priority={i === 0}
+                        />
+                      </Link>
+                    </div>
+                  ))}
+
+                  {/* Bookmark Ribbon Icon */}
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      toggleWishlist(product);
+                    }}
+                    className="absolute top-1.5 right-1.5 z-20 text-white drop-shadow-sm transition-opacity active:opacity-50"
+                  >
+                    <Bookmark
+                      className={`w-6 h-6 ${wishlistItems.some((item: any) => item.id === product.id) ? 'fill-white' : 'fill-none'} stroke-white`}
+                      strokeWidth={1.5}
+                    />
+                  </button>
+
+                  {/* Dynamic Pagination Dots Indicator */}
+                  {(product.srcs && product.srcs.length > 1) && (
+                    <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10 pointer-events-none">
+                      {product.srcs.map((_: any, i: number) => (
+                        <div key={i} className="w-1.5 h-1.5 rounded-full bg-white shadow-sm opacity-60"></div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="px-3 flex flex-col pb-6">
@@ -219,16 +248,45 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
           {importedProducts.map((product) => (
             <div key={product.id} className="flex flex-col">
               <div className="relative aspect-[2/3] bg-white border border-black/5 rounded-xl overflow-hidden mb-1.5">
-                <Link href={`/product/${product.handle || encodeURIComponent(product.id)}`}>
-                  <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-contain p-1.5" />
-                </Link>
-                <button onClick={() => toggleWishlist(product)} className="absolute top-1.5 right-1.5 p-2 z-10 text-white transition-opacity active:opacity-50">
-                  <Bookmark size={24} className={wishlistItems.some(item => item.id === product.id) ? "fill-white" : "fill-none"} strokeWidth={1.5} />
-                </button>
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1 z-10 pointer-events-none">
-                  <div className="w-1.5 h-1.5 rounded-full bg-white/60 shadow-sm" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-sm" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-sm" />
+                <div className="w-full h-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar relative">
+                  {(product.srcs && product.srcs.length > 0 ? product.srcs : [product.src]).map((src: string, i: number) => (
+                    <div key={i} className="w-full h-full flex-none snap-center relative">
+                      <Link href={`/product/${product.handle || encodeURIComponent(product.id)}`} className="w-full h-full block">
+                        <Image
+                          src={src || "/placeholder.jpg"}
+                          alt={`${product.title} - view ${i + 1}`}
+                          fill
+                          className="object-contain p-1.5"
+                          sizes="50vw"
+                          priority={i === 0}
+                        />
+                      </Link>
+                    </div>
+                  ))}
+
+                  {/* Bookmark Ribbon Icon */}
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      toggleWishlist(product);
+                    }}
+                    className="absolute top-1.5 right-1.5 z-20 text-white drop-shadow-sm transition-opacity active:opacity-50"
+                  >
+                    <Bookmark
+                      className={`w-6 h-6 ${wishlistItems.some((item: any) => item.id === product.id) ? 'fill-white' : 'fill-none'} stroke-white`}
+                      strokeWidth={1.5}
+                    />
+                  </button>
+
+                  {/* Dynamic Pagination Dots Indicator */}
+                  {(product.srcs && product.srcs.length > 1) && (
+                    <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10 pointer-events-none">
+                      {product.srcs.map((_: any, i: number) => (
+                        <div key={i} className="w-1.5 h-1.5 rounded-full bg-white shadow-sm opacity-60"></div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="px-3 flex flex-col pb-6">
