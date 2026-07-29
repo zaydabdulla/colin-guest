@@ -63,6 +63,16 @@ const REVIEWS_COL_2: CustomerReview[] = [
   },
 ];
 
+const FIFTH_REVIEW: CustomerReview = {
+  id: "5",
+  name: "Adhil Shereef",
+  rating: 5,
+  comment: "Unreal drape and fabric feel. Colin Guest never disappoints.",
+  image: "/customer5.jpg",
+  fallbackImage: "/store4.JPG",
+  aspectRatio: "aspect-[3/4.4]",
+};
+
 interface CustomerCollageProps {
   /** Optional override for visibility toggle */
   show?: boolean;
@@ -132,7 +142,7 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
 
   return (
     <section className={`w-full py-4 sm:py-6 md:py-10 bg-white relative z-10 ${className}`}>
-      <div className="max-w-3xl md:max-w-4xl lg:max-w-5xl mx-auto px-4 sm:px-6">
+      <div className="max-w-3xl md:max-w-5xl lg:max-w-6xl mx-auto px-4 sm:px-6">
         
         {/* Section Header */}
         <div className="text-center mb-5 sm:mb-7">
@@ -154,19 +164,22 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
           </div>
         </div>
 
-        {/* Desktop Layout: 4 Columns with 1 Unique Card Each (Expanded Uniform Scale) */}
-        <div className="hidden md:grid md:grid-cols-4 gap-3.5 lg:gap-4.5 items-start max-w-4xl lg:max-w-5xl mx-auto">
+        {/* Desktop Layout: 5 Columns with 1 Unique Card Each (Full Width 5 Cards) */}
+        <div className="hidden md:grid md:grid-cols-5 gap-3 lg:gap-4 items-start max-w-5xl lg:max-w-6xl mx-auto">
           <div className="flex flex-col">
             {renderCard(REVIEWS_COL_1[0])} {/* Zayd Abdulla */}
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col pt-3">
             {renderCard(REVIEWS_COL_2[0])} {/* Fidel Shaan */}
           </div>
-          <div className="flex flex-col pt-3">
+          <div className="flex flex-col">
             {renderCard(REVIEWS_COL_1[1])} {/* Farhan Ahammed */}
           </div>
-          <div className="flex flex-col pt-1.5">
+          <div className="flex flex-col pt-4">
             {renderCard(REVIEWS_COL_2[1])} {/* Mowfaq Rahman */}
+          </div>
+          <div className="flex flex-col pt-1">
+            {renderCard(FIFTH_REVIEW)} {/* Adhil Shereef */}
           </div>
         </div>
       </div>
