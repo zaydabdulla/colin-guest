@@ -13,6 +13,7 @@ import { ShopTheLook } from "@/components/shop-the-look";
 import { motion, AnimatePresence } from "framer-motion";
 import { PincodeChecker } from "@/components/pincode-checker";
 import { CustomerCollage } from "@/components/customer-collage";
+import { OurStore } from "@/components/our-store";
 
 interface ProductClientProps {
   product: Product;
@@ -280,6 +281,9 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
             </div>
           </div>
         </section>
+
+        {/* Visit Our Store Section */}
+        <OurStore className="max-w-[1400px] mx-auto pb-24 mt-12" />
 
         <style dangerouslySetInnerHTML={{__html: `
           .custom-scrollbar::-webkit-scrollbar {

@@ -11,6 +11,7 @@ import { ProductCard } from "../product-card";
 import { ShopTheLook } from "../shop-the-look";
 import { PincodeChecker } from "@/components/pincode-checker";
 import { CustomerCollage } from "@/components/customer-collage";
+import { OurStore } from "../our-store";
 
 interface MobileProductClientProps {
   product: Product;
@@ -316,7 +317,7 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
       </div>
 
       {/* Discover All Button with rotating black neon border */}
-      <div className="flex justify-center mt-6 mb-12 relative z-10">
+      <div className="flex justify-center mt-6 mb-8 relative z-10">
         <Link
           href="/collections/all"
           className="relative group p-[1.2px] overflow-hidden rounded-full active:scale-95 transition-transform"
@@ -334,6 +335,9 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
           </div>
         </Link>
       </div>
+
+      {/* Visit Our Store Section */}
+      <OurStore className="mt-6 mb-12" />
 
 
 

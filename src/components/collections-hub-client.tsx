@@ -6,6 +6,8 @@ import Link from "next/link";
 import { motion, animate } from "framer-motion";
 import { Collection } from "@/lib/data";
 
+import { OurStore } from "@/components/our-store";
+
 interface CollectionsHubClientProps {
   collections: Collection[];
   allProductsImage: string;
@@ -102,6 +104,9 @@ export function CollectionsHubClient({ collections, allProductsImage }: Collecti
           </motion.div>
         ))}
       </motion.div>
+
+      {/* Visit Our Store Section */}
+      <OurStore className="mt-16 md:mt-24 pb-12" />
     </div>
   );
 }
