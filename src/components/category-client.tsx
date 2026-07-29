@@ -260,7 +260,7 @@ export default function CategoryClient({ category, formattedCategory, displayPro
       {/* Top Header Row */}
       <div className="flex flex-col gap-6 mb-10">
          <div className="flex justify-between items-center">
-            <h1 className="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] opacity-80">{formattedCategory}</h1>
+            <h1 className="text-[10px] md:text-[12px] font-bold uppercase tracking-[0.2em] opacity-80">{formattedCategory}</h1>
             
             <div className="flex items-center gap-4">
               {/* Architectural Grid Toggle */}
@@ -277,9 +277,9 @@ export default function CategoryClient({ category, formattedCategory, displayPro
                   className="relative flex items-center justify-center text-black"
                 >
                   {isDense ? (
-                    <Grid3X3 size={18} strokeWidth={1.5} />
+                    <Grid3X3 size={19} strokeWidth={1.5} />
                   ) : (
-                    <LayoutGrid size={18} strokeWidth={1.5} />
+                    <LayoutGrid size={19} strokeWidth={1.5} />
                   )}
                 </motion.div>
                 
@@ -289,9 +289,9 @@ export default function CategoryClient({ category, formattedCategory, displayPro
 
               <button 
                 onClick={() => setIsFilterOpen(true)}
-                className="flex items-center gap-2 border border-black/5 rounded-full px-4 py-2 text-[9px] md:text-[10.2px] font-bold uppercase tracking-widest hover:border-black/20 transition-all bg-white shadow-sm"
+                className="flex items-center gap-2 border border-black/5 rounded-full px-4 py-2 md:px-4.5 md:py-2 text-[9px] md:text-[11px] font-bold uppercase tracking-widest hover:border-black/20 transition-all bg-white shadow-sm"
               >
-                <SlidersHorizontal size={12} className="md:w-3.5 md:h-3.5" /> Advance Filters
+                <SlidersHorizontal size={13} className="md:w-3.5 md:h-3.5" /> Advance Filters
               </button>
             </div>
          </div>
@@ -304,7 +304,7 @@ export default function CategoryClient({ category, formattedCategory, displayPro
                 <Link 
                   key={cat.id}
                   href={`/collections/${cat.id}`}
-                  className="relative group px-4.5 py-1.5 md:px-3.5 md:py-1.5"
+                  className="relative group px-4.5 py-1.5 md:px-4 md:py-1.5"
                 >
                   {/* Liquid Bubble Background */}
                   {isActive && (
@@ -314,7 +314,7 @@ export default function CategoryClient({ category, formattedCategory, displayPro
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
-                  <span className={`relative z-10 text-[9px] md:text-[10.2px] font-medium uppercase tracking-widest transition-colors duration-300 ${
+                  <span className={`relative z-10 text-[9px] md:text-[11px] font-medium uppercase tracking-widest transition-colors duration-300 ${
                     isActive ? 'text-black' : 'text-black/40 group-hover:text-black'
                   }`}>
                     {cat.name}
