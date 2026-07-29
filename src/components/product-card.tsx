@@ -60,7 +60,7 @@ export function ProductCard({
           delay: index % 4 * 0.1, 
           ease: "easeOut"
         } as any}
-        className="relative w-full aspect-[4/5] bg-[#f8f8f8] rounded-[24px] mb-3 overflow-hidden flex items-center justify-center p-0 border border-black/5 group-hover:shadow-md transition-shadow duration-500"
+        className="relative w-full aspect-[4/5] bg-white rounded-[24px] mb-3 overflow-hidden flex items-center justify-center p-0 border border-black/5 group-hover:shadow-md transition-shadow duration-500"
       >
         {/* Heart / Bookmark Icon mapped to global store */}
         {!isDense && (
@@ -80,16 +80,16 @@ export function ProductCard({
           } as any}
         >
           {srcs.map((src, i) => (
-            <div key={i} className="flex-none w-full h-full snap-center relative">
+            <div key={i} className="flex-none w-full h-full snap-center relative bg-white">
               <Link 
                 href={`/product/${product.handle || encodeURIComponent(product.id)}`} 
-                className="relative w-full h-full mix-blend-multiply drop-shadow-2xl flex items-center justify-center"
+                className="relative w-full h-full drop-shadow-sm flex items-center justify-center bg-white"
               >
                 <Image 
                   src={src || "/placeholder.jpg"}
                   alt={`${product.title} - view ${i + 1}`}
                   fill
-                  className="object-contain transition-transform duration-700 group-hover:scale-105"
+                  className="object-contain p-2.5 transition-transform duration-700 group-hover:scale-105"
                   priority={i === 0}
                 />
               </Link>
