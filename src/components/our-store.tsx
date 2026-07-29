@@ -227,15 +227,15 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
         </div>
       </div>
 
-      {/* DESKTOP LAYOUT (Slightly larger landscape stage matching mockup) */}
+      {/* DESKTOP LAYOUT (Compact, screen-fitting landscape stage matching mockup) */}
       <div className="hidden md:block max-w-6xl mx-auto px-6 lg:px-8">
         
-        {/* Top Header */}
-        <div className="text-left mb-5">
-          <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-[#b89759] block mb-1.5 font-sans italic">
+        {/* Top Header (Compact) */}
+        <div className="text-left mb-4">
+          <span className="text-[10px] lg:text-[11px] font-medium uppercase tracking-[0.2em] text-[#b89759] block mb-1 font-sans italic">
             OUR STORE
           </span>
-          <h2 className="text-3xl lg:text-4xl font-serif text-[#1a1a1a] tracking-tight mb-1.5 font-sans">
+          <h2 className="text-2xl lg:text-3xl font-serif text-[#1a1a1a] tracking-tight mb-1 font-sans">
             Visit Our Store
           </h2>
           <p className="text-xs lg:text-sm text-neutral-500 font-normal font-sans">
@@ -244,16 +244,16 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
         </div>
 
         {/* Full Width Landscape Carousel Stage */}
-        <div className="relative w-full h-[330px] sm:h-[370px] md:h-[400px] lg:h-[420px] flex items-center justify-center overflow-hidden my-4">
+        <div className="relative w-full h-[280px] sm:h-[310px] md:h-[340px] lg:h-[360px] flex items-center justify-center overflow-hidden my-3">
           
           {/* Left Arrow Button */}
           <button
             type="button"
             onClick={() => moveCarousel('left')}
             aria-label="Previous store photo"
-            className="absolute left-2 lg:left-4 z-30 w-10 h-10 lg:w-11 lg:h-11 rounded-full bg-white text-black border border-black/10 flex items-center justify-center hover:bg-neutral-100 active:scale-95 transition-all shadow-md"
+            className="absolute left-2 lg:left-4 z-30 w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-white text-black border border-black/10 flex items-center justify-center hover:bg-neutral-100 active:scale-95 transition-all shadow-md"
           >
-            <ArrowLeft size={18} />
+            <ArrowLeft size={16} />
           </button>
 
           {/* Carousel Stack */}
@@ -267,12 +267,12 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
                   key={photo.id}
                   style={{ zIndex: 10 - Math.abs(pos) }}
                   animate={{
-                    scale: 1 - Math.abs(pos) * 0.15,
-                    x: pos * 330,
-                    opacity: Math.abs(pos) === 2 ? 0.25 : Math.abs(pos) === 1 ? 0.68 : 1,
+                    scale: 1 - Math.abs(pos) * 0.14,
+                    x: pos * 300,
+                    opacity: Math.abs(pos) === 2 ? 0.25 : Math.abs(pos) === 1 ? 0.65 : 1,
                   }}
                   transition={{ type: "spring", stiffness: 260, damping: 32 }}
-                  className="absolute w-[51%] lg:w-[47%] aspect-[16/10] rounded-[22px] overflow-hidden shadow-[0_18px_45px_rgba(0,0,0,0.13)] border-[2px] border-white cursor-pointer select-none"
+                  className="absolute w-[50%] lg:w-[46%] aspect-[16/10] rounded-[20px] overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.12)] border-[2px] border-white cursor-pointer select-none"
                   onClick={() => {
                     if (pos !== 0) setActiveIndex(index);
                     else setIsLightboxOpen(true);
@@ -297,66 +297,66 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
             type="button"
             onClick={() => moveCarousel('right')}
             aria-label="Next store photo"
-            className="absolute right-2 lg:right-4 z-30 w-10 h-10 lg:w-11 lg:h-11 rounded-full bg-white text-black border border-black/10 flex items-center justify-center hover:bg-neutral-100 active:scale-95 transition-all shadow-md"
+            className="absolute right-2 lg:right-4 z-30 w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-white text-black border border-black/10 flex items-center justify-center hover:bg-neutral-100 active:scale-95 transition-all shadow-md"
           >
-            <ArrowRight size={18} />
+            <ArrowRight size={16} />
           </button>
         </div>
 
         {/* Pagination Dots */}
-        <div className="flex items-center justify-center gap-1.5 mt-2.5 mb-6">
+        <div className="flex items-center justify-center gap-1.5 mt-2 mb-5">
           {STORE_PHOTOS.map((_, i) => (
             <button
               key={i}
               onClick={() => setActiveIndex(i)}
               aria-label={`Go to slide ${i + 1}`}
               className={`h-1.5 transition-all duration-500 rounded-full ${
-                activeIndex === i ? "w-4.5 bg-[#1a1a1a]" : "w-1.5 bg-neutral-300 hover:bg-neutral-400"
+                activeIndex === i ? "w-4 bg-[#1a1a1a]" : "w-1.5 bg-neutral-300 hover:bg-neutral-400"
               }`}
             />
           ))}
         </div>
 
-        {/* Horizontal Location & Hours Card */}
-        <div className="w-full bg-[#f6f5f2] rounded-2xl p-5 lg:p-5.5 border border-black/5 shadow-sm flex items-center justify-between gap-5">
+        {/* Compact Horizontal Location & Hours Card */}
+        <div className="w-full bg-[#f6f5f2] rounded-xl p-4 lg:p-4.5 border border-black/5 shadow-sm flex items-center justify-between gap-4">
           
           {/* Column 1: Location */}
-          <div className="flex items-center gap-3.5 flex-1 pr-5 border-r border-black/10">
-            <div className="w-10 h-10 rounded-full bg-[#e8e6df] text-[#1a1a1a] flex items-center justify-center shrink-0 shadow-sm">
-              <MapPin size={18} className="stroke-[1.75]" />
+          <div className="flex items-center gap-3 flex-1 pr-4 border-r border-black/10">
+            <div className="w-9 h-9 rounded-full bg-[#e8e6df] text-[#1a1a1a] flex items-center justify-center shrink-0 shadow-sm">
+              <MapPin size={17} className="stroke-[1.75]" />
             </div>
             <div className="min-w-0">
-              <h4 className="text-sm lg:text-base font-bold text-[#1a1a1a] tracking-tight">
+              <h4 className="text-xs lg:text-sm font-bold text-[#1a1a1a] tracking-tight">
                 Areekode, Malappuram
               </h4>
-              <p className="text-xs text-neutral-500 leading-normal font-normal mt-0.5">
+              <p className="text-[10.5px] lg:text-xs text-neutral-500 leading-normal font-normal mt-0.5">
                 Areekode, Malappuram District, Kerala, India
               </p>
             </div>
           </div>
 
           {/* Column 2: Hours */}
-          <div className="flex items-center gap-3.5 flex-1 px-5 border-r border-black/10">
-            <div className="w-10 h-10 rounded-full bg-[#e8e6df] text-[#1a1a1a] flex items-center justify-center shrink-0 shadow-sm">
-              <Clock size={18} className="stroke-[1.75]" />
+          <div className="flex items-center gap-3 flex-1 px-4 border-r border-black/10">
+            <div className="w-9 h-9 rounded-full bg-[#e8e6df] text-[#1a1a1a] flex items-center justify-center shrink-0 shadow-sm">
+              <Clock size={17} className="stroke-[1.75]" />
             </div>
             <div className="min-w-0">
-              <h4 className="text-sm lg:text-base font-bold text-[#1a1a1a] tracking-tight">
+              <h4 className="text-xs lg:text-sm font-bold text-[#1a1a1a] tracking-tight">
                 Open Daily
               </h4>
-              <p className="text-xs text-neutral-500 font-normal leading-tight mt-0.5">
+              <p className="text-[10.5px] lg:text-xs text-neutral-500 font-normal leading-tight mt-0.5">
                 10:00 AM – 09:00 PM
               </p>
             </div>
           </div>
 
           {/* Column 3: Get Directions Button */}
-          <div className="flex items-center justify-end pl-5">
+          <div className="flex items-center justify-end pl-4">
             <a
               href={googleMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 bg-[#1a1a1a] text-white rounded-full text-xs font-semibold flex items-center gap-2 hover:bg-black active:scale-95 transition-all shadow-sm shrink-0"
+              className="px-5 py-2.5 bg-[#1a1a1a] text-white rounded-full text-[10.5px] lg:text-xs font-semibold flex items-center gap-1.5 hover:bg-black active:scale-95 transition-all shadow-sm shrink-0"
             >
               <span>Get Directions</span>
               <ArrowUpRight size={14} />
