@@ -65,11 +65,11 @@ const REVIEWS_COL_2: CustomerReview[] = [
 
 const FIFTH_REVIEW: CustomerReview = {
   id: "5",
-  name: "Adhil Shereef",
+  name: "Faaz Mohammed",
   rating: 5,
   comment: "Unreal drape and fabric feel. Colin Guest never disappoints.",
   image: "/customer5.jpg",
-  fallbackImage: "/store4.JPG",
+  fallbackImage: "/collections_hero.jpg",
   aspectRatio: "aspect-[3/4.4]",
 };
 
