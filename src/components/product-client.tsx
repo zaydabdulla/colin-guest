@@ -283,7 +283,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
         </section>
 
         {/* Visit Our Store Section */}
-        <OurStore className="max-w-[1400px] mx-auto pb-16 mt-4" />
+        <OurStore className="max-w-[1400px] mx-auto pb-28 md:pb-36 mt-4" />
 
         <style dangerouslySetInnerHTML={{__html: `
           .custom-scrollbar::-webkit-scrollbar {
