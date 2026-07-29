@@ -199,35 +199,35 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
               </p>
             </div>
 
-            {/* Location & Hours Card (Refined Editorial Card) */}
-            <div className="bg-[#f6f5f2] rounded-2xl p-5 md:p-6 border border-black/5 shadow-sm flex flex-col gap-4">
+            {/* Location & Hours Card (Refined Compact Mobile & Luxury Desktop Card) */}
+            <div className="bg-[#f6f5f2] rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 border border-black/5 shadow-sm flex flex-col gap-3 sm:gap-4">
               
               {/* Row 1: Location */}
-              <div className="flex items-start gap-3.5 pb-4 border-b border-black/8">
-                <div className="w-10 h-10 rounded-full bg-[#1a1a1a] text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
-                  <MapPin size={18} className="stroke-[1.75]" />
+              <div className="flex items-start gap-2.5 sm:gap-3.5 pb-3 sm:pb-4 border-b border-black/8">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-[#1a1a1a] text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                  <MapPin size={15} className="md:w-4.5 md:h-4.5 stroke-[1.75]" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h4 className="text-sm md:text-base font-bold text-[#1a1a1a] tracking-tight">
+                  <h4 className="text-[12.5px] sm:text-sm md:text-base font-bold text-[#1a1a1a] tracking-tight">
                     Areekode, Malappuram
                   </h4>
-                  <p className="text-xs text-neutral-500 leading-normal font-normal mt-0.5">
+                  <p className="text-[10.5px] sm:text-xs text-neutral-500 leading-normal font-normal mt-0.5">
                     Areekode, Malappuram District, Kerala, India
                   </p>
                 </div>
               </div>
 
               {/* Row 2: Hours & Get Directions Button */}
-              <div className="flex items-center justify-between gap-3 pt-1">
-                <div className="flex items-center gap-3.5 min-w-0">
-                  <div className="w-10 h-10 rounded-full bg-[#1a1a1a] text-white flex items-center justify-center shrink-0 shadow-sm">
-                    <Clock size={18} className="stroke-[1.75]" />
+              <div className="flex items-center justify-between gap-2 sm:gap-3 pt-0.5 sm:pt-1">
+                <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-[#1a1a1a] text-white flex items-center justify-center shrink-0 shadow-sm">
+                    <Clock size={15} className="md:w-4.5 md:h-4.5 stroke-[1.75]" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-sm md:text-base font-bold text-[#1a1a1a] tracking-tight">
+                    <h4 className="text-[12.5px] sm:text-sm md:text-base font-bold text-[#1a1a1a] tracking-tight">
                       Open Daily
                     </h4>
-                    <p className="text-xs text-neutral-500 font-normal leading-tight mt-0.5">
+                    <p className="text-[10.5px] sm:text-xs text-neutral-500 font-normal leading-tight mt-0.5">
                       10:00 AM – 09:00 PM
                     </p>
                   </div>
@@ -237,10 +237,10 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
                   href={googleMapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-5 py-3 bg-[#1a1a1a] text-white rounded-xl text-xs font-semibold flex items-center gap-2 hover:bg-black active:scale-95 transition-all shadow-sm shrink-0"
+                  className="px-3.5 py-2 sm:px-4 sm:py-2.5 md:px-5 md:py-3 bg-[#1a1a1a] text-white rounded-lg sm:rounded-xl text-[10.5px] sm:text-xs font-semibold flex items-center gap-1.5 sm:gap-2 hover:bg-black active:scale-95 transition-all shadow-sm shrink-0"
                 >
                   <span>Get Directions</span>
-                  <ArrowUpRight size={14} />
+                  <ArrowUpRight size={13} className="md:w-3.5 md:h-3.5" />
                 </a>
               </div>
 
