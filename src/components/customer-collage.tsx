@@ -136,10 +136,10 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
         
         {/* Section Header */}
         <div className="text-center mb-4 sm:mb-6">
-          <h3 className="text-[10px] md:text-[11.5px] font-medium uppercase tracking-[0.3em] text-[#1a1a1a] font-sans">
+          <h3 className="text-[11.5px] md:text-[14px] font-semibold uppercase tracking-[0.25em] text-[#1a1a1a] font-sans">
             HEAR FROM OUR CUSTOMERS
           </h3>
-          <p className="mt-1 text-[8px] md:text-[9.5px] font-normal uppercase tracking-[0.2em] text-black/40 font-sans">
+          <p className="mt-1 text-[9px] md:text-[10.5px] font-normal uppercase tracking-[0.2em] text-black/40 font-sans">
             REAL REVIEWS. REAL PEOPLE.
           </p>
         </div>
