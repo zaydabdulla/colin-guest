@@ -284,7 +284,7 @@ export function MobileCollectionClient({
                             src={product.src || "/placeholder.jpg"}
                             alt={product.title}
                             fill
-                            className="object-cover"
+                            className="object-contain p-1 bg-white"
                             sizes="25vw"
                           />
                         </Link>
