@@ -83,16 +83,16 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
   const googleMapsUrl = "https://maps.app.goo.gl/XoNamgJh3rDWnZHDA";
 
   return (
-    <section className={`w-full py-6 md:py-10 bg-transparent relative z-10 font-sans ${className}`}>
-      <div className="max-w-md sm:max-w-lg md:max-w-xl mx-auto px-4 sm:px-6">
+    <section className={`w-full py-6 md:py-16 bg-transparent relative z-10 font-sans ${className}`}>
+      <div className="max-w-md sm:max-w-lg md:max-w-6xl mx-auto px-4 sm:px-6 md:px-8">
         
-        {/* Header matching AI Mockup & Brand Font */}
-        <div className="flex items-end justify-between mb-4 sm:mb-5">
+        {/* Mobile Header (Visible on Mobile Only) */}
+        <div className="flex md:hidden items-end justify-between mb-4 sm:mb-5">
           <div>
             <span className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.2em] text-[#b89759] block mb-1 font-sans italic">
               OUR STORE
             </span>
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-normal text-[#1a1a1a] tracking-tight font-sans">
+            <h2 className="text-xl sm:text-2xl font-normal text-[#1a1a1a] tracking-tight font-sans">
               Visit Our Store
             </h2>
             <p className="text-[11px] sm:text-xs text-neutral-500 mt-0.5 font-normal font-sans">
@@ -100,13 +100,13 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
             </p>
           </div>
 
-          {/* Navigation Arrows */}
+          {/* Navigation Arrows for Mobile */}
           <div className="flex items-center gap-1.5 shrink-0 pb-0.5">
             <button
               type="button"
               onClick={() => moveCarousel('left')}
               aria-label="Previous store photo"
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-black/15 bg-white text-black flex items-center justify-center hover:bg-neutral-100 active:scale-95 transition-all shadow-sm"
+              className="w-8 h-8 rounded-full border border-black/15 bg-white text-black flex items-center justify-center hover:bg-neutral-100 active:scale-95 transition-all shadow-sm"
             >
               <ArrowLeft size={14} />
             </button>
@@ -114,114 +114,164 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
               type="button"
               onClick={() => moveCarousel('right')}
               aria-label="Next store photo"
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#1a1a1a] text-white flex items-center justify-center hover:bg-black active:scale-95 transition-all shadow-sm"
+              className="w-8 h-8 rounded-full bg-[#1a1a1a] text-white flex items-center justify-center hover:bg-black active:scale-95 transition-all shadow-sm"
             >
               <ArrowRight size={14} />
             </button>
           </div>
         </div>
 
-        {/* Silky Smooth Stacked Carousel Frame (Identical Physics to Top Category Swiper) */}
-        <div className="relative w-full h-[340px] sm:h-[380px] flex items-center justify-center overflow-hidden py-2">
-          <div className="relative w-full h-full flex items-center justify-center">
-            {STORE_PHOTOS.map((photo, index) => {
-              const pos = getPosition(index);
-              if (Math.abs(pos) > 2) return null;
-
-              return (
-                <motion.div
-                  key={photo.id}
-                  style={{ zIndex: 10 - Math.abs(pos) }}
-                  animate={{
-                    scale: 1 - Math.abs(pos) * 0.12,
-                    x: pos * 60,
-                    opacity: Math.abs(pos) === 2 ? 0.35 : Math.abs(pos) === 1 ? 0.75 : 1,
-                  }}
-                  transition={{ type: "spring", stiffness: 260, damping: 32 }}
-                  className="absolute w-[78%] sm:w-[75%] aspect-[3.8/4.6] rounded-[24px] overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.12)] border-[2px] border-white cursor-pointer select-none touch-pan-y"
-                  onClick={() => {
-                    if (pos !== 0) setActiveIndex(index);
-                    else setIsLightboxOpen(true);
-                  }}
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  onDragEnd={(_, info) => {
-                    if (info.offset.x > 35) moveCarousel('left');
-                    if (info.offset.x < -35) moveCarousel('right');
-                  }}
-                >
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={photo.src}
-                      alt={photo.label}
-                      fill
-                      unoptimized
-                      className="object-cover pointer-events-none"
-                    />
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Pagination Dots */}
-        <div className="flex items-center justify-center gap-1.5 mt-3 mb-5">
-          {STORE_PHOTOS.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setActiveIndex(i)}
-              aria-label={`Go to slide ${i + 1}`}
-              className={`h-1.5 transition-all duration-500 rounded-full ${
-                activeIndex === i ? "w-4 bg-[#1a1a1a]" : "w-1.5 bg-neutral-300 hover:bg-neutral-400"
-              }`}
-            />
-          ))}
-        </div>
-
-        {/* Compact Bottom Information Box */}
-        <div className="bg-[#f6f5f2] rounded-2xl p-4 border border-black/5 shadow-sm flex flex-col gap-3">
+        {/* 2-Column Responsive Wrapper (Mobile: Column, Desktop: Carousel Left + Info Right) */}
+        <div className="flex flex-col md:flex-row md:items-center md:gap-12 lg:gap-16">
           
-          {/* Row 1: Location */}
-          <div className="flex items-center gap-3 pb-3 border-b border-black/8">
-            <div className="w-9 h-9 rounded-full bg-[#1a1a1a] text-white flex items-center justify-center shrink-0 shadow-sm">
-              <MapPin size={16} className="stroke-[1.75]" />
+          {/* Left Column: Image Carousel */}
+          <div className="w-full md:w-1/2 flex flex-col items-center">
+            <div className="relative w-full h-[340px] sm:h-[380px] md:h-[440px] flex items-center justify-center overflow-hidden py-2">
+              <div className="relative w-full h-full flex items-center justify-center">
+                {STORE_PHOTOS.map((photo, index) => {
+                  const pos = getPosition(index);
+                  if (Math.abs(pos) > 2) return null;
+
+                  return (
+                    <motion.div
+                      key={photo.id}
+                      style={{ zIndex: 10 - Math.abs(pos) }}
+                      animate={{
+                        scale: 1 - Math.abs(pos) * 0.12,
+                        x: pos * 60,
+                        opacity: Math.abs(pos) === 2 ? 0.35 : Math.abs(pos) === 1 ? 0.75 : 1,
+                      }}
+                      transition={{ type: "spring", stiffness: 260, damping: 32 }}
+                      className="absolute w-[78%] sm:w-[75%] md:w-[82%] aspect-[3.8/4.6] rounded-[24px] overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.12)] border-[2px] border-white cursor-pointer select-none touch-pan-y"
+                      onClick={() => {
+                        if (pos !== 0) setActiveIndex(index);
+                        else setIsLightboxOpen(true);
+                      }}
+                      drag="x"
+                      dragConstraints={{ left: 0, right: 0 }}
+                      onDragEnd={(_, info) => {
+                        if (info.offset.x > 35) moveCarousel('left');
+                        if (info.offset.x < -35) moveCarousel('right');
+                      }}
+                    >
+                      <div className="relative w-full h-full">
+                        <Image
+                          src={photo.src}
+                          alt={photo.label}
+                          fill
+                          unoptimized
+                          className="object-cover pointer-events-none"
+                        />
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
             </div>
-            <div className="min-w-0 flex-1">
-              <h4 className="text-xs sm:text-sm font-bold text-[#1a1a1a] tracking-tight truncate">
-                Areekode, Malappuram
-              </h4>
-              <p className="text-[10px] text-neutral-500 leading-tight font-normal truncate mt-0.5">
-                Areekode, Malappuram District, Kerala, India
+
+            {/* Pagination Dots */}
+            <div className="flex items-center justify-center gap-1.5 mt-3 md:mt-4 mb-5 md:mb-0">
+              {STORE_PHOTOS.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveIndex(i)}
+                  aria-label={`Go to slide ${i + 1}`}
+                  className={`h-1.5 transition-all duration-500 rounded-full ${
+                    activeIndex === i ? "w-4 bg-[#1a1a1a]" : "w-1.5 bg-neutral-300 hover:bg-neutral-400"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Right Column: Desktop Header & Store Info Card */}
+          <div className="w-full md:w-1/2 flex flex-col justify-center">
+            
+            {/* Desktop Header */}
+            <div className="hidden md:block mb-8">
+              <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-[#b89759] block mb-2 font-sans italic">
+                OUR STORE
+              </span>
+              <h2 className="text-3xl lg:text-4xl font-normal text-[#1a1a1a] tracking-tight font-sans mb-2">
+                Visit Our Store
+              </h2>
+              <p className="text-sm text-neutral-500 font-normal font-sans">
+                Experience our curated collections in person with bespoke assistance.
               </p>
             </div>
-          </div>
 
-          {/* Row 2: Hours & Directions Button (Compact Layout) */}
-          <div className="flex items-center justify-between gap-2 pt-0.5">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-9 h-9 rounded-full bg-[#1a1a1a] text-white flex items-center justify-center shrink-0 shadow-sm">
-                <Clock size={16} className="stroke-[1.75]" />
-              </div>
-              <div className="min-w-0">
-                <h4 className="text-xs sm:text-sm font-bold text-[#1a1a1a] tracking-tight">
-                  Open Daily
-                </h4>
-                <p className="text-[10px] text-neutral-500 font-normal leading-tight mt-0.5">
-                  10:00 AM – 09:00 PM
-                </p>
+            {/* Desktop Navigation Arrows Header Controls */}
+            <div className="hidden md:flex items-center justify-between mb-4">
+              <span className="text-xs font-bold uppercase tracking-widest text-black/40">
+                {currentPhoto.label} ({activeIndex + 1}/{STORE_PHOTOS.length})
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => moveCarousel('left')}
+                  aria-label="Previous store photo"
+                  className="w-9 h-9 rounded-full border border-black/15 bg-white text-black flex items-center justify-center hover:bg-neutral-100 active:scale-95 transition-all shadow-sm"
+                >
+                  <ArrowLeft size={15} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveCarousel('right')}
+                  aria-label="Next store photo"
+                  className="w-9 h-9 rounded-full bg-[#1a1a1a] text-white flex items-center justify-center hover:bg-black active:scale-95 transition-all shadow-sm"
+                >
+                  <ArrowRight size={15} />
+                </button>
               </div>
             </div>
 
-            <a
-              href={googleMapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2.5 bg-[#1a1a1a] text-white rounded-xl text-[10.5px] font-semibold flex items-center gap-1.5 hover:bg-black active:scale-95 transition-all shadow-sm shrink-0"
-            >
-              <span>Get Directions</span>
-              <ArrowUpRight size={13} />
-            </a>
+            {/* Location & Hours Card (Refined Editorial Card) */}
+            <div className="bg-[#f6f5f2] rounded-2xl p-5 md:p-6 border border-black/5 shadow-sm flex flex-col gap-4">
+              
+              {/* Row 1: Location */}
+              <div className="flex items-start gap-3.5 pb-4 border-b border-black/8">
+                <div className="w-10 h-10 rounded-full bg-[#1a1a1a] text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                  <MapPin size={18} className="stroke-[1.75]" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-sm md:text-base font-bold text-[#1a1a1a] tracking-tight">
+                    Areekode, Malappuram
+                  </h4>
+                  <p className="text-xs text-neutral-500 leading-normal font-normal mt-0.5">
+                    Areekode, Malappuram District, Kerala, India
+                  </p>
+                </div>
+              </div>
+
+              {/* Row 2: Hours & Get Directions Button */}
+              <div className="flex items-center justify-between gap-3 pt-1">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-full bg-[#1a1a1a] text-white flex items-center justify-center shrink-0 shadow-sm">
+                    <Clock size={18} className="stroke-[1.75]" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-sm md:text-base font-bold text-[#1a1a1a] tracking-tight">
+                      Open Daily
+                    </h4>
+                    <p className="text-xs text-neutral-500 font-normal leading-tight mt-0.5">
+                      10:00 AM – 09:00 PM
+                    </p>
+                  </div>
+                </div>
+
+                <a
+                  href={googleMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-5 py-3 bg-[#1a1a1a] text-white rounded-xl text-xs font-semibold flex items-center gap-2 hover:bg-black active:scale-95 transition-all shadow-sm shrink-0"
+                >
+                  <span>Get Directions</span>
+                  <ArrowUpRight size={14} />
+                </a>
+              </div>
+
+            </div>
+
           </div>
 
         </div>
@@ -243,7 +293,7 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl overflow-hidden max-w-sm w-full shadow-2xl relative flex flex-col max-h-[85vh]"
+              className="bg-white rounded-2xl overflow-hidden max-w-sm sm:max-w-md w-full shadow-2xl relative flex flex-col max-h-[85vh]"
             >
               <button
                 onClick={() => setIsLightboxOpen(false)}
@@ -262,19 +312,19 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
                 />
               </div>
 
-              <div className="p-3.5 bg-white flex items-center justify-between">
+              <div className="p-4 bg-white flex items-center justify-between">
                 <div>
-                  <h4 className="text-xs font-bold text-[#1a1a1a]">{currentPhoto.label}</h4>
-                  <p className="text-[9.5px] text-neutral-500">Areekode, Malappuram • Open Daily 10-9</p>
+                  <h4 className="text-sm font-bold text-[#1a1a1a]">{currentPhoto.label}</h4>
+                  <p className="text-xs text-neutral-500">Areekode, Malappuram • Open Daily 10:00 AM - 09:00 PM</p>
                 </div>
                 <a
                   href={googleMapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3.5 py-1.5 bg-[#1a1a1a] text-white rounded-lg text-[9.5px] font-semibold flex items-center gap-1"
+                  className="px-4 py-2 bg-[#1a1a1a] text-white rounded-xl text-xs font-semibold flex items-center gap-1.5"
                 >
                   <span>Directions</span>
-                  <ArrowUpRight size={12} />
+                  <ArrowUpRight size={13} />
                 </a>
               </div>
             </motion.div>
@@ -284,3 +334,4 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
     </section>
   );
 }
+
