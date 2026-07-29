@@ -115,25 +115,25 @@ export function PincodeChecker() {
   };
 
   return (
-    <div className="w-full mt-2.5 font-sans pt-2.5 border-t border-black/5">
-      <h4 className="text-[7px] font-bold uppercase tracking-[0.25em] text-black/30 mb-2 flex items-center gap-1">
-        <Truck size={9} strokeWidth={2.5} /> Check Delivery Details
+    <div className="w-full mt-2.5 md:mt-3.5 font-sans pt-2.5 md:pt-3.5 border-t border-black/5">
+      <h4 className="text-[7px] md:text-[9.5px] font-bold uppercase tracking-[0.25em] text-black/40 mb-2 md:mb-2.5 flex items-center gap-1.5">
+        <Truck size={9} strokeWidth={2.5} className="md:w-3.5 md:h-3.5" /> Check Delivery Details
       </h4>
-      <form onSubmit={handleCheck} className="flex gap-2">
+      <form onSubmit={handleCheck} className="flex gap-2 md:gap-2.5">
         <input
           type="text"
           maxLength={6}
           value={pincode}
           onChange={(e) => setPincode(e.target.value.replace(/\D/g, ''))}
           placeholder="ENTER PINCODE"
-          className="flex-1 bg-black/[0.03] border border-black/5 rounded-md px-3 py-1.5 text-[8px] font-bold tracking-[0.1em] outline-none focus:border-black/20 focus:bg-transparent transition-all placeholder:text-black/20 text-black font-semibold"
+          className="flex-1 bg-black/[0.03] border border-black/5 rounded-md md:rounded-lg px-3 py-1.5 md:px-4 md:py-2.5 text-[8px] md:text-[10.5px] font-bold tracking-[0.1em] outline-none focus:border-black/20 focus:bg-transparent transition-all placeholder:text-black/25 text-black"
         />
         <button
           type="submit"
           disabled={loading}
-          className="bg-black text-white px-4 py-1.5 rounded-md text-[8px] font-bold tracking-[0.15em] hover:bg-black/80 transition-colors uppercase disabled:opacity-50 flex items-center justify-center min-w-[60px]"
+          className="bg-black text-white px-4 py-1.5 md:px-6 md:py-2.5 rounded-md md:rounded-lg text-[8px] md:text-[10.5px] font-bold tracking-[0.15em] hover:bg-black/80 transition-colors uppercase disabled:opacity-50 flex items-center justify-center min-w-[60px] md:min-w-[78px]"
         >
-          {loading ? <Loader2 size={8} className="animate-spin" /> : 'CHECK'}
+          {loading ? <Loader2 size={10} className="animate-spin md:w-3.5 md:h-3.5" /> : 'CHECK'}
         </button>
       </form>
       
@@ -143,9 +143,9 @@ export function PincodeChecker() {
             initial={{ opacity: 0, y: -2 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -2 }}
-            className="text-[7.5px] font-bold text-red-500 mt-2 uppercase tracking-wider flex items-center gap-1"
+            className="text-[7.5px] md:text-[9.5px] font-bold text-red-500 mt-2 uppercase tracking-wider flex items-center gap-1"
           >
-            <AlertCircle size={8} /> {error}
+            <AlertCircle size={9} className="md:w-3.5 md:h-3.5" /> {error}
           </motion.p>
         )}
         
@@ -161,11 +161,11 @@ export function PincodeChecker() {
               <div className="mt-3.5 pt-2.5 border-t border-black/5">
                 {/* Header Status */}
                 <div className="flex items-center justify-between mb-3.5">
-                  <div className="flex items-center gap-1 text-green-600 font-extrabold text-[8px] uppercase tracking-wider">
-                    <Check size={9} strokeWidth={3} /> 
+                  <div className="flex items-center gap-1 text-green-600 font-extrabold text-[8px] md:text-[10px] uppercase tracking-wider">
+                    <Check size={9} strokeWidth={3} className="md:w-3.5 md:h-3.5" /> 
                     <span>Deliverable to {result.district || 'Your Pincode'}</span>
                   </div>
-                  <div className="text-[7px] font-bold text-black/50 uppercase tracking-widest bg-black/[0.03] px-2 py-0.5 rounded-md border border-black/5">
+                  <div className="text-[7px] md:text-[9px] font-bold text-black/50 uppercase tracking-widest bg-black/[0.03] px-2 py-0.5 md:px-2.5 md:py-1 rounded-md border border-black/5">
                     {result.cod ? "COD & Prepaid Available" : "Prepaid Only"}
                   </div>
                 </div>
