@@ -100,28 +100,28 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
         </div>
 
         {/* Card Details */}
-        <div className="p-2 sm:p-2.5 md:p-3 flex flex-col flex-1 justify-between bg-white min-h-[90px] sm:min-h-[105px] md:min-h-[115px]">
+        <div className="p-2 sm:p-2.5 md:p-3.5 flex flex-col flex-1 justify-between bg-white min-h-[90px] sm:min-h-[105px] md:min-h-[125px]">
           <div>
             {/* Delicate Stars */}
-            <div className="flex items-center gap-0.5 mb-1">
+            <div className="flex items-center gap-0.5 mb-1.5">
               {[...Array(review.rating)].map((_, i) => (
                 <Star
                   key={i}
                   size={9}
-                  className="fill-black text-black shrink-0"
+                  className="fill-black text-black shrink-0 md:w-2.5 md:h-2.5"
                 />
               ))}
             </div>
 
             {/* Review Text */}
-            <p className="text-[8.5px] md:text-[10px] text-black/70 font-normal leading-relaxed font-sans mb-2">
+            <p className="text-[8.5px] md:text-[11px] lg:text-[11.5px] text-black/70 font-normal leading-relaxed font-sans mb-2">
               {review.comment}
             </p>
           </div>
 
           {/* Customer Name */}
-          <div className="mt-auto pt-1 border-t border-black/5">
-            <span className="text-[8.5px] md:text-[10px] font-semibold uppercase tracking-wider text-black/85 truncate block">
+          <div className="mt-auto pt-1.5 border-t border-black/5">
+            <span className="text-[8.5px] md:text-[10.5px] lg:text-[11px] font-semibold uppercase tracking-wider text-black/85 truncate block">
               {review.name}
             </span>
           </div>
@@ -131,12 +131,12 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
   };
 
   return (
-    <section className={`w-full py-4 sm:py-6 md:py-8 bg-white relative z-10 ${className}`}>
-      <div className="max-w-3xl md:max-w-4xl mx-auto px-4 sm:px-6">
+    <section className={`w-full py-4 sm:py-6 md:py-10 bg-white relative z-10 ${className}`}>
+      <div className="max-w-3xl md:max-w-4xl lg:max-w-5xl mx-auto px-4 sm:px-6">
         
         {/* Section Header */}
-        <div className="text-center mb-4 sm:mb-6">
-          <h3 className="text-[11.5px] md:text-[14px] font-semibold uppercase tracking-[0.25em] text-[#1a1a1a] font-sans">
+        <div className="text-center mb-5 sm:mb-7">
+          <h3 className="text-[11.5px] md:text-[14px] lg:text-[15px] font-semibold uppercase tracking-[0.25em] text-[#1a1a1a] font-sans">
             HEAR FROM OUR CUSTOMERS
           </h3>
           <p className="mt-1 text-[9px] md:text-[10.5px] font-normal uppercase tracking-[0.2em] text-black/40 font-sans">
@@ -144,7 +144,7 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
           </p>
         </div>
 
-        {/* Mobile Layout: 2 Columns of 2 Cards */}
+        {/* Mobile Layout: 2 Columns of 2 Cards (100% UNTOUCHED) */}
         <div className="grid grid-cols-2 gap-2 sm:gap-2.5 items-start max-w-2xl mx-auto md:hidden">
           <div className="flex flex-col">
             {REVIEWS_COL_1.map((review) => renderCard(review))}
@@ -154,8 +154,8 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
           </div>
         </div>
 
-        {/* Desktop Layout: 4 Columns with 1 Unique Card Each (Compact & Aesthetic) */}
-        <div className="hidden md:grid md:grid-cols-4 gap-2.5 items-start max-w-3xl mx-auto">
+        {/* Desktop Layout: 4 Columns with 1 Unique Card Each (Expanded Uniform Scale) */}
+        <div className="hidden md:grid md:grid-cols-4 gap-3.5 lg:gap-4.5 items-start max-w-4xl lg:max-w-5xl mx-auto">
           <div className="flex flex-col">
             {renderCard(REVIEWS_COL_1[0])} {/* Zayd Abdulla */}
           </div>
