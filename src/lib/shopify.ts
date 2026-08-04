@@ -41,7 +41,7 @@ export async function shopifyFetch({ query, variables }: { query: string; variab
   }
 }
 
-export async function getCollectionProducts(handle: string, sortKey: string = 'BEST_SELLING') {
+export async function getCollectionProducts(handle: string, sortKey: string = 'CREATED') {
   // First, try fetching by handle
   const query = `
     query getCollection($handle: String!, $sortKey: ProductCollectionSortKeys) {
@@ -291,7 +291,7 @@ export async function getProductByHandle(handle: string) {
   return null;
 }
 
-export async function getAllProducts(sortKey: string = 'BEST_SELLING'): Promise<any[]> {
+export async function getAllProducts(sortKey: string = 'CREATED_AT'): Promise<any[]> {
   const query = `
     query getProducts($sortKey: ProductSortKeys) {
       products(first: 250, sortKey: $sortKey) {

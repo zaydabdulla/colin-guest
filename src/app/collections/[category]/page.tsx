@@ -55,7 +55,7 @@ export default async function CategoryGrid({ params }: { params: Promise<{ categ
     variants: p.variants?.edges.map((e: any) => e.node) || [],
     options: p.options || [],
     createdAt: p.createdAt,
-    salesCount: shopifyProducts.length - index,
+    salesCount: p.salesCount || 0,
     metafieldKeys: [
       p.color1 && 'custom.color',
       p.color2 && 'custom.Color',
