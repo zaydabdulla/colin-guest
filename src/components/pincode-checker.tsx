@@ -10,6 +10,9 @@ export function PincodeChecker() {
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState('');
 
+  // Client-side cache to prevent duplicate requests
+  const [clientCache, setClientCache] = useState<Record<string, any>>({});
+
   const handleCheck = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!/^\d{6}$/.test(pincode)) {
@@ -17,15 +20,26 @@ export function PincodeChecker() {
       return;
     }
     setError('');
+
+    // Check client cache first
+    if (clientCache[pincode]) {
+      setResult(clientCache[pincode]);
+      return;
+    }
+
     setLoading(true);
     setResult(null);
 
     try {
-      const res = await fetch(`/api/delhivery/serviceability?pincode=${pincode}&t=${Date.now()}`);
+      const res = await fetch(`/api/delhivery/serviceability?pincode=${pincode}`);
       const data = await res.json();
-      if (!res.ok || data.error) {
+
+      if (res.status === 429) {
+        setError('Too many requests. Please wait a moment.');
+      } else if (!res.ok || data.error) {
         setError(data.error || 'Verification failed. Try again.');
       } else {
+        setClientCache(prev => ({ ...prev, [pincode]: data }));
         setResult(data);
       }
     } catch (err) {

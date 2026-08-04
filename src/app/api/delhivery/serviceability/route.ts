@@ -29,19 +29,34 @@ function getTransitDays(stateCode?: string): { minDays: number; maxDays: number;
   return { minDays: 5, maxDays: 7, label: '5-7 business days' };
 }
 
-export async function GET(request: Request) {
-  // Rate Limit Check (max 30 requests/minute per IP)
-  const rateLimitResponse = await checkRateLimit(request, {
-    ipConfig: { limit: 30, windowMs: 60 * 1000 }
-  });
-  if (rateLimitResponse) return rateLimitResponse;
+// Server-side in-memory cache for pincode serviceability (15 minute TTL)
+const pincodeCache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
 
+export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const pincode = searchParams.get('pincode');
   
   if (!pincode || !/^\d{6}$/.test(pincode)) {
     return NextResponse.json({ error: 'Invalid Pincode' }, { status: 400 });
   }
+
+  // 1. Check Server Cache First (Bypasses rate-limiting for cached pincodes)
+  const cached = pincodeCache.get(pincode);
+  const now = Date.now();
+  if (cached && now - cached.timestamp < CACHE_TTL_MS) {
+    return NextResponse.json(cached.data, {
+      headers: {
+        'Cache-Control': 'public, max-age=900, s-maxage=900',
+      }
+    });
+  }
+
+  // 2. Standard Business Rate Limit Check (120 requests/minute per IP)
+  const rateLimitResponse = await checkRateLimit(request, {
+    ipConfig: { limit: 120, windowMs: 60 * 1000 }
+  });
+  if (rateLimitResponse) return rateLimitResponse;
 
   const token = process.env.DELHIVERY_API_TOKEN;
   if (!token) {
@@ -68,7 +83,9 @@ export async function GET(request: Request) {
     const item = data.delivery_codes?.[0]?.postal_code;
 
     if (!item) {
-      return NextResponse.json({ deliverable: false, cod: false });
+      const resultData = { deliverable: false, cod: false };
+      pincodeCache.set(pincode, { data: resultData, timestamp: now });
+      return NextResponse.json(resultData);
     }
 
     // Handle both boolean and "Y"/"N" format representation from Delhivery's API
@@ -78,7 +95,7 @@ export async function GET(request: Request) {
 
     const transit = getTransitDays(item.state_code);
 
-    return NextResponse.json({
+    const resultData = {
       deliverable: isServiceable,
       cod: isCod,
       district: item.district,
@@ -86,11 +103,14 @@ export async function GET(request: Request) {
       eta: transit.label,
       minDays: transit.minDays,
       maxDays: transit.maxDays
-    }, {
+    };
+
+    // Store in server-side cache
+    pincodeCache.set(pincode, { data: resultData, timestamp: now });
+
+    return NextResponse.json(resultData, {
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
+        'Cache-Control': 'public, max-age=900, s-maxage=900',
       }
     });
   } catch (error) {
