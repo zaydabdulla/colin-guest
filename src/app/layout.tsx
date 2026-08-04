@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { CartDrawer } from "@/components/cart-drawer";
 import { WishlistPopup } from "@/components/wishlist-popup";
@@ -52,6 +53,22 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        {/* Google Analytics 4 (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-61SWVWYW3Z"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics-ga4" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-61SWVWYW3Z');
+          `}
+        </Script>
+      </head>
       <body className="antialiased overflow-x-hidden max-w-full w-full">
         <SessionProvider>
           <ComingSoonWrapper>
