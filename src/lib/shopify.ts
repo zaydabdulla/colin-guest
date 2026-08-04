@@ -41,13 +41,13 @@ export async function shopifyFetch({ query, variables }: { query: string; variab
   }
 }
 
-export async function getCollectionProducts(handle: string, sortKey: string = 'CREATED') {
+export async function getCollectionProducts(handle: string, sortKey: string = 'CREATED', reverse: boolean = true) {
   // First, try fetching by handle
   const query = `
-    query getCollection($handle: String!, $sortKey: ProductCollectionSortKeys) {
+    query getCollection($handle: String!, $sortKey: ProductCollectionSortKeys, $reverse: Boolean) {
       collection(handle: $handle) {
         title
-        products(first: 50, sortKey: $sortKey) {
+        products(first: 50, sortKey: $sortKey, reverse: $reverse) {
           edges {
             node {
               id
@@ -114,7 +114,7 @@ export async function getCollectionProducts(handle: string, sortKey: string = 'C
 
   let response = await shopifyFetch({
     query,
-    variables: { handle, sortKey },
+    variables: { handle, sortKey, reverse },
   });
 
   // If not found, try to find a collection with a matching title
@@ -144,7 +144,7 @@ export async function getCollectionProducts(handle: string, sortKey: string = 'C
       console.log(`Found matching collection: ${match.node.title} (${match.node.handle})`);
       response = await shopifyFetch({
         query,
-        variables: { handle: match.node.handle, sortKey },
+        variables: { handle: match.node.handle, sortKey, reverse },
       });
     }
   }
@@ -291,10 +291,10 @@ export async function getProductByHandle(handle: string) {
   return null;
 }
 
-export async function getAllProducts(sortKey: string = 'CREATED_AT'): Promise<any[]> {
+export async function getAllProducts(sortKey: string = 'CREATED_AT', reverse: boolean = true): Promise<any[]> {
   const query = `
-    query getProducts($sortKey: ProductSortKeys) {
-      products(first: 250, sortKey: $sortKey) {
+    query getProducts($sortKey: ProductSortKeys, $reverse: Boolean) {
+      products(first: 250, sortKey: $sortKey, reverse: $reverse) {
         edges {
           node {
             id
@@ -357,7 +357,7 @@ export async function getAllProducts(sortKey: string = 'CREATED_AT'): Promise<an
 
   const response = await shopifyFetch({ 
     query, 
-    variables: { sortKey } 
+    variables: { sortKey, reverse } 
   });
   return response.data?.products?.edges.map((edge: any) => ({
     ...edge.node,
