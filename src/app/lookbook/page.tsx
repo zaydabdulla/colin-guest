@@ -11,6 +11,7 @@ export default async function LookbookPage() {
   
   const displayProducts: Product[] = shopifyProducts.map((p: any) => ({
     id: p.id,
+    handle: p.handle,
     src: p.images[0]?.url || "/placeholder.jpg",
     secondarySrc: p.images[1]?.url,
     srcs: p.images.map((img: any) => img.url),

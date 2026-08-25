@@ -50,6 +50,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         if (recommendations && recommendations.length > 0) {
           suggestedProducts = recommendations.map((p: any) => ({
             id: p.id,
+            handle: p.handle,
             src: p.images[0]?.url || "/placeholder.jpg",
             secondarySrc: p.images[1]?.url,
             srcs: p.images.map((img: any) => img.url),
@@ -68,6 +69,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
             .slice(0, 4)
             .map((p: any) => ({
               id: p.id,
+              handle: p.handle,
               src: p.images[0]?.url || "/placeholder.jpg",
               secondarySrc: p.images[1]?.url,
               srcs: p.images.map((img: any) => img.url),
@@ -89,6 +91,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   const allRawProducts = await getAllProducts();
   const allProducts: Product[] = allRawProducts.map((p: any) => ({
     id: p.id,
+    handle: p.handle,
     src: p.images[0]?.url || "/placeholder.jpg",
     secondarySrc: p.images[1]?.url,
     srcs: p.images.map((img: any) => img.url),

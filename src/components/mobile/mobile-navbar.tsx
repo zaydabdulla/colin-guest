@@ -66,6 +66,7 @@ export function MobileNavbar() {
           const results = await searchProducts(searchQuery);
           const mappedResults: Product[] = results.map((p: any) => ({
             id: p.id,
+            handle: p.handle,
             src: p.images[0]?.url || "/placeholder.jpg",
             title: p.title,
             price: `${p.priceRange.minVariantPrice.amount} ${p.priceRange.minVariantPrice.currencyCode}`,
