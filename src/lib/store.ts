@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { type Product } from './data';
-import { customerLogin, getCustomer, getProductsByIds, customerCreate, customerRecover, customerUpdate, customerAddressCreate, customerActivate, customerReset } from './shopify';
+import { customerLogin, getCustomer, getProductsByIds, customerCreate, customerRecover, customerUpdate, customerAddressCreate, customerAddressUpdate, customerActivate, customerReset } from './shopify';
 import { signOut } from 'next-auth/react';
-import { adminAddAddress, syncWishlist, getWishlist, checkEmailExists, recoverPasswordAction } from '@/app/actions/shopify';
+import { adminAddAddress, adminUpdateAddress, syncWishlist, getWishlist, checkEmailExists, recoverPasswordAction } from '@/app/actions/shopify';
 
 
 
@@ -54,6 +54,7 @@ interface CartState {
   saveData: () => Promise<void>;
   updateUser: (firstName: string, lastName: string) => Promise<{ success: boolean; error?: string }>;
   addAddress: (address: any) => Promise<{ success: boolean; error?: string }>;
+  updateAddress: (addressId: string, address: any) => Promise<{ success: boolean; error?: string }>;
   activateAccount: (id: string, token: string, password: string, mode?: 'activate' | 'reset') => Promise<{ success: boolean; error?: string }>;
 
   wishlistPopupProduct: Product | null;
@@ -336,6 +337,58 @@ export const useCartStore = create<CartState>()(
         }
       },
       
+      updateAddress: async (addressId, address) => {
+        const { accessToken, user } = get();
+        if (!user) return { success: false, error: "No user session found." };
+        set({ isSyncing: true });
+
+        // Email login: use Storefront API customerAddressUpdate
+        if (accessToken) {
+          try {
+            const result = await customerAddressUpdate(accessToken, addressId, address);
+            if (result?.customerAddress) {
+              set({
+                user: {
+                  ...user,
+                  addresses: (user.addresses || []).map((a: any) =>
+                    a.id === addressId ? { ...a, ...result.customerAddress } : a
+                  )
+                },
+                isSyncing: false
+              });
+              return { success: true };
+            }
+            set({ isSyncing: false });
+            return { success: false, error: result?.customerUserErrors?.[0]?.message || "Failed to update address" };
+          } catch (error) {
+            set({ isSyncing: false });
+            return { success: false, error: "An unexpected error occurred" };
+          }
+        }
+
+        // Google login: use Admin API adminUpdateAddress
+        try {
+          const result = await adminUpdateAddress(user.email, addressId, address);
+          if (result.success) {
+            set({
+              user: {
+                ...user,
+                addresses: (user.addresses || []).map((a: any) =>
+                  a.id === addressId ? { ...a, ...result.address } : a
+                )
+              },
+              isSyncing: false
+            });
+            return { success: true };
+          }
+          set({ isSyncing: false });
+          return { success: false, error: result.error };
+        } catch (error) {
+          set({ isSyncing: false });
+          return { success: false, error: "An unexpected error occurred during Admin sync" };
+        }
+      },
+
       activateAccount: async (id, token, password, mode = 'activate') => {
         set({ isSyncing: true });
         try {

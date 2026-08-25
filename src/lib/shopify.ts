@@ -973,6 +973,41 @@ export async function customerAddressCreate(customerAccessToken: string, address
   return response.data?.customerAddressCreate;
 }
 
+export async function customerAddressUpdate(customerAccessToken: string, id: string, address: any) {
+  const query = `
+    mutation customerAddressUpdate($customerAccessToken: String!, $id: ID!, $address: MailingAddressInput!) {
+      customerAddressUpdate(customerAccessToken: $customerAccessToken, id: $id, address: $address) {
+        customerAddress {
+          id
+          address1
+          address2
+          city
+          province
+          country
+          zip
+          phone
+        }
+        customerUserErrors {
+          code
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const response = await shopifyFetch({
+    query,
+    variables: {
+      customerAccessToken,
+      id,
+      address,
+    },
+  });
+
+  return response.data?.customerAddressUpdate;
+}
+
 export async function createShopifyCheckout(items: any[], email?: string, customerAccessToken?: string | null) {
   const lineItems = items.map(item => {
     let variantId = item.variantId;

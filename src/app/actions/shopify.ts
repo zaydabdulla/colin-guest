@@ -139,6 +139,69 @@ export async function adminAddAddress(email: string, address: any) {
   }
 }
 
+export async function adminUpdateAddress(email: string, addressId: string, address: any) {
+  if (!domain || !clientId || !clientSecret) {
+    return { success: false, error: "Shopify Admin API is not configured." };
+  }
+
+  try {
+    const adminToken = await getAdminToken();
+
+    // Find customer by email
+    const findQuery = `query { customers(first: 1, query: "email:${email}") { edges { node { id } } } }`;
+    const findResponse = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': adminToken },
+      body: JSON.stringify({ query: findQuery }),
+    });
+    const findData = await findResponse.json();
+    const customerId = findData.data?.customers?.edges[0]?.node?.id;
+    if (!customerId) return { success: false, error: "Customer not found" };
+
+    // Update the address using Admin API
+    const updateMutation = `
+      mutation customerAddressUpdate($customerId: ID!, $addressId: ID!, $address: MailingAddressInput!) {
+        customerAddressUpdate(customerId: $customerId, addressId: $addressId, address: $address) {
+          customerAddress {
+            id
+            address1
+            address2
+            city
+            province
+            country
+            zip
+            phone
+          }
+          userErrors { field message }
+        }
+      }
+    `;
+
+    const updateResponse = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': adminToken },
+      body: JSON.stringify({
+        query: updateMutation,
+        variables: { customerId, addressId, address }
+      }),
+    });
+
+    const updateData = await updateResponse.json();
+    if (updateData.data?.customerAddressUpdate?.userErrors?.length > 0) {
+      return { success: false, error: updateData.data.customerAddressUpdate.userErrors[0].message };
+    }
+
+    return {
+      success: true,
+      address: updateData.data?.customerAddressUpdate?.customerAddress
+    };
+
+  } catch (error: any) {
+    console.error("Admin address update error:", error);
+    return { success: false, error: `Shopify Error: ${error.message || "Internal server error"}` };
+  }
+}
+
 export async function getOrCreateShopifyCustomer(email: string, firstName: string, lastName: string) {
   if (!domain || !clientId || !clientSecret) return { success: false };
 

@@ -22,7 +22,7 @@ import Link from "next/link";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, isLoggedIn, logout, updateUser, addAddress, isSyncing } = useCartStore();
+  const { user, isLoggedIn, logout, updateUser, addAddress, updateAddress, isSyncing } = useCartStore();
   
   const [isEditingName, setIsEditingName] = useState(false);
   const [firstName, setFirstName] = useState(user?.firstName || "");
@@ -34,6 +34,18 @@ export default function ProfilePage() {
   // Address Form State
   const [isAddingAddress, setIsAddingAddress] = useState(false);
   const [newAddress, setNewAddress] = useState({
+    address1: "",
+    address2: "",
+    city: "",
+    province: "",
+    country: "India",
+    zip: "",
+    phone: ""
+  });
+
+  // Edit Address State
+  const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
+  const [editAddress, setEditAddress] = useState({
     address1: "",
     address2: "",
     city: "",
@@ -97,6 +109,32 @@ export default function ProfilePage() {
       });
     } else {
       setError(result.error || "Failed to add address");
+    }
+  };
+
+  const handleStartEdit = (address: any) => {
+    setEditingAddressId(address.id);
+    setEditAddress({
+      address1: address.address1 || "",
+      address2: address.address2 || "",
+      city: address.city || "",
+      province: address.province || "",
+      country: address.country || "India",
+      zip: address.zip || "",
+      phone: address.phone || ""
+    });
+    setError(null);
+  };
+
+  const handleEditAddress = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingAddressId) return;
+    setError(null);
+    const result = await updateAddress(editingAddressId, editAddress);
+    if (result.success) {
+      setEditingAddressId(null);
+    } else {
+      setError(result.error || "Failed to update address");
     }
   };
 
@@ -359,19 +397,115 @@ export default function ProfilePage() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.1 }}
-                      className="bg-[#f9f9fa] rounded-[20px] p-5 border border-black/5 flex items-start justify-between group"
+                      className="bg-[#f9f9fa] rounded-[20px] p-5 border border-black/5"
                     >
-                      <div className="flex gap-4">
-                        <div className="mt-1">
-                          <Building2 size={16} className="text-black/20" />
-                        </div>
-                        <div className="space-y-0.5">
-                          <p className="text-[11px] font-bold text-black tracking-wide">{address.address1}</p>
-                          {address.address2 && <p className="text-[10px] font-medium text-black/60">{address.address2}</p>}
-                          <p className="text-[10px] font-medium text-black/60">{address.city}, {address.province} {address.zip}</p>
-                          <p className="text-[10px] font-medium text-black/60 uppercase tracking-widest">{address.country}</p>
-                        </div>
-                      </div>
+                      <AnimatePresence mode="wait">
+                        {editingAddressId === address.id ? (
+                          <motion.form
+                            key="edit-form"
+                            initial={{ opacity: 0, y: 6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 6 }}
+                            onSubmit={handleEditAddress}
+                            className="space-y-4"
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-black/40">Edit Address</p>
+                              <button
+                                type="button"
+                                onClick={() => setEditingAddressId(null)}
+                                className="text-black/30 hover:text-black transition-colors"
+                              >
+                                <X size={14} strokeWidth={1.5} />
+                              </button>
+                            </div>
+
+                            {error && editingAddressId === address.id && (
+                              <p className="text-[9px] font-bold uppercase tracking-wider text-red-500">{error}</p>
+                            )}
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="space-y-1">
+                                <label className="text-[8px] font-bold uppercase tracking-widest text-black/30">Address Line 1</label>
+                                <input required type="text" value={editAddress.address1}
+                                  onChange={(e) => setEditAddress({...editAddress, address1: e.target.value})}
+                                  className="w-full border-b border-black/10 py-1 text-xs focus:border-black outline-none transition-colors bg-transparent text-black"
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-[8px] font-bold uppercase tracking-widest text-black/30">Address Line 2 (Opt)</label>
+                                <input type="text" value={editAddress.address2}
+                                  onChange={(e) => setEditAddress({...editAddress, address2: e.target.value})}
+                                  className="w-full border-b border-black/10 py-1 text-xs focus:border-black outline-none transition-colors bg-transparent text-black"
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-[8px] font-bold uppercase tracking-widest text-black/30">City</label>
+                                <input required type="text" value={editAddress.city}
+                                  onChange={(e) => setEditAddress({...editAddress, city: e.target.value})}
+                                  className="w-full border-b border-black/10 py-1 text-xs focus:border-black outline-none transition-colors bg-transparent text-black"
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-[8px] font-bold uppercase tracking-widest text-black/30">State / Province</label>
+                                <input required type="text" value={editAddress.province}
+                                  onChange={(e) => setEditAddress({...editAddress, province: e.target.value})}
+                                  className="w-full border-b border-black/10 py-1 text-xs focus:border-black outline-none transition-colors bg-transparent text-black"
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-[8px] font-bold uppercase tracking-widest text-black/30">Zip / Postal Code</label>
+                                <input required type="text" value={editAddress.zip}
+                                  onChange={(e) => setEditAddress({...editAddress, zip: e.target.value})}
+                                  className="w-full border-b border-black/10 py-1 text-xs focus:border-black outline-none transition-colors bg-transparent text-black"
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-[8px] font-bold uppercase tracking-widest text-black/30">Phone Number</label>
+                                <input type="text" value={editAddress.phone}
+                                  onChange={(e) => setEditAddress({...editAddress, phone: e.target.value})}
+                                  className="w-full border-b border-black/10 py-1 text-xs focus:border-black outline-none transition-colors bg-transparent text-black"
+                                />
+                              </div>
+                            </div>
+
+                            <button
+                              disabled={isSyncing}
+                              className="w-full bg-black text-white py-3 rounded-xl text-[9px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-black/80 transition-all shadow-sm disabled:opacity-50"
+                            >
+                              {isSyncing ? <Loader2 size={12} className="animate-spin" /> : <Check size={14} />}
+                              Save Changes
+                            </button>
+                          </motion.form>
+                        ) : (
+                          <motion.div
+                            key="address-view"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="flex items-start justify-between group"
+                          >
+                            <div className="flex gap-4">
+                              <div className="mt-1">
+                                <Building2 size={16} className="text-black/20" />
+                              </div>
+                              <div className="space-y-0.5">
+                                <p className="text-[11px] font-bold text-black tracking-wide">{address.address1}</p>
+                                {address.address2 && <p className="text-[10px] font-medium text-black/60">{address.address2}</p>}
+                                <p className="text-[10px] font-medium text-black/60">{address.city}, {address.province} {address.zip}</p>
+                                <p className="text-[10px] font-medium text-black/60 uppercase tracking-widest">{address.country}</p>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => handleStartEdit(address)}
+                              className="flex items-center gap-1.5 text-[8px] font-bold uppercase tracking-widest text-black/20 hover:text-black transition-colors opacity-0 group-hover:opacity-100"
+                            >
+                              <Edit2 size={11} strokeWidth={1.5} />
+                              Edit
+                            </button>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </motion.div>
                   ))
                 ) : (
