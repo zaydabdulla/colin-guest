@@ -202,6 +202,51 @@ export async function adminUpdateAddress(email: string, addressId: string, addre
   }
 }
 
+export async function adminDeleteAddress(addressId: string) {
+  if (!domain || !clientId || !clientSecret) {
+    return { success: false, error: "Shopify Admin API is not configured." };
+  }
+
+  try {
+    const adminToken = await getAdminToken();
+
+    const deleteMutation = `
+      mutation customerAddressDelete($id: ID!) {
+        customerAddressDelete(id: $id) {
+          deletedCustomerAddressId
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const deleteResponse = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': adminToken },
+      body: JSON.stringify({
+        query: deleteMutation,
+        variables: { id: addressId }
+      }),
+    });
+
+    const deleteData = await deleteResponse.json();
+    if (deleteData.data?.customerAddressDelete?.userErrors?.length > 0) {
+      return { success: false, error: deleteData.data.customerAddressDelete.userErrors[0].message };
+    }
+
+    return {
+      success: true,
+      deletedAddressId: deleteData.data?.customerAddressDelete?.deletedCustomerAddressId
+    };
+
+  } catch (error: any) {
+    console.error("Admin address delete error:", error);
+    return { success: false, error: `Shopify Error: ${error.message || "Internal server error"}` };
+  }
+}
+
 export async function getOrCreateShopifyCustomer(email: string, firstName: string, lastName: string) {
   if (!domain || !clientId || !clientSecret) return { success: false };
 

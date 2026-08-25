@@ -11,6 +11,7 @@ import {
   LogOut, 
   Plus, 
   Edit2,
+  Trash2,
   Package,
   ArrowLeft,
   X,
@@ -22,7 +23,7 @@ import Link from "next/link";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, isLoggedIn, logout, updateUser, addAddress, updateAddress, isSyncing } = useCartStore();
+  const { user, isLoggedIn, logout, updateUser, addAddress, updateAddress, deleteAddress, isSyncing } = useCartStore();
   
   const [isEditingName, setIsEditingName] = useState(false);
   const [firstName, setFirstName] = useState(user?.firstName || "");
@@ -135,6 +136,15 @@ export default function ProfilePage() {
       setEditingAddressId(null);
     } else {
       setError(result.error || "Failed to update address");
+    }
+  };
+
+  const handleDeleteAddress = async (addressId: string) => {
+    if (!window.confirm("Are you sure you want to delete this address?")) return;
+    setError(null);
+    const result = await deleteAddress(addressId);
+    if (!result.success) {
+      setError(result.error || "Failed to delete address");
     }
   };
 
@@ -496,13 +506,23 @@ export default function ProfilePage() {
                                 <p className="text-[10px] font-medium text-black/60 uppercase tracking-widest">{address.country}</p>
                               </div>
                             </div>
-                            <button
-                              onClick={() => handleStartEdit(address)}
-                              className="flex items-center gap-1.5 text-[8px] font-bold uppercase tracking-widest text-black/20 hover:text-black transition-colors opacity-0 group-hover:opacity-100"
-                            >
-                              <Edit2 size={11} strokeWidth={1.5} />
-                              Edit
-                            </button>
+                            <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button
+                                onClick={() => handleStartEdit(address)}
+                                className="flex items-center gap-1.5 text-[8px] font-bold uppercase tracking-widest text-black/20 hover:text-black transition-colors"
+                              >
+                                <Edit2 size={11} strokeWidth={1.5} />
+                                Edit
+                              </button>
+                              <button
+                                disabled={isSyncing}
+                                onClick={() => handleDeleteAddress(address.id)}
+                                className="flex items-center gap-1.5 text-[8px] font-bold uppercase tracking-widest text-red-500/40 hover:text-red-500 transition-colors disabled:opacity-30"
+                              >
+                                <Trash2 size={11} strokeWidth={1.5} />
+                                Remove
+                              </button>
+                            </div>
                           </motion.div>
                         )}
                       </AnimatePresence>

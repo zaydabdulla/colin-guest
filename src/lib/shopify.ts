@@ -1008,6 +1008,31 @@ export async function customerAddressUpdate(customerAccessToken: string, id: str
   return response.data?.customerAddressUpdate;
 }
 
+export async function customerAddressDelete(customerAccessToken: string, id: string) {
+  const query = `
+    mutation customerAddressDelete($customerAccessToken: String!, $id: ID!) {
+      customerAddressDelete(customerAccessToken: $customerAccessToken, id: $id) {
+        deletedCustomerAddressId
+        customerUserErrors {
+          code
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const response = await shopifyFetch({
+    query,
+    variables: {
+      customerAccessToken,
+      id,
+    },
+  });
+
+  return response.data?.customerAddressDelete;
+}
+
 export async function createShopifyCheckout(items: any[], email?: string, customerAccessToken?: string | null) {
   const lineItems = items.map(item => {
     let variantId = item.variantId;

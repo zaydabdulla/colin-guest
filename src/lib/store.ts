@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { type Product } from './data';
-import { customerLogin, getCustomer, getProductsByIds, customerCreate, customerRecover, customerUpdate, customerAddressCreate, customerAddressUpdate, customerActivate, customerReset } from './shopify';
+import { customerLogin, getCustomer, getProductsByIds, customerCreate, customerRecover, customerUpdate, customerAddressCreate, customerAddressUpdate, customerAddressDelete, customerActivate, customerReset } from './shopify';
 import { signOut } from 'next-auth/react';
-import { adminAddAddress, adminUpdateAddress, syncWishlist, getWishlist, checkEmailExists, recoverPasswordAction } from '@/app/actions/shopify';
+import { adminAddAddress, adminUpdateAddress, adminDeleteAddress, syncWishlist, getWishlist, checkEmailExists, recoverPasswordAction } from '@/app/actions/shopify';
 
 
 
@@ -55,6 +55,7 @@ interface CartState {
   updateUser: (firstName: string, lastName: string) => Promise<{ success: boolean; error?: string }>;
   addAddress: (address: any) => Promise<{ success: boolean; error?: string }>;
   updateAddress: (addressId: string, address: any) => Promise<{ success: boolean; error?: string }>;
+  deleteAddress: (addressId: string) => Promise<{ success: boolean; error?: string }>;
   activateAccount: (id: string, token: string, password: string, mode?: 'activate' | 'reset') => Promise<{ success: boolean; error?: string }>;
 
   wishlistPopupProduct: Product | null;
@@ -376,6 +377,54 @@ export const useCartStore = create<CartState>()(
                 addresses: (user.addresses || []).map((a: any) =>
                   a.id === addressId ? { ...a, ...result.address } : a
                 )
+              },
+              isSyncing: false
+            });
+            return { success: true };
+          }
+          set({ isSyncing: false });
+          return { success: false, error: result.error };
+        } catch (error) {
+          set({ isSyncing: false });
+          return { success: false, error: "An unexpected error occurred during Admin sync" };
+        }
+      },
+
+      deleteAddress: async (addressId) => {
+        const { accessToken, user } = get();
+        if (!user) return { success: false, error: "No user session found." };
+        set({ isSyncing: true });
+
+        // Email login: use Storefront API customerAddressDelete
+        if (accessToken) {
+          try {
+            const result = await customerAddressDelete(accessToken, addressId);
+            if (result?.deletedCustomerAddressId) {
+              set({
+                user: {
+                  ...user,
+                  addresses: (user.addresses || []).filter((a: any) => a.id !== addressId)
+                },
+                isSyncing: false
+              });
+              return { success: true };
+            }
+            set({ isSyncing: false });
+            return { success: false, error: result?.customerUserErrors?.[0]?.message || "Failed to delete address" };
+          } catch (error) {
+            set({ isSyncing: false });
+            return { success: false, error: "An unexpected error occurred" };
+          }
+        }
+
+        // Google login: use Admin API adminDeleteAddress
+        try {
+          const result = await adminDeleteAddress(addressId);
+          if (result.success) {
+            set({
+              user: {
+                ...user,
+                addresses: (user.addresses || []).filter((a: any) => a.id !== addressId)
               },
               isSyncing: false
             });
