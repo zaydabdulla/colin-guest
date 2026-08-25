@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Bookmark } from "lucide-react";
@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PincodeChecker } from "@/components/pincode-checker";
 import { CustomerCollage } from "@/components/customer-collage";
 import { OurStore } from "@/components/our-store";
+import { trackMetaEvent } from "@/lib/meta-pixel";
 
 interface ProductClientProps {
   product: Product;
@@ -29,6 +30,23 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
 
   const { openCart, addToCart, wishlistItems, toggleWishlist } = useCartStore();
   const isWishlisted = wishlistItems.some((item: Product) => item.id === product.id);
+
+  // Track Meta ViewContent Event
+  useEffect(() => {
+    if (product) {
+      trackMetaEvent({
+        eventName: "ViewContent",
+        customData: {
+          content_name: product.title,
+          content_category: product.category,
+          content_ids: [String(product.id)],
+          content_type: "product",
+          value: product.amount || 0,
+          currency: "INR",
+        },
+      });
+    }
+  }, [product?.id]);
 
   // Determine if all variants are sold out
   const isAllSoldOut = !product.variants || product.variants.length === 0 || product.variants.every(v => !v.availableForSale);

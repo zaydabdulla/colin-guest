@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
@@ -12,6 +13,7 @@ import { MobileFooter } from "@/components/mobile/mobile-footer";
 
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { SyncManager } from "@/components/sync-manager";
+import { MetaPixelListener } from "@/components/meta-pixel-listener";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -103,6 +105,9 @@ export default function RootLayout({
             <WishlistPopup />
             <SyncManager />
             <ScrollToTop />
+            <Suspense fallback={null}>
+              <MetaPixelListener />
+            </Suspense>
           </ComingSoonWrapper>
         </SessionProvider>
       </body>

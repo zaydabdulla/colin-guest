@@ -990,11 +990,23 @@ export async function createShopifyCheckout(items: any[], email?: string, custom
       }
 
       if (variantsArray.length > 0) {
-        // Try finding matching variant by size title
+        // Try finding matching variant by size title or selectedOptions
         const variant = variantsArray.find((v: any) => {
-          const vTitle = (v.title || v.node?.title || "").toLowerCase();
-          const itemSize = (item.size || "").toLowerCase();
-          return vTitle === itemSize || vTitle.includes(itemSize);
+          const vTitle = (v.title || v.node?.title || "").toLowerCase().trim();
+          const itemSize = (item.size || "").toLowerCase().trim();
+
+          // 1. Exact match (e.g. "l" === "l")
+          if (vTitle === itemSize) return true;
+
+          // 2. SelectedOptions match (e.g. option value "L")
+          const opts = v.selectedOptions || v.node?.selectedOptions || [];
+          if (opts.some((opt: any) => (opt.value || "").toLowerCase().trim() === itemSize)) {
+            return true;
+          }
+
+          // 3. Multi-option title match (e.g. "Gray / L")
+          const parts = vTitle.split('/').map((p: string) => p.trim());
+          return parts.includes(itemSize);
         });
 
         if (variant) {

@@ -86,6 +86,21 @@ export const useCartStore = create<CartState>()(
           };
         });
         get().saveData();
+
+        // Fire Meta Pixel & Conversions API AddToCart event
+        try {
+          const { trackMetaEvent } = require("@/lib/meta-pixel");
+          trackMetaEvent({
+            eventName: "AddToCart",
+            customData: {
+              content_name: product.title,
+              content_ids: [String(product.id)],
+              content_type: "product",
+              value: product.amount || 0,
+              currency: "INR",
+            },
+          });
+        } catch (e) {}
       },
       removeFromCart: (cartItemId) => {
         set((state) => ({
