@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Clock, MapPin, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -59,7 +60,10 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
   const [activeIndex, setActiveIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
     if (isLightboxOpen) {
       document.documentElement.classList.add("scroll-lock");
       document.body.classList.add("scroll-lock");
@@ -383,7 +387,7 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
 
       {/* Lightbox Modal */}
       <AnimatePresence>
-        {isLightboxOpen && (
+        {isLightboxOpen && mounted && createPortal(
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -431,7 +435,8 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
                 </a>
               </div>
             </motion.div>
-          </motion.div>
+          </motion.div>,
+          document.body
         )}
       </AnimatePresence>
     </section>

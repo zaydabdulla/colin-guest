@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { Star, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -83,7 +84,10 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
   const [activeImageModal, setActiveImageModal] = useState<CustomerReview | null>(null);
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
     if (activeImageModal) {
       document.documentElement.classList.add("scroll-lock");
       document.body.classList.add("scroll-lock");
@@ -200,7 +204,7 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
 
       {/* Lightbox Modal */}
       <AnimatePresence>
-        {activeImageModal && (
+        {activeImageModal && mounted && createPortal(
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -246,7 +250,8 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
                 </span>
               </div>
             </motion.div>
-          </motion.div>
+          </motion.div>,
+          document.body
         )}
       </AnimatePresence>
     </section>
