@@ -85,12 +85,15 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
 
   useEffect(() => {
     if (activeImageModal) {
-      document.body.style.overflow = "hidden";
+      document.documentElement.classList.add("scroll-lock");
+      document.body.classList.add("scroll-lock");
     } else {
-      document.body.style.overflow = "";
+      document.documentElement.classList.remove("scroll-lock");
+      document.body.classList.remove("scroll-lock");
     }
     return () => {
-      document.body.style.overflow = "";
+      document.documentElement.classList.remove("scroll-lock");
+      document.body.classList.remove("scroll-lock");
     };
   }, [activeImageModal]);
 
