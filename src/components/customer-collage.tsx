@@ -88,21 +88,39 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
   useEffect(() => {
     const parentSection = containerRef.current?.parentElement;
     if (activeImageModal) {
-      document.documentElement.classList.add("scroll-lock");
-      document.body.classList.add("scroll-lock");
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
       if (parentSection) {
         parentSection.style.zIndex = "9999";
       }
     } else {
-      document.documentElement.classList.remove("scroll-lock");
-      document.body.classList.remove("scroll-lock");
+      const scrollY = Math.abs(parseFloat(document.body.style.top || '0'));
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      if (scrollY > 0) {
+        window.scrollTo(0, scrollY);
+      }
       if (parentSection) {
         parentSection.style.zIndex = "20";
       }
     }
     return () => {
-      document.documentElement.classList.remove("scroll-lock");
-      document.body.classList.remove("scroll-lock");
+      const scrollY = Math.abs(parseFloat(document.body.style.top || '0'));
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      if (scrollY > 0) {
+        window.scrollTo(0, scrollY);
+      }
       if (parentSection) {
         parentSection.style.zIndex = "20";
       }
