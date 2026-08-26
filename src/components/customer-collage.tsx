@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { createPortal } from "react-dom";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Star, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -84,20 +83,29 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
   const [activeImageModal, setActiveImageModal] = useState<CustomerReview | null>(null);
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
-  const [mounted, setMounted] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMounted(true);
+    const parentSection = containerRef.current?.parentElement;
     if (activeImageModal) {
       document.documentElement.classList.add("scroll-lock");
       document.body.classList.add("scroll-lock");
+      if (parentSection) {
+        parentSection.style.zIndex = "9999";
+      }
     } else {
       document.documentElement.classList.remove("scroll-lock");
       document.body.classList.remove("scroll-lock");
+      if (parentSection) {
+        parentSection.style.zIndex = "20";
+      }
     }
     return () => {
       document.documentElement.classList.remove("scroll-lock");
       document.body.classList.remove("scroll-lock");
+      if (parentSection) {
+        parentSection.style.zIndex = "20";
+      }
     };
   }, [activeImageModal]);
 
@@ -159,7 +167,7 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
   };
 
   return (
-    <section className={`w-full py-4 sm:py-6 md:py-10 bg-white relative z-10 ${className}`}>
+    <section ref={containerRef} className={`w-full py-4 sm:py-6 md:py-10 bg-white relative z-10 ${className}`}>
       <div className="max-w-3xl md:max-w-5xl lg:max-w-6xl mx-auto px-4 sm:px-6">
         
         {/* Section Header */}
@@ -204,7 +212,7 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
 
       {/* Lightbox Modal */}
       <AnimatePresence>
-        {activeImageModal && mounted && createPortal(
+        {activeImageModal && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -250,8 +258,7 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
                 </span>
               </div>
             </motion.div>
-          </motion.div>,
-          document.body
+          </motion.div>
         )}
       </AnimatePresence>
     </section>

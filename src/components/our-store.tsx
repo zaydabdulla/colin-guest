@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { createPortal } from "react-dom";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Clock, MapPin, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -60,20 +59,28 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
   const [activeIndex, setActiveIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
-  const [mounted, setMounted] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMounted(true);
     if (isLightboxOpen) {
       document.documentElement.classList.add("scroll-lock");
       document.body.classList.add("scroll-lock");
+      if (sectionRef.current) {
+        sectionRef.current.style.zIndex = "9999";
+      }
     } else {
       document.documentElement.classList.remove("scroll-lock");
       document.body.classList.remove("scroll-lock");
+      if (sectionRef.current) {
+        sectionRef.current.style.zIndex = "10";
+      }
     }
     return () => {
       document.documentElement.classList.remove("scroll-lock");
       document.body.classList.remove("scroll-lock");
+      if (sectionRef.current) {
+        sectionRef.current.style.zIndex = "10";
+      }
     };
   }, [isLightboxOpen]);
 
@@ -101,7 +108,7 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
   const googleMapsUrl = "https://maps.app.goo.gl/XoNamgJh3rDWnZHDA";
 
   return (
-    <section className={`w-full py-6 md:py-16 bg-transparent relative z-10 font-sans ${className}`}>
+    <section ref={sectionRef} className={`w-full py-6 md:py-16 bg-transparent relative z-10 font-sans ${className}`}>
       
       {/* MOBILE LAYOUT (100% UNTOUCHED) */}
       <div className="md:hidden max-w-md sm:max-w-lg mx-auto px-4 sm:px-6">
@@ -387,7 +394,7 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
 
       {/* Lightbox Modal */}
       <AnimatePresence>
-        {isLightboxOpen && mounted && createPortal(
+        {isLightboxOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -435,8 +442,7 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
                 </a>
               </div>
             </motion.div>
-          </motion.div>,
-          document.body
+          </motion.div>
         )}
       </AnimatePresence>
     </section>
