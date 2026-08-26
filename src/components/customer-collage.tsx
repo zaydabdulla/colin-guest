@@ -86,7 +86,7 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const parentSection = containerRef.current?.parentElement;
+    const section = containerRef.current;
     if (activeImageModal) {
       const scrollY = window.scrollY;
       document.body.style.position = 'fixed';
@@ -94,8 +94,8 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
       document.body.style.left = '0';
       document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
-      if (parentSection) {
-        parentSection.style.zIndex = "9999";
+      if (section) {
+        section.style.zIndex = "99999";
       }
     } else {
       const scrollY = Math.abs(parseFloat(document.body.style.top || '0'));
@@ -107,8 +107,8 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
       if (scrollY > 0) {
         window.scrollTo(0, scrollY);
       }
-      if (parentSection) {
-        parentSection.style.zIndex = "20";
+      if (section) {
+        section.style.zIndex = "20";
       }
     }
     return () => {
@@ -121,8 +121,8 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
       if (scrollY > 0) {
         window.scrollTo(0, scrollY);
       }
-      if (parentSection) {
-        parentSection.style.zIndex = "20";
+      if (section) {
+        section.style.zIndex = "20";
       }
     };
   }, [activeImageModal]);
@@ -236,23 +236,23 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setActiveImageModal(null)}
-            className="fixed inset-0 z-[9999] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[99999] bg-black/85 backdrop-blur-md flex items-center justify-center p-4"
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-xl overflow-hidden max-w-xs w-full shadow-2xl relative flex flex-col max-h-[85vh]"
+              className="bg-transparent rounded-2xl overflow-hidden max-w-sm w-full shadow-2xl relative flex flex-col max-h-[85vh] p-2"
             >
               <button
                 onClick={() => setActiveImageModal(null)}
-                className="absolute top-2.5 right-2.5 z-10 p-1.5 bg-black/60 text-white rounded-full hover:bg-black transition-colors"
+                className="absolute top-4 right-4 z-10 p-2 bg-black/70 text-white rounded-full hover:bg-black transition-colors shadow-lg"
               >
-                <X size={12} />
+                <X size={15} />
               </button>
 
-              <div className="relative w-full aspect-[3/4] bg-neutral-900">
+              <div className="relative w-full aspect-[3/4] bg-neutral-900 rounded-2xl overflow-hidden">
                 <Image
                   src={failedImages[activeImageModal.id] ? activeImageModal.fallbackImage : activeImageModal.image}
                   alt={activeImageModal.name}
@@ -260,20 +260,6 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
                   unoptimized
                   className="object-cover"
                 />
-              </div>
-
-              <div className="p-3 bg-white flex flex-col gap-1">
-                <div className="flex items-center gap-0.5">
-                  {[...Array(activeImageModal.rating)].map((_, i) => (
-                    <Star key={i} size={10} className="fill-black text-black" />
-                  ))}
-                </div>
-                <p className="text-[9px] leading-relaxed text-black/70 font-normal">
-                  "{activeImageModal.comment}"
-                </p>
-                <span className="text-[9px] font-semibold uppercase tracking-wider text-black mt-1">
-                  {activeImageModal.name}
-                </span>
               </div>
             </motion.div>
           </motion.div>
