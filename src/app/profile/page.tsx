@@ -506,10 +506,10 @@ export default function ProfilePage() {
                                 <p className="text-[10px] font-medium text-black/60 uppercase tracking-widest">{address.country}</p>
                               </div>
                             </div>
-                            <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex items-center gap-3 opacity-60 md:opacity-40 group-hover:opacity-100 transition-opacity">
                               <button
                                 onClick={() => handleStartEdit(address)}
-                                className="flex items-center gap-1.5 text-[8px] font-bold uppercase tracking-widest text-black/20 hover:text-black transition-colors"
+                                className="flex items-center gap-1.5 text-[8px] font-bold uppercase tracking-widest text-black hover:text-black transition-colors"
                               >
                                 <Edit2 size={11} strokeWidth={1.5} />
                                 Edit
@@ -517,7 +517,7 @@ export default function ProfilePage() {
                               <button
                                 disabled={isSyncing}
                                 onClick={() => handleDeleteAddress(address.id)}
-                                className="flex items-center gap-1.5 text-[8px] font-bold uppercase tracking-widest text-red-500/40 hover:text-red-500 transition-colors disabled:opacity-30"
+                                className="flex items-center gap-1.5 text-[8px] font-bold uppercase tracking-widest text-red-500 hover:text-red-600 transition-colors disabled:opacity-30"
                               >
                                 <Trash2 size={11} strokeWidth={1.5} />
                                 Remove

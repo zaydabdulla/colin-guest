@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Star, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -82,6 +82,17 @@ interface CustomerCollageProps {
 export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }: CustomerCollageProps) {
   const [activeImageModal, setActiveImageModal] = useState<CustomerReview | null>(null);
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    if (activeImageModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [activeImageModal]);
 
   if (!show) {
     return null;
