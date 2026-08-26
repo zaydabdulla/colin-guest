@@ -38,3 +38,9 @@ body {
 .scroll-lock {
   overflow: hidden !important;
 }
+
+body.lightbox-open nav,
+body.lightbox-open .safe-top {
+  display: none !important;
+}
+

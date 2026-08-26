@@ -69,8 +69,9 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
       document.body.style.left = '0';
       document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
+      document.body.classList.add('lightbox-open');
       if (sectionRef.current) {
-        sectionRef.current.style.zIndex = "9999";
+        sectionRef.current.style.zIndex = "99999";
       }
     } else {
       const scrollY = Math.abs(parseFloat(document.body.style.top || '0'));
@@ -79,6 +80,7 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
       document.body.style.left = '';
       document.body.style.width = '';
       document.body.style.overflow = '';
+      document.body.classList.remove('lightbox-open');
       if (scrollY > 0) {
         window.scrollTo(0, scrollY);
       }
@@ -93,6 +95,7 @@ export function OurStore({ show = SHOW_OUR_STORE, className = "" }: OurStoreProp
       document.body.style.left = '';
       document.body.style.width = '';
       document.body.style.overflow = '';
+      document.body.classList.remove('lightbox-open');
       if (scrollY > 0) {
         window.scrollTo(0, scrollY);
       }

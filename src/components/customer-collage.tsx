@@ -94,6 +94,7 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
       document.body.style.left = '0';
       document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
+      document.body.classList.add('lightbox-open');
       if (section) {
         section.style.zIndex = "99999";
       }
@@ -104,6 +105,7 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
       document.body.style.left = '';
       document.body.style.width = '';
       document.body.style.overflow = '';
+      document.body.classList.remove('lightbox-open');
       if (scrollY > 0) {
         window.scrollTo(0, scrollY);
       }
@@ -118,6 +120,7 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
       document.body.style.left = '';
       document.body.style.width = '';
       document.body.style.overflow = '';
+      document.body.classList.remove('lightbox-open');
       if (scrollY > 0) {
         window.scrollTo(0, scrollY);
       }
