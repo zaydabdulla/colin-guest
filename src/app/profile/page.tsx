@@ -23,13 +23,19 @@ import Link from "next/link";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, isLoggedIn, logout, updateUser, addAddress, updateAddress, deleteAddress, isSyncing } = useCartStore();
+  const { user, isLoggedIn, logout, updateUser, addAddress, updateAddress, deleteAddress } = useCartStore();
   
   const [isEditingName, setIsEditingName] = useState(false);
   const [firstName, setFirstName] = useState(user?.firstName || "");
   const [lastName, setLastName] = useState(user?.lastName || "");
   const [error, setError] = useState<string | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
+
+  // Local Loading States
+  const [isUpdatingName, setIsUpdatingName] = useState(false);
+  const [isAddingAddressLoading, setIsAddingAddressLoading] = useState(false);
+  const [isUpdatingAddress, setIsUpdatingAddress] = useState(false);
+  const [deletingAddressId, setDeletingAddressId] = useState<string | null>(null);
 
 
   // Address Form State
@@ -85,7 +91,9 @@ export default function ProfilePage() {
 
   const handleUpdateName = async () => {
     setError(null);
+    setIsUpdatingName(true);
     const result = await updateUser(firstName, lastName);
+    setIsUpdatingName(false);
     if (result.success) {
       setIsEditingName(false);
     } else {
@@ -96,7 +104,9 @@ export default function ProfilePage() {
   const handleAddAddress = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setIsAddingAddressLoading(true);
     const result = await addAddress(newAddress);
+    setIsAddingAddressLoading(false);
     if (result.success) {
       setIsAddingAddress(false);
       setNewAddress({
@@ -131,7 +141,9 @@ export default function ProfilePage() {
     e.preventDefault();
     if (!editingAddressId) return;
     setError(null);
+    setIsUpdatingAddress(true);
     const result = await updateAddress(editingAddressId, editAddress);
+    setIsUpdatingAddress(false);
     if (result.success) {
       setEditingAddressId(null);
     } else {
@@ -142,7 +154,9 @@ export default function ProfilePage() {
   const handleDeleteAddress = async (addressId: string) => {
     if (!window.confirm("Are you sure you want to delete this address?")) return;
     setError(null);
+    setDeletingAddressId(addressId);
     const result = await deleteAddress(addressId);
+    setDeletingAddressId(null);
     if (!result.success) {
       setError(result.error || "Failed to delete address");
     }
@@ -217,10 +231,10 @@ export default function ProfilePage() {
                     </button>
                     <button 
                       onClick={handleUpdateName}
-                      disabled={isSyncing}
+                      disabled={isUpdatingName}
                       className="text-black/40 hover:text-black transition-colors disabled:opacity-30"
                     >
-                      {isSyncing ? <Loader2 size={14} className="animate-spin" /> : <Check size={16} strokeWidth={2} />}
+                      {isUpdatingName ? <Loader2 size={14} className="animate-spin" /> : <Check size={16} strokeWidth={2} />}
                     </button>
                   </div>
                 )}
@@ -388,10 +402,10 @@ export default function ProfilePage() {
                       </div>
                       
                       <button 
-                        disabled={isSyncing}
+                        disabled={isAddingAddressLoading}
                         className="w-full bg-black text-white py-3 rounded-xl text-[9px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-black/80 transition-all shadow-sm"
                       >
-                        {isSyncing ? <Loader2 size={12} className="animate-spin" /> : <Check size={14} />}
+                        {isAddingAddressLoading ? <Loader2 size={12} className="animate-spin" /> : <Check size={14} />}
                         Save Address
                       </button>
                     </form>
@@ -480,10 +494,10 @@ export default function ProfilePage() {
                             </div>
 
                             <button
-                              disabled={isSyncing}
+                              disabled={isUpdatingAddress}
                               className="w-full bg-black text-white py-3 rounded-xl text-[9px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-black/80 transition-all shadow-sm disabled:opacity-50"
                             >
-                              {isSyncing ? <Loader2 size={12} className="animate-spin" /> : <Check size={14} />}
+                              {isUpdatingAddress ? <Loader2 size={12} className="animate-spin" /> : <Check size={14} />}
                               Save Changes
                             </button>
                           </motion.form>
@@ -515,7 +529,7 @@ export default function ProfilePage() {
                                 Edit
                               </button>
                               <button
-                                disabled={isSyncing}
+                                disabled={deletingAddressId !== null}
                                 onClick={() => handleDeleteAddress(address.id)}
                                 className="flex items-center gap-1.5 text-[8px] font-bold uppercase tracking-widest text-red-500 hover:text-red-600 transition-colors disabled:opacity-30"
                               >
