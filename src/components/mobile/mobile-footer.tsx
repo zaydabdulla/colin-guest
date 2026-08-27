@@ -27,14 +27,13 @@ export function MobileFooter() {
       links: [
         { name: "The Lookbook", href: "/" },
         { name: "Architectural Integrity", href: "/about" },
-        { name: "Journal", href: "#" },
       ],
     },
     {
       title: "Curations",
       links: [
-        { name: "New Arrivals", href: "/collections/all" },
-        { name: "All Collections", href: "/collections/all" },
+        { name: "All Products", href: "/collections/all" },
+        { name: "Browse Collections", href: "/collections" },
       ],
     },
     {

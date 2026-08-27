@@ -27,16 +27,13 @@ export function Footer() {
       links: [
         { name: "The Lookbook", href: "/" },
         { name: "Architectural Integrity", href: "/about" },
-        { name: "Journal", href: "#" },
-        { name: "Archive", href: "#" },
       ],
     },
     {
       title: "Curations",
       links: [
-        { name: "New Arrivals", href: "/collections" },
-        { name: "All Collections", href: "/collections" },
-        { name: "Signature Pieces", href: "/collections" },
+        { name: "All Products", href: "/collections/all" },
+        { name: "Browse Collections", href: "/collections" },
       ],
     },
     {
