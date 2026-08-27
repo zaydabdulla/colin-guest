@@ -73,6 +73,17 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
 
       {/* 1. Image Slider */}
       <div className="w-full aspect-[4/5] bg-white border-b border-black/5 overflow-hidden relative">
+        {/* Wishlist Button */}
+        <button
+          type="button"
+          onClick={() => toggleWishlist(product)}
+          className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm border border-black/5 shadow-sm flex items-center justify-center active:scale-95 transition-transform"
+        >
+          <Bookmark
+            size={15}
+            className={`transition-colors ${isWishlisted ? "fill-black text-black" : "text-black/40"}`}
+          />
+        </button>
         <div
           ref={scrollRef}
           onScroll={handleScroll}
@@ -112,16 +123,6 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
             <h1 className="text-xs font-bold tracking-tight text-[#1a1a1a] truncate">
               {product.title}
             </h1>
-            <button
-              type="button"
-              onClick={() => toggleWishlist(product)}
-              className="active:opacity-50 transition-opacity shrink-0 pb-0.5"
-            >
-              <Bookmark
-                size={11}
-                className={`transition-colors pointer-events-none ${isWishlisted ? "fill-black text-black" : "text-black/30"}`}
-              />
-            </button>
           </div>
           <button
             type="button"
