@@ -371,7 +371,7 @@ export function MobileNavbar() {
           <div className="px-10 space-y-8">
             <div className="flex gap-6 items-center">
               <a
-                href="https://www.instagram.com/colin__guest/"
+                href="https://www.instagram.com/colinguest_/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-black/30 hover:text-black transition-colors"
@@ -382,7 +382,7 @@ export function MobileNavbar() {
                 </svg>
               </a>
               <a
-                href="https://wa.me/yourwhatsappnumber"
+                href="https://wa.me/917034500072"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-black/30 hover:text-black transition-colors"
