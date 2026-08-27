@@ -68,6 +68,17 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
           {/* Leftmost Column: Static Anchor */}
           <div className="flex-1 sticky top-[80px] h-[calc(100vh-80px)] pb-4 shrink-0 flex items-center justify-center">
             <div className="relative w-full h-full bg-white rounded-2xl overflow-hidden flex items-center justify-center border border-black/5 shadow-sm">
+              {/* Wishlist Button */}
+              <button
+                type="button"
+                onClick={() => toggleWishlist(product)}
+                className="absolute top-6 right-6 z-20 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm border border-black/5 shadow-sm flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+              >
+                <Bookmark
+                  size={16}
+                  className={`transition-colors ${isWishlisted ? "fill-black text-black" : "text-black/40"}`}
+                />
+              </button>
               {displayImages[0] ? (
                 <Image 
                   src={displayImages[0]}
@@ -104,16 +115,6 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                     <h1 className="text-xs md:text-[13.5px] font-bold tracking-tight text-[#1a1a1a] truncate">
                       {product.title}
                     </h1>
-                    <button
-                      type="button"
-                      onClick={() => toggleWishlist(product)}
-                      className="active:opacity-50 transition-opacity shrink-0 pb-0.5"
-                    >
-                      <Bookmark
-                        size={12}
-                        className={`transition-colors pointer-events-none ${isWishlisted ? "fill-black text-black" : "text-black/30"}`}
-                      />
-                    </button>
                   </div>
                   <button
                     type="button"
