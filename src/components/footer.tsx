@@ -26,7 +26,9 @@ export function Footer() {
       title: "Editorial",
       links: [
         { name: "The Lookbook", href: "/" },
-        { name: "Architectural Integrity", href: "/about" },
+        { name: "About Us", href: "/about" },
+        { name: "My Account", href: "/profile" },
+        { name: "Order History", href: "/orders" },
       ],
     },
     {
@@ -103,22 +105,25 @@ export function Footer() {
                 </div>
               </div>
 
-              <div className="flex gap-6 items-center">
-                {socialLinks.map((social, idx) => (
-                  <a
-                    key={idx}
-                    href={idx === 0 ? "https://www.instagram.com/colinguest_/" : social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`transition-all duration-500 hover:-translate-y-1 ${isAboutPage ? "opacity-30 hover:opacity-100" : "opacity-20 hover:opacity-100"}`}
-                  >
-                    {idx === 0 ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-                        <rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-                      </svg>
-                    ) : social.icon}
-                  </a>
-                ))}
+              <div className="space-y-4">
+                <h2 className="text-[8px] font-bold uppercase tracking-[0.4em] opacity-40">Customer Support</h2>
+                <div className="flex gap-6 items-center">
+                  {socialLinks.map((social, idx) => (
+                    <a
+                      key={idx}
+                      href={idx === 0 ? "https://www.instagram.com/colinguest_/" : social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`transition-all duration-500 hover:-translate-y-1 ${isAboutPage ? "opacity-30 hover:opacity-100" : "opacity-20 hover:opacity-100"}`}
+                    >
+                      {idx === 0 ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                          <rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                        </svg>
+                      ) : social.icon}
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
 
