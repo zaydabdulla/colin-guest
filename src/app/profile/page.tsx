@@ -582,7 +582,12 @@ export default function ProfilePage() {
             <div className="px-6 text-center md:text-left">
                <p className="text-[8px] font-medium text-black/20 leading-relaxed uppercase tracking-widest">
                  Requires assistance? <br />
-                 <Link href="/contact" className="text-black/40 hover:text-black underline underline-offset-4">Contact Support</Link>
+                 <a 
+                   href="mailto:colinguestofficial@gmail.com" 
+                   className="text-black/40 hover:text-black underline underline-offset-4 transition-colors normal-case tracking-normal"
+                 >
+                   Contact Support: colinguestofficial@gmail.com
+                 </a>
                </p>
             </div>
           </div>
