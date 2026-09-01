@@ -66,6 +66,14 @@ export function MobileFooter() {
       ),
       href: "https://wa.me/917034500072"
     },
+    {
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+          <rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+        </svg>
+      ),
+      href: "https://mail.google.com/mail/?view=cm&fs=1&to=colinguestofficial@gmail.com"
+    },
   ];
 
   return (
@@ -109,16 +117,12 @@ export function MobileFooter() {
                 {socialLinks.map((social, idx) => (
                   <a
                     key={idx}
-                    href={idx === 0 ? "https://www.instagram.com/colinguest_/" : social.href}
+                    href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`transition-all duration-500 ${isAboutPage ? "opacity-30 hover:opacity-100" : "opacity-20 hover:opacity-100"}`}
                   >
-                    {idx === 0 ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-                        <rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-                      </svg>
-                    ) : social.icon}
+                    {social.icon}
                   </a>
                 ))}
               </div>

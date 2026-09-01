@@ -392,6 +392,17 @@ export function MobileNavbar() {
                   <path d="M22 11.08c0 4.84-3.87 8.77-8.64 8.77-1.54 0-3.05-.41-4.37-1.21l-4.27 1.12 1.13-4.16c-.86-1.28-1.32-2.78-1.32-4.52C4.54 6.24 8.4 2.31 13.17 2.31c4.77 0 8.83 3.93 8.83 8.77zM17.48 14.19c-.26-.14-1.54-.76-1.78-.85-.24-.09-.42-.14-.59.14-.17.28-.68.85-.83 1.03-.15.19-.3.21-.56.07-.26-.14-1.1-.4-2.1-1.3-.77-.69-1.3-1.53-1.45-1.8-.15-.26-.01-.41.12-.54.12-.13.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.32-.02-.45-.06-.13-.59-1.42-.81-1.95-.21-.51-.43-.44-.59-.45-.15-.01-.32-.01-.49-.01-.17 0-.45.06-.68.32-.24.25-.9.88-.9 2.15s.92 2.5 1.05 2.68c.13.17 1.8 2.76 4.36 3.86.61.26 1.09.42 1.46.54.61.2 1.17.17 1.6.11.49-.07 1.54-.63 1.76-1.24.21-.61.21-1.13.15-1.24-.07-.12-.24-.19-.5-.33z" />
                 </svg>
               </a>
+              <a
+                href="https://mail.google.com/mail/?view=cm&fs=1&to=colinguestofficial@gmail.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-black/30 hover:text-black transition-colors"
+                aria-label="Email"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                </svg>
+              </a>
             </div>
 
             <div className="space-y-1.5">
