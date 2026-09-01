@@ -17,7 +17,10 @@ import {
   X,
   Check,
   Loader2,
-  Building2
+  Building2,
+  MessageSquare,
+  Copy,
+  ArrowUpRight
 } from "lucide-react";
 import Link from "next/link";
 
@@ -36,6 +39,16 @@ export default function ProfilePage() {
   const [isAddingAddressLoading, setIsAddingAddressLoading] = useState(false);
   const [isUpdatingAddress, setIsUpdatingAddress] = useState(false);
   const [deletingAddressId, setDeletingAddressId] = useState<string | null>(null);
+
+  // In-App Support Modal State
+  const [isSupportOpen, setIsSupportOpen] = useState(false);
+  const [copiedEmail, setCopiedEmail] = useState(false);
+
+  const handleCopySupportEmail = () => {
+    navigator.clipboard.writeText("colinguestofficial@gmail.com");
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 2000);
+  };
 
 
   // Address Form State
@@ -582,19 +595,120 @@ export default function ProfilePage() {
             <div className="px-6 text-center md:text-left">
                <p className="text-[8px] font-medium text-black/20 leading-relaxed uppercase tracking-widest">
                  Requires assistance? <br />
-                 <a 
-                   href="https://mail.google.com/mail/?view=cm&fs=1&to=colinguestofficial@gmail.com" 
-                   target="_blank"
-                   rel="noopener noreferrer"
+                 <button 
+                   onClick={() => setIsSupportOpen(true)}
+                   type="button"
                    className="text-black/40 hover:text-black underline underline-offset-4 transition-colors"
                  >
                    Contact Support
-                 </a>
+                 </button>
                </p>
             </div>
           </div>
         </div>
       </div>
+
+      {/* In-App Support Modal */}
+      <AnimatePresence>
+        {isSupportOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSupportOpen(false)}
+              className="absolute inset-0 bg-black/40 backdrop-blur-md"
+            />
+
+            {/* Modal Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              transition={{ type: "spring", duration: 0.4, bounce: 0 }}
+              className="relative w-full max-w-md bg-white rounded-[28px] p-7 shadow-2xl border border-black/5 overflow-hidden z-10"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between pb-4 border-b border-black/5">
+                <div>
+                  <h3 className="text-lg font-serif italic text-black">Client Assistance</h3>
+                  <p className="text-[8px] font-bold uppercase tracking-[0.25em] text-black/30">Colin Guest Concierge</p>
+                </div>
+                <button
+                  onClick={() => setIsSupportOpen(false)}
+                  className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-black/40 hover:text-black transition-colors"
+                >
+                  <X size={14} strokeWidth={1.5} />
+                </button>
+              </div>
+
+              {/* Support Options */}
+              <div className="py-5 space-y-3">
+                {/* WhatsApp Option */}
+                <a
+                  href="https://wa.me/917034500072"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-4 rounded-2xl border border-black/5 bg-[#fbfbfb] hover:bg-black hover:text-white transition-all duration-300 group"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-[#25D366]/10 group-hover:bg-white/10 flex items-center justify-center text-[#25D366] group-hover:text-white transition-colors">
+                      <MessageSquare size={18} strokeWidth={1.5} />
+                    </div>
+                    <div className="text-left">
+                      <div className="flex items-center gap-2">
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-black group-hover:text-white transition-colors">WhatsApp Support</p>
+                        <span className="text-[7px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-[#25D366]/15 text-[#1fa851] group-hover:bg-white/20 group-hover:text-white transition-colors">Fastest</span>
+                      </div>
+                      <p className="text-[9px] font-medium text-black/40 group-hover:text-white/60 transition-colors mt-0.5">+91 7034500072 &bull; Instant chat</p>
+                    </div>
+                  </div>
+                  <ArrowUpRight size={16} className="text-black/20 group-hover:text-white transition-colors group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </a>
+
+                {/* Email Option */}
+                <div className="p-4 rounded-2xl border border-black/5 bg-[#fbfbfb] flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-black/5 flex items-center justify-center text-black/60 shrink-0">
+                      <Mail size={18} strokeWidth={1.5} />
+                    </div>
+                    <div className="min-w-0 text-left">
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-black">Email Inquiries</p>
+                      <p className="text-[9.5px] font-medium text-black/60 truncate mt-0.5">colinguestofficial@gmail.com</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <a
+                      href="https://mail.google.com/mail/?view=cm&fs=1&to=colinguestofficial@gmail.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-2.5 py-1.5 rounded-lg bg-black text-white text-[8px] font-bold uppercase tracking-wider hover:bg-black/80 transition-colors shadow-sm"
+                    >
+                      Open
+                    </a>
+                    <button
+                      onClick={handleCopySupportEmail}
+                      type="button"
+                      className="p-1.5 rounded-lg border border-black/10 bg-white text-black/50 hover:text-black transition-colors"
+                      title="Copy email address"
+                    >
+                      {copiedEmail ? <Check size={12} className="text-black" /> : <Copy size={12} />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer Note */}
+              <div className="pt-3 border-t border-black/5 text-center">
+                <p className="text-[7.5px] font-bold uppercase tracking-[0.2em] text-black/30">
+                  Concierge Hours: Mon &ndash; Sat, 10:00 AM &ndash; 7:00 PM IST
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
