@@ -17,7 +17,8 @@ import {
   X,
   Check,
   Loader2,
-  Building2
+  Building2,
+  Copy
 } from "lucide-react";
 import Link from "next/link";
 
@@ -586,28 +587,31 @@ export default function ProfilePage() {
               </button>
             </motion.div>
 
-            <div className="px-6 text-center md:text-left">
-               <p className="text-[8px] font-medium text-black/20 leading-relaxed uppercase tracking-widest">
-                 Requires assistance? <br />
-                 <span className="inline-flex items-center gap-2 mt-1">
-                   <a 
-                     href="https://mail.google.com/mail/?view=cm&fs=1&to=colinguestofficial@gmail.com" 
-                     target="_blank"
-                     rel="noopener noreferrer"
-                     className="text-black/40 hover:text-black underline underline-offset-4 transition-colors normal-case tracking-normal"
-                   >
-                     colinguestofficial@gmail.com
-                   </a>
-                   <button
-                     onClick={handleCopyEmail}
-                     type="button"
-                     className="text-[7.5px] uppercase tracking-wider text-black/30 hover:text-black font-bold transition-colors ml-1 px-1.5 py-0.5 rounded bg-black/5"
-                     title="Copy email"
-                   >
-                     {copied ? "✓ Copied" : "Copy"}
-                   </button>
-                 </span>
+            <div className="px-6 text-center md:text-left space-y-1">
+               <p className="text-[8px] font-bold text-black/30 uppercase tracking-[0.25em]">
+                 Requires assistance?
                </p>
+               <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/80">
+                 Contact Support
+               </h3>
+               <div className="flex items-center gap-2 pt-0.5 justify-center md:justify-start">
+                 <a 
+                   href="https://mail.google.com/mail/?view=cm&fs=1&to=colinguestofficial@gmail.com" 
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   className="text-[12px] font-medium text-black/70 hover:text-black underline underline-offset-4 transition-colors"
+                 >
+                   colinguestofficial@gmail.com
+                 </a>
+                 <button
+                   onClick={handleCopyEmail}
+                   type="button"
+                   className="p-1.5 rounded-lg bg-black/5 hover:bg-black/10 text-black/50 hover:text-black transition-colors"
+                   title="Copy email to clipboard"
+                 >
+                   {copied ? <Check size={12} className="text-black stroke-[2.5]" /> : <Copy size={12} />}
+                 </button>
+               </div>
             </div>
           </div>
         </div>
