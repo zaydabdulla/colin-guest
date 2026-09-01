@@ -668,35 +668,39 @@ export default function ProfilePage() {
                 </a>
 
                 {/* Email Option */}
-                <div className="p-4 rounded-2xl border border-black/5 bg-[#fbfbfb] flex items-center justify-between gap-3">
+                <a
+                  href="https://mail.google.com/mail/?view=cm&fs=1&to=colinguestofficial@gmail.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-4 rounded-2xl border border-black/5 bg-[#fbfbfb] hover:bg-black hover:text-white transition-all duration-300 group"
+                >
                   <div className="flex items-center gap-3.5 min-w-0">
-                    <div className="w-10 h-10 rounded-xl bg-black/5 flex items-center justify-center text-black/60 shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-black/5 group-hover:bg-white/10 flex items-center justify-center text-black/60 group-hover:text-white transition-colors shrink-0">
                       <Mail size={18} strokeWidth={1.5} />
                     </div>
-                    <div className="min-w-0 text-left">
-                      <p className="text-[11px] font-bold uppercase tracking-wider text-black">Email Inquiries</p>
-                      <p className="text-[9.5px] font-medium text-black/60 truncate mt-0.5">colinguestofficial@gmail.com</p>
+                    <div className="text-left min-w-0">
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-black group-hover:text-white transition-colors">Email Inquiries</p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="text-[9px] font-medium text-black/40 group-hover:text-white/60 transition-colors truncate">
+                          colinguestofficial@gmail.com
+                        </span>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleCopySupportEmail();
+                          }}
+                          type="button"
+                          className="p-1 rounded text-black/30 group-hover:text-white/60 hover:!text-white transition-colors active:scale-90 shrink-0"
+                          title="Copy email address"
+                        >
+                          {copiedEmail ? <Check size={11} className="text-black group-hover:text-white stroke-[2.5]" /> : <Copy size={11} />}
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <a
-                      href="https://mail.google.com/mail/?view=cm&fs=1&to=colinguestofficial@gmail.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-2.5 py-1.5 rounded-lg bg-black text-white text-[8px] font-bold uppercase tracking-wider hover:bg-black/80 transition-colors shadow-sm"
-                    >
-                      Open
-                    </a>
-                    <button
-                      onClick={handleCopySupportEmail}
-                      type="button"
-                      className="p-1.5 rounded-lg border border-black/10 bg-white text-black/50 hover:text-black transition-colors"
-                      title="Copy email address"
-                    >
-                      {copiedEmail ? <Check size={12} className="text-black" /> : <Copy size={12} />}
-                    </button>
-                  </div>
-                </div>
+                  <ArrowUpRight size={16} className="text-black/20 group-hover:text-white transition-colors group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0" />
+                </a>
               </div>
 
               {/* Footer Note */}
