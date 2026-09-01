@@ -17,8 +17,7 @@ import {
   X,
   Check,
   Loader2,
-  Building2,
-  Copy
+  Building2
 } from "lucide-react";
 import Link from "next/link";
 
@@ -37,13 +36,6 @@ export default function ProfilePage() {
   const [isAddingAddressLoading, setIsAddingAddressLoading] = useState(false);
   const [isUpdatingAddress, setIsUpdatingAddress] = useState(false);
   const [deletingAddressId, setDeletingAddressId] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
-
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText("colinguestofficial@gmail.com");
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
 
   // Address Form State
@@ -587,31 +579,18 @@ export default function ProfilePage() {
               </button>
             </motion.div>
 
-            <div className="px-6 text-center md:text-left space-y-0.5">
-               <p className="text-[8px] font-bold text-black/30 uppercase tracking-[0.25em]">
-                 Requires assistance?
-               </p>
-               <p className="text-[8.5px] font-bold text-black/60 uppercase tracking-[0.15em]">
-                 Contact Support
-               </p>
-               <div className="flex items-center gap-1.5 justify-center md:justify-start pt-0.5">
+            <div className="px-6 text-center md:text-left">
+               <p className="text-[8px] font-medium text-black/20 leading-relaxed uppercase tracking-widest">
+                 Requires assistance? <br />
                  <a 
                    href="https://mail.google.com/mail/?view=cm&fs=1&to=colinguestofficial@gmail.com" 
                    target="_blank"
                    rel="noopener noreferrer"
-                   className="text-[10px] font-medium text-black/70 hover:text-black underline underline-offset-2 transition-colors"
+                   className="text-black/40 hover:text-black underline underline-offset-4 transition-colors"
                  >
-                   colinguestofficial@gmail.com
+                   Contact Support
                  </a>
-                 <button
-                   onClick={handleCopyEmail}
-                   type="button"
-                   className="text-black/30 hover:text-black transition-colors p-0.5 active:scale-95"
-                   title="Copy email to clipboard"
-                 >
-                   {copied ? <Check size={10} className="text-black" /> : <Copy size={10} />}
-                 </button>
-               </div>
+               </p>
             </div>
           </div>
         </div>
