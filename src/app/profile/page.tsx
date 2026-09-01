@@ -633,7 +633,7 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between pb-4 border-b border-black/5">
                 <div>
                   <h3 className="text-lg font-serif italic text-black">Client Assistance</h3>
-                  <p className="text-[8px] font-bold uppercase tracking-[0.25em] text-black/30">Colin Guest Concierge</p>
+                  <p className="text-[8px] font-bold uppercase tracking-[0.25em] text-black/30">Colinguest Support</p>
                 </div>
                 <button
                   onClick={() => setIsSupportOpen(false)}
@@ -702,7 +702,7 @@ export default function ProfilePage() {
               {/* Footer Note */}
               <div className="pt-3 border-t border-black/5 text-center">
                 <p className="text-[7.5px] font-bold uppercase tracking-[0.2em] text-black/30">
-                  Concierge Hours: Mon &ndash; Sat, 10:00 AM &ndash; 7:00 PM IST
+                  Support Hours: Mon &ndash; Sat, 10:00 AM &ndash; 7:00 PM IST
                 </p>
               </div>
             </motion.div>
