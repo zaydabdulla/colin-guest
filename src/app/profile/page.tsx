@@ -36,6 +36,13 @@ export default function ProfilePage() {
   const [isAddingAddressLoading, setIsAddingAddressLoading] = useState(false);
   const [isUpdatingAddress, setIsUpdatingAddress] = useState(false);
   const [deletingAddressId, setDeletingAddressId] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText("colinguestofficial@gmail.com");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
 
   // Address Form State
@@ -582,12 +589,24 @@ export default function ProfilePage() {
             <div className="px-6 text-center md:text-left">
                <p className="text-[8px] font-medium text-black/20 leading-relaxed uppercase tracking-widest">
                  Requires assistance? <br />
-                 <a 
-                   href="mailto:colinguestofficial@gmail.com" 
-                   className="text-black/40 hover:text-black underline underline-offset-4 transition-colors normal-case tracking-normal"
-                 >
-                   Contact Support: colinguestofficial@gmail.com
-                 </a>
+                 <span className="inline-flex items-center gap-2 mt-1">
+                   <a 
+                     href="https://mail.google.com/mail/?view=cm&fs=1&to=colinguestofficial@gmail.com" 
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     className="text-black/40 hover:text-black underline underline-offset-4 transition-colors normal-case tracking-normal"
+                   >
+                     colinguestofficial@gmail.com
+                   </a>
+                   <button
+                     onClick={handleCopyEmail}
+                     type="button"
+                     className="text-[7.5px] uppercase tracking-wider text-black/30 hover:text-black font-bold transition-colors ml-1 px-1.5 py-0.5 rounded bg-black/5"
+                     title="Copy email"
+                   >
+                     {copied ? "✓ Copied" : "Copy"}
+                   </button>
+                 </span>
                </p>
             </div>
           </div>
