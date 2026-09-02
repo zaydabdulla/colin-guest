@@ -1,7 +1,7 @@
 // Meta (Facebook/Instagram) Pixel & Conversions API Helper
 // Implements dual-tracking with event deduplication (event_id)
 
-export const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || "61SWVWYW3Z"; // Can be overridden in .env.local
+export const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || "2614004339033377";
 
 declare global {
   interface Window {
