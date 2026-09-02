@@ -105,10 +105,10 @@ export default function RootLayout({
             <WishlistPopup />
             <SyncManager />
             <ScrollToTop />
-            <Suspense fallback={null}>
-              <MetaPixelListener />
-            </Suspense>
           </ComingSoonWrapper>
+          <Suspense fallback={null}>
+            <MetaPixelListener />
+          </Suspense>
         </SessionProvider>
       </body>
     </html>
