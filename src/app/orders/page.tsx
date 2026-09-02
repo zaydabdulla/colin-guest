@@ -14,7 +14,9 @@ import {
   ExternalLink,
   ChevronRight,
   Search,
-  Loader2
+  Loader2,
+  Copy,
+  Check
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -50,38 +52,12 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isHydrated, setIsHydrated] = useState(false);
-  
-  const [activeTrackingAwb, setActiveTrackingAwb] = useState<string | null>(null);
-  const [trackingDetails, setTrackingDetails] = useState<any | null>(null);
-  const [trackingLoading, setTrackingLoading] = useState(false);
-  const [trackingError, setTrackingError] = useState<string | null>(null);
+  const [copiedAwb, setCopiedAwb] = useState<string | null>(null);
 
-  const handleTrackShipment = async (awb: string) => {
-    if (activeTrackingAwb === awb) {
-      setActiveTrackingAwb(null);
-      setTrackingDetails(null);
-      return;
-    }
-
-    setActiveTrackingAwb(awb);
-    setTrackingLoading(true);
-    setTrackingError(null);
-    setTrackingDetails(null);
-
-    try {
-      const res = await fetch(`/api/delhivery/track?awb=${awb}`);
-      if (!res.ok) throw new Error("Failed to load tracking data");
-      const data = await res.json();
-      if (data.found) {
-        setTrackingDetails(data);
-      } else {
-        setTrackingError("Shipment details not found yet. Courier update pending.");
-      }
-    } catch (err) {
-      setTrackingError("Error fetching tracking details. Please try again.");
-    } finally {
-      setTrackingLoading(false);
-    }
+  const handleCopyAwb = (awb: string) => {
+    navigator.clipboard.writeText(awb);
+    setCopiedAwb(awb);
+    setTimeout(() => setCopiedAwb(null), 2000);
   };
 
   useEffect(() => {
@@ -248,120 +224,62 @@ export default function OrdersPage() {
                   </div>
                 </div>
 
-                {/* Real-time Tracking Timeline */}
-                <AnimatePresence>
-                  {activeTrackingAwb && order.fulfillments && order.fulfillments.length > 0 && activeTrackingAwb === order.fulfillments[0].number && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="border-t border-black/5 bg-[#fcfcfc] overflow-hidden"
-                    >
-                      <div className="p-6 font-sans">
-                        <div className="flex items-center justify-between mb-4 pb-2 border-b border-black/[0.04]">
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-[8px] font-extrabold uppercase tracking-widest text-black/40">Status:</span>
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-black">
-                              {trackingLoading ? "Retrieving..." : trackingDetails?.status || "In Transit"}
-                            </span>
-                          </div>
-                          {trackingDetails?.awb && (
-                            <span className="text-[8px] font-bold text-black/30 tracking-widest uppercase">
-                              AWB: {trackingDetails.awb}
-                            </span>
-                          )}
-                        </div>
-
-                        {trackingLoading && (
-                          <div className="flex items-center justify-center py-8 gap-2">
-                            <Loader2 size={12} className="animate-spin text-black/40" />
-                            <span className="text-[8px] font-bold uppercase tracking-widest text-black/30">Connecting to Delhivery...</span>
-                          </div>
-                        )}
-
-                        {trackingError && (
-                          <div className="py-4 text-center">
-                            <span className="text-[9px] font-semibold text-black/40 uppercase tracking-wider">{trackingError}</span>
-                          </div>
-                        )}
-
-                        {trackingDetails && trackingDetails.scans && trackingDetails.scans.length > 0 ? (
-                          <div className="relative pl-4 border-l border-black/10 space-y-5 py-2">
-                            {trackingDetails.scans.map((scan: any, sIdx: number) => (
-                              <div key={sIdx} className="relative group/scan">
-                                {/* Dot on the vertical line */}
-                                <div className={`absolute -left-[20.5px] top-1 w-[9px] h-[9px] rounded-full border-2 border-white transition-colors duration-300 ${sIdx === 0 ? 'bg-black' : 'bg-black/25'}`} />
-                                
-                                <div className="flex flex-col gap-0.5">
-                                  <div className="flex items-baseline justify-between gap-4">
-                                    <span className={`text-[9.5px] font-bold uppercase tracking-wide ${sIdx === 0 ? 'text-black' : 'text-black/60'}`}>
-                                      {scan.status}
-                                    </span>
-                                    {scan.dateTime && (
-                                      <span className="text-[8px] font-bold text-black/30 uppercase tracking-widest whitespace-nowrap">
-                                        {new Date(scan.dateTime).toLocaleString('en-US', {
-                                          month: 'short',
-                                          day: 'numeric',
-                                          hour: '2-digit',
-                                          minute: '2-digit',
-                                          hour12: true
-                                        })}
-                                      </span>
-                                    )}
-                                  </div>
-                                  
-                                  {scan.location && (
-                                    <span className="text-[8.5px] font-semibold text-black/40 uppercase tracking-widest">
-                                      {scan.location}
-                                    </span>
-                                  )}
-
-                                  {scan.instructions && (
-                                    <p className="text-[8.5px] text-black/45 mt-0.5 leading-relaxed font-medium italic">
-                                      {scan.instructions}
-                                    </p>
-                                  )}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          !trackingLoading && !trackingError && (
-                            <div className="py-4 text-center">
-                              <span className="text-[9px] font-semibold text-black/40 uppercase tracking-wider">Courier update pending. Please check back later.</span>
-                            </div>
-                          )
-                        )}
+                {/* Shipping & Delhivery Tracking Card */}
+                {order.fulfillments && order.fulfillments.length > 0 && order.fulfillments[0].number ? (
+                  <div className="px-6 py-4 bg-[#fbfbfb] border-t border-black/5 flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-10 h-10 rounded-2xl bg-black/5 flex items-center justify-center text-black/70 shrink-0">
+                        <Truck size={18} strokeWidth={1.5} />
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[8px] font-bold uppercase tracking-[0.25em] text-black/40">
+                            Courier Partner: {order.fulfillments[0].company || "Delhivery Express"}
+                          </span>
+                          <span className="text-[7.5px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-black text-white">
+                            {order.status || "Fulfilled"}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-[11px] font-mono font-bold tracking-wider text-black">
+                            AWB: {order.fulfillments[0].number}
+                          </span>
+                          <button
+                            onClick={() => handleCopyAwb(order.fulfillments![0].number)}
+                            type="button"
+                            className="p-1 rounded-md bg-black/5 hover:bg-black/10 text-black/50 hover:text-black transition-colors"
+                            title="Copy AWB Number"
+                          >
+                            {copiedAwb === order.fulfillments[0].number ? (
+                              <Check size={11} className="text-black stroke-[2.5]" />
+                            ) : (
+                              <Copy size={11} />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
 
-                {/* Footer Action */}
-                <div className="px-6 py-4 bg-[#f9f9f9]/30 border-t border-black/5 flex justify-between items-center">
-                   <div>
-                     {order.fulfillments && order.fulfillments.length > 0 && order.fulfillments[0].number && (
-                       <button
-                         onClick={() => handleTrackShipment(order.fulfillments![0].number)}
-                         className={`text-[9px] font-bold uppercase tracking-widest px-4 py-2 rounded-full transition-all flex items-center gap-1.5 ${
-                           activeTrackingAwb === order.fulfillments[0].number
-                             ? 'bg-black/5 text-black border border-black/10'
-                             : 'bg-black text-white hover:bg-black/85 shadow-sm'
-                         }`}
-                       >
-                         {activeTrackingAwb === order.fulfillments[0].number ? 'Close Tracker' : `Track Status (${order.fulfillments[0].number})`}
-                         {activeTrackingAwb === order.fulfillments[0].number ? (
-                           <ChevronRight size={10} className="rotate-90 transition-transform duration-300" />
-                         ) : (
-                           <ExternalLink size={10} />
-                         )}
-                       </button>
-                     )}
-                   </div>
-                   <button className="text-[9px] font-bold uppercase tracking-widest text-black/30 hover:text-black transition-colors flex items-center gap-1.5">
-                     Digital Invoice <ExternalLink size={10} />
-                   </button>
-                </div>
+                    <a
+                      href={`https://www.delhivery.com/track/package/${order.fulfillments[0].number}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-5 py-2.5 rounded-xl bg-black text-white text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-black/80 transition-all flex items-center gap-2 shadow-sm shrink-0"
+                    >
+                      <Truck size={12} strokeWidth={1.5} />
+                      Track on Delhivery
+                      <ExternalLink size={11} strokeWidth={1.5} />
+                    </a>
+                  </div>
+                ) : (
+                  <div className="px-6 py-3.5 bg-[#fbfbfb]/50 border-t border-black/5 flex items-center justify-between text-black/40 text-[9px] font-medium uppercase tracking-widest">
+                    <span className="flex items-center gap-2">
+                      <Clock size={12} strokeWidth={1.5} />
+                      Preparing for Dispatch
+                    </span>
+                    <span>Tracking number will appear once manifested</span>
+                  </div>
+                )}
               </motion.div>
             ))
           ) : (
