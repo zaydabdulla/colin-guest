@@ -9,13 +9,20 @@ import { Camera, Globe, Video, ArrowRight, Send } from "lucide-react";
 export function MobileFooter() {
   const pathname = usePathname();
 
-  // Show on About, Collections, Product, and Checkout pages as requested
-  // Show on About, Collections, Product, Checkout, and Legal pages
-  const legalPages = ["/terms", "/privacy", "/shipping", "/returns"];
-  const showFooter = pathname === "/about" || 
+  const allowedPages = [
+    "/about", 
+    "/profile", 
+    "/orders", 
+    "/wishlist", 
+    "/search", 
+    "/terms", 
+    "/privacy", 
+    "/shipping", 
+    "/returns"
+  ];
+  const showFooter = allowedPages.includes(pathname) || 
                      pathname.startsWith("/collections") || 
-                     pathname.startsWith("/product") || 
-                     legalPages.includes(pathname);
+                     pathname.startsWith("/product");
 
   if (!showFooter) return null;
 

@@ -17,8 +17,7 @@ import {
   Copy,
   Check,
   RotateCcw,
-  RefreshCw,
-  HelpCircle
+  RefreshCw
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -124,19 +123,12 @@ export default function OrdersPage() {
       <div className="max-w-4xl mx-auto">
         
         {/* Top Navigation */}
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6">
           <Link 
             href="/profile" 
             className="inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.3em] text-black/40 hover:text-black transition-all"
           >
             <ArrowLeft size={10} /> Back to Profile
-          </Link>
-
-          <Link
-            href="/returns"
-            className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-black/40 hover:text-black transition-all"
-          >
-            <HelpCircle size={11} /> Return Policy
           </Link>
         </div>
 
