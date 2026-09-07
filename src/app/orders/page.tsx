@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/store";
 import { motion, AnimatePresence } from "framer-motion";
@@ -13,18 +13,23 @@ import {
   ShoppingBag,
   ExternalLink,
   ChevronRight,
-  Search,
   Loader2,
   Copy,
-  Check
+  Check,
+  RotateCcw,
+  RefreshCw,
+  HelpCircle
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { getCustomerOrders } from "@/app/actions/shopify";
+import ReturnRequestModal from "@/components/return-request-modal";
 
 interface OrderItem {
+  id?: string;
   title: string;
   quantity: number;
+  variantTitle?: string | null;
   image: string | null;
   handle: string | null;
 }
@@ -42,6 +47,9 @@ interface Order {
   total: string;
   currency: string;
   status: string;
+  tags?: string[];
+  returnStatus?: 'PENDING_REVIEW' | 'APPROVED' | 'REJECTED' | 'COMPLETED' | null;
+  returnType?: 'EXCHANGE' | 'REFUND' | null;
   fulfillments?: FulfillmentInfo[];
   items: OrderItem[];
 }
@@ -53,6 +61,9 @@ export default function OrdersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isHydrated, setIsHydrated] = useState(false);
   const [copiedAwb, setCopiedAwb] = useState<string | null>(null);
+  
+  // Return Modal State
+  const [selectedReturnOrder, setSelectedReturnOrder] = useState<Order | null>(null);
 
   const handleCopyAwb = (awb: string) => {
     navigator.clipboard.writeText(awb);
@@ -70,21 +81,21 @@ export default function OrdersPage() {
     }
   }, [isHydrated, isLoggedIn, router]);
 
-  useEffect(() => {
-    async function fetchOrders() {
-      if (user?.email) {
-        const result = await getCustomerOrders(user.email);
-        if (result.success && result.orders) {
-          setOrders(result.orders);
-        }
-        setIsLoading(false);
+  const fetchOrders = useCallback(async () => {
+    if (user?.email) {
+      const result = await getCustomerOrders(user.email);
+      if (result.success && result.orders) {
+        setOrders(result.orders);
       }
+      setIsLoading(false);
     }
+  }, [user?.email]);
 
+  useEffect(() => {
     if (isLoggedIn && user?.email) {
       fetchOrders();
     }
-  }, [isLoggedIn, user?.email]);
+  }, [isLoggedIn, user?.email, fetchOrders]);
 
   if (!isHydrated) return null;
   if (!isLoggedIn || !user) return null;
@@ -109,16 +120,23 @@ export default function OrdersPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#fcfcfc] pt-24 pb-16 px-8 font-sans">
+    <main className="min-h-screen bg-[#fcfcfc] pt-24 pb-16 px-4 sm:px-8 font-sans">
       <div className="max-w-4xl mx-auto">
         
         {/* Top Navigation */}
-        <div className="mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <Link 
             href="/profile" 
             className="inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.3em] text-black/40 hover:text-black transition-all"
           >
             <ArrowLeft size={10} /> Back to Profile
+          </Link>
+
+          <Link
+            href="/returns"
+            className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-black/40 hover:text-black transition-all"
+          >
+            <HelpCircle size={11} /> Return Policy
           </Link>
         </div>
 
@@ -195,7 +213,7 @@ export default function OrdersPage() {
                             {item.image ? (
                               <Image 
                                 src={item.image} 
-                                alt={item.title}
+                                alt={item.title} 
                                 fill
                                 className="object-cover"
                               />
@@ -207,7 +225,15 @@ export default function OrdersPage() {
                           </div>
                           <div>
                             <h4 className="text-[11px] font-bold text-black leading-tight mb-1">{item.title}</h4>
-                            <p className="text-[9px] font-medium text-black/40 uppercase tracking-widest">Qty: {item.quantity}</p>
+                            <div className="flex items-center gap-2 text-[9px] font-medium text-black/40 uppercase tracking-widest">
+                              <span>Qty: {item.quantity}</span>
+                              {item.variantTitle && (
+                                <>
+                                  <span>•</span>
+                                  <span>{item.variantTitle}</span>
+                                </>
+                              )}
+                            </div>
                           </div>
                         </div>
                         
@@ -222,6 +248,50 @@ export default function OrdersPage() {
                       </div>
                     ))}
                   </div>
+                </div>
+
+                {/* Return & Exchange Action / Status Bar */}
+                <div className="px-6 py-3.5 bg-[#f8f8f8] border-t border-black/5 flex flex-wrap items-center justify-between gap-3">
+                  {order.returnStatus === 'PENDING_REVIEW' ? (
+                    <div className="flex items-center gap-2 text-amber-900 bg-amber-500/10 px-3.5 py-1.5 rounded-full border border-amber-500/20">
+                      <Clock size={12} className="shrink-0" />
+                      <span className="text-[8.5px] font-bold uppercase tracking-wider">
+                        {order.returnType === 'EXCHANGE' ? 'Exchange Request' : 'Return Request'}: Under Review (Delhivery Pickup Scheduling)
+                      </span>
+                    </div>
+                  ) : order.returnStatus === 'APPROVED' ? (
+                    <div className="flex items-center gap-2 text-emerald-900 bg-emerald-500/10 px-3.5 py-1.5 rounded-full border border-emerald-500/20">
+                      <CheckCircle2 size={12} className="shrink-0" />
+                      <span className="text-[8.5px] font-bold uppercase tracking-wider">
+                        Return Approved • Delhivery Reverse Pickup Assigned
+                      </span>
+                    </div>
+                  ) : order.returnStatus === 'COMPLETED' ? (
+                    <div className="flex items-center gap-2 text-black/60 bg-black/5 px-3.5 py-1.5 rounded-full">
+                      <CheckCircle2 size={12} className="shrink-0" />
+                      <span className="text-[8.5px] font-bold uppercase tracking-wider">
+                        Return Completed & Settled
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedReturnOrder(order)}
+                        className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-black/70 hover:text-black px-3.5 py-1.5 rounded-xl border border-black/10 bg-white hover:bg-black/5 transition-all shadow-xs"
+                      >
+                        <RotateCcw size={11} strokeWidth={2} />
+                        Request Return / Exchange
+                      </button>
+                      <span className="hidden sm:inline-block text-[8px] uppercase tracking-wider text-black/30">
+                        (Eligible within 7 days of delivery)
+                      </span>
+                    </div>
+                  )}
+
+                  <span className="text-[8px] font-medium text-black/30">
+                    Compliant with 7-day Colin Guest Quality Guarantee
+                  </span>
                 </div>
 
                 {/* Shipping & Delhivery Tracking Card */}
@@ -305,6 +375,22 @@ export default function OrdersPage() {
           )}
         </div>
       </div>
+
+      {/* Return Request Modal */}
+      {selectedReturnOrder && (
+        <ReturnRequestModal
+          isOpen={!!selectedReturnOrder}
+          onClose={() => setSelectedReturnOrder(null)}
+          orderId={selectedReturnOrder.id}
+          orderName={selectedReturnOrder.name}
+          customerEmail={user.email}
+          customerName={`${user.firstName || ''} ${user.lastName || ''}`.trim() || undefined}
+          items={selectedReturnOrder.items}
+          onSuccess={() => {
+            fetchOrders();
+          }}
+        />
+      )}
     </main>
   );
 }

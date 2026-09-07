@@ -556,6 +556,8 @@ export async function getCustomerOrders(email: string) {
               id
               name
               createdAt
+              tags
+              note
               totalPriceSet {
                 shopMoney {
                   amount
@@ -574,9 +576,12 @@ export async function getCustomerOrders(email: string) {
               lineItems(first: 10) {
                 edges {
                   node {
+                    id
                     title
                     quantity
                     variant {
+                      id
+                      title
                       image {
                         url
                       }
@@ -611,30 +616,211 @@ export async function getCustomerOrders(email: string) {
       return { success: false, error: data.errors[0].message };
     }
 
-    const orders = data.data.orders.edges.map((edge: any) => ({
-      id: edge.node.id,
-      name: edge.node.name,
-      date: edge.node.createdAt,
-      total: edge.node.totalPriceSet.shopMoney.amount,
-      currency: edge.node.totalPriceSet.shopMoney.currencyCode,
-      status: edge.node.displayFulfillmentStatus,
-      fulfillments: edge.node.fulfillments?.map((f: any) => ({
-        company: f.trackingInfo?.[0]?.company || 'Delhivery',
-        number: f.trackingInfo?.[0]?.number,
-        url: f.trackingInfo?.[0]?.url || (f.trackingInfo?.[0]?.number ? `https://www.delhivery.com/track/package/${f.trackingInfo[0].number}` : null)
-      })).filter((f: any) => f.number) || [],
-      items: edge.node.lineItems.edges.map((li: any) => ({
-        title: li.node.title,
-        quantity: li.node.quantity,
-        image: li.node.variant?.image?.url || null,
-        handle: li.node.variant?.product?.handle || null
-      }))
-    }));
+    const orders = data.data.orders.edges.map((edge: any) => {
+      const tags: string[] = edge.node.tags || [];
+      let returnStatus: 'PENDING_REVIEW' | 'APPROVED' | 'REJECTED' | 'COMPLETED' | null = null;
+      let returnType: 'EXCHANGE' | 'REFUND' | null = null;
+
+      if (tags.some((t: string) => t.toLowerCase().includes('return completed') || t.toLowerCase().includes('refunded'))) {
+        returnStatus = 'COMPLETED';
+      } else if (tags.some((t: string) => t.toLowerCase().includes('return approved'))) {
+        returnStatus = 'APPROVED';
+      } else if (tags.some((t: string) => t.toLowerCase().includes('return rejected'))) {
+        returnStatus = 'REJECTED';
+      } else if (tags.some((t: string) => t.toLowerCase().includes('return requested'))) {
+        returnStatus = 'PENDING_REVIEW';
+      }
+
+      if (tags.some((t: string) => t.toLowerCase().includes('type: exchange') || t.toLowerCase().includes('return: exchange'))) {
+        returnType = 'EXCHANGE';
+      } else if (tags.some((t: string) => t.toLowerCase().includes('type: refund') || t.toLowerCase().includes('return: refund'))) {
+        returnType = 'REFUND';
+      }
+
+      return {
+        id: edge.node.id,
+        name: edge.node.name,
+        date: edge.node.createdAt,
+        total: edge.node.totalPriceSet.shopMoney.amount,
+        currency: edge.node.totalPriceSet.shopMoney.currencyCode,
+        status: edge.node.displayFulfillmentStatus,
+        tags: tags,
+        returnStatus,
+        returnType,
+        fulfillments: edge.node.fulfillments?.map((f: any) => ({
+          company: f.trackingInfo?.[0]?.company || 'Delhivery',
+          number: f.trackingInfo?.[0]?.number,
+          url: f.trackingInfo?.[0]?.url || (f.trackingInfo?.[0]?.number ? `https://www.delhivery.com/track/package/${f.trackingInfo[0].number}` : null)
+        })).filter((f: any) => f.number) || [],
+        items: edge.node.lineItems.edges.map((li: any) => ({
+          id: li.node.id,
+          title: li.node.title,
+          quantity: li.node.quantity,
+          variantTitle: li.node.variant?.title || null,
+          image: li.node.variant?.image?.url || null,
+          handle: li.node.variant?.product?.handle || null
+        }))
+      };
+    });
 
     return { success: true, orders };
 
   } catch (error) {
     return { success: false, error: "Failed to fetch orders" };
+  }
+}
+
+export interface ReturnRequestItem {
+  title: string;
+  quantity: number;
+  image?: string | null;
+}
+
+export interface ReturnRequestPayload {
+  orderId: string;
+  orderName: string;
+  customerEmail: string;
+  customerName?: string;
+  returnType: 'EXCHANGE' | 'REFUND';
+  reason: string;
+  exchangeSize?: string;
+  notes?: string;
+  items: ReturnRequestItem[];
+}
+
+export async function requestOrderReturnAction(payload: ReturnRequestPayload) {
+  if (!domain || !clientId || !clientSecret) {
+    return { success: false, error: "Shopify Admin API not configured." };
+  }
+
+  try {
+    // Rate limit check: max 10 requests per minute per IP for return requests
+    const headersList = await headers();
+    const mockRequest = new Request("http://localhost", { headers: headersList });
+    const rateLimitResponse = await checkRateLimit(mockRequest, {
+      ipConfig: { limit: 10, windowMs: 60 * 1000 }
+    });
+    if (rateLimitResponse) {
+      return { success: false, error: "Too many return requests submitted. Please try again shortly." };
+    }
+
+    const adminToken = await getAdminToken();
+
+    // 1. Fetch current order details (tags & existing note)
+    const getOrderQuery = `
+      query getOrder($id: ID!) {
+        order(id: $id) {
+          id
+          name
+          tags
+          note
+        }
+      }
+    `;
+
+    const getOrderRes = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': adminToken,
+      },
+      body: JSON.stringify({
+        query: getOrderQuery,
+        variables: { id: payload.orderId }
+      })
+    });
+
+    const getOrderData = await getOrderRes.json();
+    const order = getOrderData.data?.order;
+    if (!order) {
+      return { success: false, error: "Order not found in Shopify." };
+    }
+
+    // 2. Prepare updated tags and structured note
+    const currentTags: string[] = order.tags || [];
+    const newTags = Array.from(new Set([
+      ...currentTags,
+      "Return Requested",
+      `Return: ${payload.returnType}`,
+      `Reason: ${payload.reason.slice(0, 30)}`
+    ]));
+
+    const timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+    const formattedItems = payload.items
+      .map(it => `• ${it.title} (Qty: ${it.quantity})`)
+      .join("\n");
+
+    const returnNoteBlock = `
+=== [CUSTOMER RETURN / EXCHANGE REQUEST] ===
+Status: PENDING REVIEW
+Date: ${timestamp} IST
+Requested Action: ${payload.returnType === 'EXCHANGE' ? `Size Exchange (Desired Size: ${payload.exchangeSize || 'Not specified'})` : 'Full Refund'}
+Customer: ${payload.customerName || 'Customer'} (${payload.customerEmail})
+Reason: ${payload.reason}
+Customer Notes: ${payload.notes || 'None provided'}
+Items for Return:
+${formattedItems}
+============================================
+`;
+
+    const updatedNote = order.note 
+      ? `${order.note}\n\n${returnNoteBlock}`
+      : returnNoteBlock;
+
+    // 3. Update Order in Shopify Admin API
+    const updateOrderMutation = `
+      mutation orderUpdate($input: OrderInput!) {
+        orderUpdate(input: $input) {
+          order {
+            id
+            tags
+            note
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const updateRes = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': adminToken,
+      },
+      body: JSON.stringify({
+        query: updateOrderMutation,
+        variables: {
+          input: {
+            id: payload.orderId,
+            tags: newTags,
+            note: updatedNote
+          }
+        }
+      })
+    });
+
+    const updateData = await updateRes.json();
+    if (updateData.data?.orderUpdate?.userErrors?.length > 0) {
+      return {
+        success: false,
+        error: updateData.data.orderUpdate.userErrors[0].message
+      };
+    }
+
+    return {
+      success: true,
+      message: "Return request submitted successfully. Our logistics team will review and coordinate the Delhivery reverse pickup."
+    };
+
+  } catch (error: any) {
+    console.error("Order return request error:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to submit return request."
+    };
   }
 }
 

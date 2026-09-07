@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 
 interface LegalPageProps {
   title: string;
+  children?: React.ReactNode;
   content: {
     section?: string;
     text?: string;
@@ -11,7 +12,7 @@ interface LegalPageProps {
   }[];
 }
 
-export default function LegalLayout({ title, content }: LegalPageProps) {
+export default function LegalLayout({ title, content, children }: LegalPageProps) {
   return (
     <main className="w-full bg-white text-black font-sans min-h-screen">
       <div className="max-w-4xl pt-40 pb-80 px-6 md:px-24">
@@ -23,6 +24,8 @@ export default function LegalLayout({ title, content }: LegalPageProps) {
           <h1 className="text-2xl md:text-3xl font-black uppercase tracking-[-0.04em] mb-12 leading-[0.9]">
             {title}
           </h1>
+
+          {children && <div className="mb-14">{children}</div>}
 
           <div className="space-y-16">
             {content.map((item, index) => (
