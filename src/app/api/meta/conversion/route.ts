@@ -28,11 +28,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing eventName or eventId" }, { status: 400 });
     }
 
-    // Extract Client IP and User Agent for Meta Attribution
+    // Extract Client IP, User Agent, and Meta Cookies (_fbp, _fbc) for attribution
     const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || 
                      request.headers.get("x-real-ip") || 
                      "127.0.0.1";
     const userAgent = request.headers.get("user-agent") || "";
+    const cookieHeader = request.headers.get("cookie") || "";
+    const fbpMatch = cookieHeader.match(/_fbp=([^;]+)/);
+    const fbcMatch = cookieHeader.match(/_fbc=([^;]+)/);
 
     const eventPayload = {
       data: [
@@ -45,6 +48,15 @@ export async function POST(request: Request) {
           user_data: {
             client_ip_address: clientIp,
             client_user_agent: userAgent,
+            fbp: fbpMatch ? fbpMatch[1] : undefined,
+            fbc: fbcMatch ? fbcMatch[1] : undefined,
+            em: body.userData?.email ? [hashData(body.userData.email)] : undefined,
+            ph: body.userData?.phone ? [hashData(body.userData.phone)] : undefined,
+            fn: body.userData?.firstName ? [hashData(body.userData.firstName)] : undefined,
+            ln: body.userData?.lastName ? [hashData(body.userData.lastName)] : undefined,
+            ct: body.userData?.city ? [hashData(body.userData.city)] : undefined,
+            zp: body.userData?.zip ? [hashData(body.userData.zip)] : undefined,
+            country: body.userData?.country ? [hashData(body.userData.country)] : undefined,
           },
           custom_data: {
             currency: customData?.currency || "INR",
