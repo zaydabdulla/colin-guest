@@ -137,6 +137,26 @@ export const useCartStore = create<CartState>()(
           if (exists) {
             return { wishlistItems: state.wishlistItems.filter(item => item.id !== product.id) };
           } else {
+            // Track Meta AddToWishlist Event
+            try {
+              const { trackMetaEvent } = require("@/lib/meta-pixel");
+              trackMetaEvent({
+                eventName: "AddToWishlist",
+                customData: {
+                  content_name: product.title,
+                  content_ids: [String(product.id)],
+                  content_type: "product",
+                  value: product.amount || 0,
+                  currency: "INR",
+                },
+                userData: state.user ? {
+                  email: state.user.email,
+                  firstName: state.user.firstName,
+                  lastName: state.user.lastName
+                } : undefined
+              });
+            } catch (e) {}
+
             return {
               wishlistItems: [...state.wishlistItems, product],
               wishlistPopupProduct: product

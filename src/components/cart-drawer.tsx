@@ -9,6 +9,7 @@ import { useEffect, useState, useRef } from "react";
 import { getAllProducts, createShopifyCheckout } from "@/lib/shopify";
 import { Product } from "@/lib/data";
 import { signIn as socialSignIn } from "next-auth/react";
+import { trackMetaEvent } from "@/lib/meta-pixel";
 
 export function CartDrawer() {
   const router = useRouter();
@@ -382,6 +383,31 @@ export function CartDrawer() {
                               }
 
                               setIsCheckingOut(true);
+
+                              // Track Meta InitiateCheckout Event (Dual Browser + Server CAPI)
+                              try {
+                                trackMetaEvent({
+                                  eventName: "InitiateCheckout",
+                                  customData: {
+                                    num_items: items.reduce((sum, item) => sum + item.quantity, 0),
+                                    content_ids: items.map(item => String(item.product.id)),
+                                    content_type: "product",
+                                    value: total,
+                                    currency: "INR",
+                                    contents: items.map(item => ({
+                                      id: String(item.product.id),
+                                      quantity: item.quantity,
+                                      item_price: item.product.amount || 0
+                                    }))
+                                  },
+                                  userData: state.user ? {
+                                    email: state.user.email,
+                                    firstName: state.user.firstName,
+                                    lastName: state.user.lastName
+                                  } : undefined
+                                });
+                              } catch (err) {}
+
                               const result = await createShopifyCheckout(items, state.user?.email, state.accessToken);
                               if (result.success && result.url) {
                                 window.location.href = result.url;

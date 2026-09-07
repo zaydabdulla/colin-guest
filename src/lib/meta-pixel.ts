@@ -17,9 +17,29 @@ export function generateEventId(): string {
   return `cg_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 }
 
+interface MetaUserData {
+  email?: string;
+  phone?: string;
+  firstName?: string;
+  lastName?: string;
+  city?: string;
+  zip?: string;
+  country?: string;
+}
+
 interface MetaEventParams {
-  eventName: "PageView" | "ViewContent" | "AddToCart" | "InitiateCheckout" | "Search";
+  eventName: 
+    | "PageView" 
+    | "ViewContent" 
+    | "AddToCart" 
+    | "InitiateCheckout" 
+    | "AddPaymentInfo" 
+    | "Purchase" 
+    | "Search" 
+    | "AddToWishlist" 
+    | "Contact";
   eventId?: string;
+  userData?: MetaUserData;
   customData?: {
     content_name?: string;
     content_category?: string;
@@ -28,6 +48,9 @@ interface MetaEventParams {
     value?: number;
     currency?: string;
     num_items?: number;
+    search_string?: string;
+    order_id?: string;
+    contents?: Array<{ id: string | number; quantity: number; item_price?: number }>;
     [key: string]: any;
   };
 }
@@ -37,7 +60,7 @@ interface MetaEventParams {
  * 1. Browser Meta Pixel (fbq)
  * 2. Server Conversions API (/api/meta/conversion)
  */
-export async function trackMetaEvent({ eventName, eventId, customData }: MetaEventParams) {
+export async function trackMetaEvent({ eventName, eventId, customData, userData }: MetaEventParams) {
   const finalEventId = eventId || generateEventId();
 
   // 1. Browser Meta Pixel Trigger
@@ -58,6 +81,7 @@ export async function trackMetaEvent({ eventName, eventId, customData }: MetaEve
         eventName,
         eventId: finalEventId,
         customData: customData || {},
+        userData: userData || {},
         sourceUrl: typeof window !== "undefined" ? window.location.href : "",
       }),
     }).catch(() => {
