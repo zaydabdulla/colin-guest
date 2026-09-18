@@ -22,7 +22,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { getCustomerOrders } from "@/app/actions/shopify";
-import ReturnRequestModal from "@/components/return-request-modal";
+import OrderReturnModal, { SupportAssistanceType } from "@/components/order-return-modal";
 
 interface OrderItem {
   id?: string;
@@ -61,8 +61,16 @@ export default function OrdersPage() {
   const [isHydrated, setIsHydrated] = useState(false);
   const [copiedAwb, setCopiedAwb] = useState<string | null>(null);
   
-  // Return Modal State
-  const [selectedReturnOrder, setSelectedReturnOrder] = useState<Order | null>(null);
+  // Return & Refund Assistance Modal State
+  const [supportModal, setSupportModal] = useState<{
+    isOpen: boolean;
+    order: Order | null;
+    type: SupportAssistanceType;
+  }>({
+    isOpen: false,
+    order: null,
+    type: "RETURN",
+  });
 
   const handleCopyAwb = (awb: string) => {
     navigator.clipboard.writeText(awb);
@@ -266,17 +274,25 @@ export default function OrdersPage() {
                       </span>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2.5">
                       <button
                         type="button"
-                        onClick={() => setSelectedReturnOrder(order)}
-                        className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-black/70 hover:text-black px-3.5 py-1.5 rounded-xl border border-black/10 bg-white hover:bg-black/5 transition-all shadow-xs"
+                        onClick={() => setSupportModal({ isOpen: true, order, type: 'RETURN' })}
+                        className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-black/70 hover:text-black px-3.5 py-1.5 rounded-xl border border-black/10 bg-white hover:bg-black/5 transition-all shadow-xs active:scale-95 cursor-pointer"
                       >
                         <RotateCcw size={11} strokeWidth={2} />
-                        Request Return / Exchange
+                        Return / Exchange
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSupportModal({ isOpen: true, order, type: 'REFUND' })}
+                        className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-black/70 hover:text-black px-3.5 py-1.5 rounded-xl border border-black/10 bg-white hover:bg-black/5 transition-all shadow-xs active:scale-95 cursor-pointer"
+                      >
+                        <RefreshCw size={11} strokeWidth={2} />
+                        Order Refund
                       </button>
                       <span className="hidden sm:inline-block text-[8px] uppercase tracking-wider text-black/30">
-                        (Eligible within 7 days of delivery)
+                        (Eligible within 7 days)
                       </span>
                     </div>
                   )}
@@ -368,21 +384,13 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      {/* Return Request Modal */}
-      {selectedReturnOrder && (
-        <ReturnRequestModal
-          isOpen={!!selectedReturnOrder}
-          onClose={() => setSelectedReturnOrder(null)}
-          orderId={selectedReturnOrder.id}
-          orderName={selectedReturnOrder.name}
-          customerEmail={user.email}
-          customerName={`${user.firstName || ''} ${user.lastName || ''}`.trim() || undefined}
-          items={selectedReturnOrder.items}
-          onSuccess={() => {
-            fetchOrders();
-          }}
-        />
-      )}
+      {/* Return & Refund Support Modal */}
+      <OrderReturnModal
+        isOpen={supportModal.isOpen}
+        onClose={() => setSupportModal(prev => ({ ...prev, isOpen: false }))}
+        order={supportModal.order}
+        type={supportModal.type}
+      />
     </main>
   );
 }
