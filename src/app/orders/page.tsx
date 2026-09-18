@@ -69,7 +69,7 @@ export default function OrdersPage() {
   }>({
     isOpen: false,
     order: null,
-    type: "RETURN",
+    type: "RETURN_REFUND",
   });
 
   const handleCopyAwb = (awb: string) => {
@@ -274,25 +274,17 @@ export default function OrdersPage() {
                       </span>
                     </div>
                   ) : (
-                    <div className="flex flex-wrap items-center gap-2.5">
+                    <div className="flex items-center gap-3">
                       <button
                         type="button"
-                        onClick={() => setSupportModal({ isOpen: true, order, type: 'RETURN' })}
+                        onClick={() => setSupportModal({ isOpen: true, order, type: 'RETURN_REFUND' })}
                         className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-black/70 hover:text-black px-3.5 py-1.5 rounded-xl border border-black/10 bg-white hover:bg-black/5 transition-all shadow-xs active:scale-95 cursor-pointer"
                       >
                         <RotateCcw size={11} strokeWidth={2} />
-                        Return / Exchange
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setSupportModal({ isOpen: true, order, type: 'REFUND' })}
-                        className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-black/70 hover:text-black px-3.5 py-1.5 rounded-xl border border-black/10 bg-white hover:bg-black/5 transition-all shadow-xs active:scale-95 cursor-pointer"
-                      >
-                        <RefreshCw size={11} strokeWidth={2} />
-                        Order Refund
+                        Return / Refund
                       </button>
                       <span className="hidden sm:inline-block text-[8px] uppercase tracking-wider text-black/30">
-                        (Eligible within 7 days)
+                        (Eligible within 7 days of delivery)
                       </span>
                     </div>
                   )}

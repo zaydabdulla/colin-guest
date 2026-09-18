@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, MessageSquare, Mail, ArrowUpRight, Copy, Check } from "lucide-react";
 
-export type SupportAssistanceType = "RETURN" | "REFUND";
+export type SupportAssistanceType = "RETURN" | "REFUND" | "RETURN_REFUND";
 
 interface OrderReturnModalProps {
   isOpen: boolean;
@@ -20,23 +20,29 @@ interface OrderReturnModalProps {
       variantTitle?: string | null;
     }>;
   } | null;
-  type: SupportAssistanceType;
+  type?: SupportAssistanceType;
 }
 
 export default function OrderReturnModal({
   isOpen,
   onClose,
   order,
-  type,
+  type = "RETURN_REFUND",
 }: OrderReturnModalProps) {
   const [copiedEmail, setCopiedEmail] = useState(false);
 
   if (!isOpen || !order) return null;
 
   const orderCleanName = order.name.replace(/^#/, "");
-  const isRefund = type === "REFUND";
+  const isRefundOnly = type === "REFUND";
+  const isReturnOnly = type === "RETURN";
 
-  const title = isRefund ? "Order Refund Assistance" : "Return & Exchange Assistance";
+  const title = isRefundOnly
+    ? "Order Refund Assistance"
+    : isReturnOnly
+    ? "Return & Exchange Assistance"
+    : "Return & Refund Assistance";
+
   const subtitle = `ORDER #${orderCleanName} • COLINGUEST SUPPORT`;
 
   const itemsSummary = order.items && order.items.length > 0
@@ -44,16 +50,20 @@ export default function OrderReturnModal({
     : "Purchased Pieces";
 
   // Pre-filled WhatsApp message
-  const whatsappMessage = isRefund
+  const whatsappMessage = isRefundOnly
     ? `Hi Colin Guest Support, I would like to request an Order Refund for Order #${orderCleanName} (Amount: ${order.currency} ${parseFloat(order.total).toFixed(2)}). Items: ${itemsSummary}. Could you please assist me with the refund process?`
-    : `Hi Colin Guest Support, I would like to request a Return / Exchange for Order #${orderCleanName}. Items: ${itemsSummary}. Could you please assist me with the reverse pickup?`;
+    : isReturnOnly
+    ? `Hi Colin Guest Support, I would like to request a Return / Exchange for Order #${orderCleanName}. Items: ${itemsSummary}. Could you please assist me with the reverse pickup?`
+    : `Hi Colin Guest Support, I would like assistance with a Return / Refund for Order #${orderCleanName} (Amount: ${order.currency} ${parseFloat(order.total).toFixed(2)}). Items: ${itemsSummary}. Could you please guide me on the reverse pickup and options?`;
 
   const whatsappUrl = `https://wa.me/917034500072?text=${encodeURIComponent(whatsappMessage)}`;
 
   // Pre-filled Email Subject & Body
-  const emailSubject = isRefund
+  const emailSubject = isRefundOnly
     ? `Refund Request - Order #${orderCleanName}`
-    : `Return / Exchange Request - Order #${orderCleanName}`;
+    : isReturnOnly
+    ? `Return / Exchange Request - Order #${orderCleanName}`
+    : `Return / Refund Request - Order #${orderCleanName}`;
 
   const emailBody = `Hello Colin Guest Client Support,
 
@@ -62,9 +72,15 @@ I am reaching out regarding my recent purchase:
 • Total Amount: ${order.currency} ${parseFloat(order.total).toFixed(2)}
 • Items: ${itemsSummary}
 
-Requested Assistance: ${isRefund ? "Order Refund" : "Return & Exchange"}
+Requested Assistance: ${
+    isRefundOnly
+      ? "Order Refund"
+      : isReturnOnly
+      ? "Return / Exchange"
+      : "Return / Refund"
+  }
 
-Please advise on the next steps for reverse pickup and settlement.
+Please advise on the next steps for reverse pickup and assistance.
 
 Thank you!`;
 
