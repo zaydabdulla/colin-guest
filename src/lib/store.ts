@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import { type Product } from './data';
 import { customerLogin, getCustomer, getProductsByIds, customerCreate, customerRecover, customerUpdate, customerAddressCreate, customerAddressUpdate, customerAddressDelete, customerActivate, customerReset } from './shopify';
 import { signOut } from 'next-auth/react';
-import { adminAddAddress, adminUpdateAddress, adminDeleteAddress, syncWishlist, getWishlist, checkEmailExists, recoverPasswordAction } from '@/app/actions/shopify';
+import { adminAddAddress, adminUpdateAddress, adminDeleteAddress, syncWishlist, getWishlist, checkEmailExists, recoverPasswordAction, adminGetCustomerData } from '@/app/actions/shopify';
 
 
 
@@ -53,6 +53,7 @@ interface CartState {
   syncData: (merge?: boolean) => Promise<void>;
   saveData: () => Promise<void>;
   updateUser: (firstName: string, lastName: string) => Promise<{ success: boolean; error?: string }>;
+  refreshCustomerData: () => Promise<void>;
   addAddress: (address: any) => Promise<{ success: boolean; error?: string }>;
   updateAddress: (addressId: string, address: any) => Promise<{ success: boolean; error?: string }>;
   deleteAddress: (addressId: string) => Promise<{ success: boolean; error?: string }>;
@@ -302,6 +303,44 @@ export const useCartStore = create<CartState>()(
         } catch (error) {
           set({ isSyncing: false });
           return { success: false, error: "An unexpected error occurred" };
+        }
+      },
+
+      refreshCustomerData: async () => {
+        const { user, accessToken, isLoggedIn } = get();
+        if (!isLoggedIn || !user?.email) return;
+
+        try {
+          // 1. If we have an accessToken (Storefront user), fetch latest customer details
+          if (accessToken) {
+            const customer = await getCustomer(accessToken);
+            if (customer) {
+              set({
+                user: {
+                  ...user,
+                  firstName: customer.firstName || user.firstName,
+                  lastName: customer.lastName || user.lastName,
+                  addresses: customer.addresses?.edges.map((e: any) => e.node) || []
+                }
+              });
+              return;
+            }
+          }
+
+          // 2. If no accessToken (Google user) or token expired, use Shopify Admin server action
+          const dataResult = await adminGetCustomerData(user.email);
+          if (dataResult.success && dataResult.addresses) {
+            set({
+              user: {
+                ...user,
+                firstName: dataResult.firstName || user.firstName,
+                lastName: dataResult.lastName || user.lastName,
+                addresses: dataResult.addresses
+              }
+            });
+          }
+        } catch (error) {
+          console.error("Failed to refresh customer data:", error);
         }
       },
 

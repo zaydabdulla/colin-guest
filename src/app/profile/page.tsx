@@ -26,7 +26,7 @@ import Link from "next/link";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, isLoggedIn, logout, updateUser, addAddress, updateAddress, deleteAddress } = useCartStore();
+  const { user, isLoggedIn, logout, updateUser, addAddress, updateAddress, deleteAddress, refreshCustomerData } = useCartStore();
   
   const [isEditingName, setIsEditingName] = useState(false);
   const [firstName, setFirstName] = useState(user?.firstName || "");
@@ -85,6 +85,12 @@ export default function ProfilePage() {
     }
   }, [isHydrated, isLoggedIn, router]);
 
+  // Re-fetch fresh customer details & addresses from Shopify on mount/refresh
+  useEffect(() => {
+    if (isHydrated && isLoggedIn && user?.email) {
+      refreshCustomerData();
+    }
+  }, [isHydrated, isLoggedIn, user?.email]);
 
   useEffect(() => {
     if (user) {

@@ -6,11 +6,30 @@ import { useSession } from "next-auth/react";
 import { getOrCreateShopifyCustomer, adminGetCustomerData } from "@/app/actions/shopify";
 
 function SyncManagerInternal() {
-  const { isLoggedIn, syncData, isSyncing, customerId, hasLoggedOut, lastSyncedCustomerId } = useCartStore();
+  const { isLoggedIn, user, refreshCustomerData, syncData, isSyncing, customerId, hasLoggedOut, lastSyncedCustomerId } = useCartStore();
   const { data: session, status } = useSession();
   
   // Track state to manage initial merge and prevent redundant syncs
   const wasLoggedIn = useRef(isLoggedIn);
+
+  // Multi-tab sync: automatically rehydrate store when another tab updates localStorage
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "bluorng-storage") {
+        useCartStore.persist.rehydrate();
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  // Fresh profile & address fetch on page load/refresh
+  useEffect(() => {
+    if (isLoggedIn && user?.email) {
+      refreshCustomerData();
+    }
+  }, [isLoggedIn, user?.email]);
 
   useEffect(() => {
     // If user is logged in via Google but not in our store, sync them
