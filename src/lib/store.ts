@@ -482,7 +482,7 @@ export const useCartStore = create<CartState>()(
 
         // Google login: use Admin API adminDeleteAddress
         try {
-          const result = await adminDeleteAddress(addressId);
+          const result = await adminDeleteAddress(addressId, user.email);
           if (result.success) {
             set({
               user: {
