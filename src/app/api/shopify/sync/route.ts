@@ -1,112 +1,55 @@
 import { NextResponse } from 'next/server';
-import { syncWishlist, getWishlist } from '@/app/actions/shopify';
-import { getAdminToken } from '@/lib/shopify-admin';
+import { adminSaveSyncData, adminGetSyncData } from '@/app/actions/shopify';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { getCustomer } from '@/lib/shopify';
-
-const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
-
-// Helper to get customer data from Shopify Metafields
-async function getShopifySyncData(customerId: string) {
-  try {
-    const adminToken = await getAdminToken();
-    const query = `
-      query {
-        customer(id: "${customerId}") {
-          wishlist: metafield(namespace: "custom", key: "wishlist") { value }
-          cart: metafield(namespace: "custom", key: "cart") { value }
-        }
-      }
-    `;
-
-    const response = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': adminToken },
-      body: JSON.stringify({ query }),
-    });
-
-    const data = await response.json();
-    console.log("Shopify Sync GET Response:", JSON.stringify(data, null, 2));
-    
-    const wishlist = data.data?.customer?.wishlist?.value;
-    const cart = data.data?.customer?.cart?.value;
-
-    return {
-      wishlist: wishlist ? JSON.parse(wishlist) : [],
-      cart: cart ? JSON.parse(cart) : []
-    };
-  } catch (error) {
-    console.error("Shopify Sync GET Error:", error);
-    return { wishlist: [], cart: [] };
-  }
-}
-
-// Helper to save customer data to Shopify Metafields
-async function saveShopifySyncData(customerId: string, wishlist: any[], cart: any[]) {
-  try {
-    const adminToken = await getAdminToken();
-    const mutation = `
-      mutation customerUpdate($input: CustomerInput!) {
-        customerUpdate(input: $input) {
-          customer { id }
-          userErrors { message }
-        }
-      }
-    `;
-
-    const response = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': adminToken },
-      body: JSON.stringify({
-        query: mutation,
-        variables: {
-          input: {
-            id: customerId,
-            metafields: [
-              { namespace: "custom", key: "wishlist", value: JSON.stringify(wishlist), type: "json" },
-              { namespace: "custom", key: "cart", value: JSON.stringify(cart), type: "json" }
-            ]
-          }
-        }
-      }),
-    });
-
-    const data = await response.json();
-    console.log("Shopify Sync POST Response:", JSON.stringify(data, null, 2));
-    return data.data?.customerUpdate?.userErrors?.length === 0;
-  } catch (error) {
-    console.error("Shopify Sync POST Error:", error);
-    return false;
-  }
-}
+import { auth } from '@/auth';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { customerId, wishlist, cart } = body;
+    const { customerId, email: requestedEmail, wishlist, cart } = body;
 
     // Rate Limit Check
-    const rateLimitResponse = await checkRateLimit(request, { userId: customerId });
+    const rateLimitResponse = await checkRateLimit(request, { userId: customerId || requestedEmail });
     if (rateLimitResponse) return rateLimitResponse;
 
-    if (!customerId) {
-      return NextResponse.json({ error: 'Missing customerId' }, { status: 400 });
+    if (!customerId && !requestedEmail) {
+      return NextResponse.json({ error: 'Missing customerId or email' }, { status: 400 });
     }
 
-    // Authorization Check
+    // Authorization Check:
+    // 1. Check Storefront Bearer Token (if provided)
+    let authenticatedEmail = requestedEmail;
     const authHeader = request.headers.get('Authorization');
     const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null;
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized: Missing token' }, { status: 401 });
-    }
-    const customer = await getCustomer(token);
-    if (!customer || customer.id !== customerId) {
-      return NextResponse.json({ error: 'Unauthorized: Invalid token' }, { status: 401 });
+    let isAuthorized = false;
+
+    if (token && token !== 'null' && token !== 'undefined') {
+      const customer = await getCustomer(token);
+      if (customer && (!customerId || customer.id === customerId)) {
+        isAuthorized = true;
+        authenticatedEmail = customer.email || authenticatedEmail;
+      }
     }
 
-    const success = await saveShopifySyncData(customerId, wishlist, cart);
+    // 2. Fallback: Check NextAuth Session (for Google OAuth users)
+    if (!isAuthorized) {
+      const session = await auth();
+      if (session?.user?.email) {
+        if (!requestedEmail || session.user.email.toLowerCase() === requestedEmail.toLowerCase()) {
+          isAuthorized = true;
+          authenticatedEmail = session.user.email;
+        }
+      }
+    }
+
+    if (!isAuthorized) {
+      return NextResponse.json({ error: 'Unauthorized: Invalid credentials or session' }, { status: 401 });
+    }
+
+    const result = await adminSaveSyncData(authenticatedEmail, customerId, wishlist, cart);
     
-    return NextResponse.json({ success });
+    return NextResponse.json(result);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -115,28 +58,48 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const customerId = searchParams.get('customerId');
+    const customerId = searchParams.get('customerId') || undefined;
+    const requestedEmail = searchParams.get('email') || undefined;
 
     // Rate Limit Check
-    const rateLimitResponse = await checkRateLimit(request, { userId: customerId });
+    const rateLimitResponse = await checkRateLimit(request, { userId: customerId || requestedEmail });
     if (rateLimitResponse) return rateLimitResponse;
 
-    if (!customerId) {
-      return NextResponse.json({ error: 'Missing customerId' }, { status: 400 });
+    if (!customerId && !requestedEmail) {
+      return NextResponse.json({ error: 'Missing customerId or email' }, { status: 400 });
     }
 
-    // Authorization Check
+    // Authorization Check:
+    // 1. Check Storefront Bearer Token (if provided)
+    let authenticatedEmail = requestedEmail;
     const authHeader = request.headers.get('Authorization');
     const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null;
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized: Missing token' }, { status: 401 });
-    }
-    const customer = await getCustomer(token);
-    if (!customer || customer.id !== customerId) {
-      return NextResponse.json({ error: 'Unauthorized: Invalid token' }, { status: 401 });
+    let isAuthorized = false;
+
+    if (token && token !== 'null' && token !== 'undefined') {
+      const customer = await getCustomer(token);
+      if (customer && (!customerId || customer.id === customerId)) {
+        isAuthorized = true;
+        authenticatedEmail = customer.email || authenticatedEmail;
+      }
     }
 
-    const userData = await getShopifySyncData(customerId);
+    // 2. Fallback: Check NextAuth Session (for Google OAuth users)
+    if (!isAuthorized) {
+      const session = await auth();
+      if (session?.user?.email) {
+        if (!requestedEmail || session.user.email.toLowerCase() === requestedEmail.toLowerCase()) {
+          isAuthorized = true;
+          authenticatedEmail = session.user.email;
+        }
+      }
+    }
+
+    if (!isAuthorized) {
+      return NextResponse.json({ error: 'Unauthorized: Invalid credentials or session' }, { status: 401 });
+    }
+
+    const userData = await adminGetSyncData(authenticatedEmail || '', customerId);
     return NextResponse.json(userData);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

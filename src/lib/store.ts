@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import { type Product } from './data';
 import { customerLogin, getCustomer, getProductsByIds, customerCreate, customerRecover, customerUpdate, customerAddressCreate, customerAddressUpdate, customerAddressDelete, customerActivate, customerReset } from './shopify';
 import { signOut } from 'next-auth/react';
-import { adminAddAddress, adminUpdateAddress, adminDeleteAddress, syncWishlist, getWishlist, checkEmailExists, recoverPasswordAction, adminGetCustomerData } from '@/app/actions/shopify';
+import { adminAddAddress, adminUpdateAddress, adminDeleteAddress, syncWishlist, getWishlist, checkEmailExists, recoverPasswordAction, adminGetCustomerData, adminSaveSyncData, adminGetSyncData } from '@/app/actions/shopify';
 
 
 
@@ -567,157 +567,155 @@ export const useCartStore = create<CartState>()(
       },
 
       syncData: async (merge?: boolean) => {
-        const { customerId, isLoggedIn, accessToken } = get();
-        if (!isLoggedIn || !customerId) return;
+        const { customerId, isLoggedIn, user } = get();
+        if (!isLoggedIn || (!customerId && !user?.email)) return;
 
         set({ isSyncing: true });
         try {
-          const response = await fetch(`/api/shopify/sync?customerId=${encodeURIComponent(customerId)}`, {
-            headers: {
-              'Authorization': `Bearer ${accessToken}`
-            }
-          });
-          if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
-          
-          const data = await response.json();
+          const email = user?.email;
+          if (!email) {
+            set({ isSyncing: false });
+            return;
+          }
 
-          if (data && (data.wishlist || data.cart)) {
-            // Fetch full product details for wishlist items
-            const wishlistIds = data.wishlist || [];
-            const cartData = data.cart || []; // array of { productId, size, quantity }
+          const syncRes = await adminGetSyncData(email, customerId || undefined);
+          if (!syncRes.success) {
+            set({ isSyncing: false });
+            return;
+          }
 
-            let newWishlistItems: Product[] = [];
-            if (wishlistIds.length > 0) {
-              try {
-                const products = await getProductsByIds(wishlistIds);
-                if (products && products.length > 0) {
-                  newWishlistItems = products.map((p: any) => ({
+          const wishlistIds = syncRes.wishlist || [];
+          const cartData = syncRes.cart || [];
+
+          let newWishlistItems: Product[] = [];
+          if (wishlistIds.length > 0) {
+            try {
+              const products = await getProductsByIds(wishlistIds);
+              if (products && products.length > 0) {
+                newWishlistItems = products.map((p: any) => {
+                  const priceAmount = parseFloat(p.priceRange?.minVariantPrice?.amount || '0');
+                  const flattenedVariants = p.variants?.edges 
+                    ? p.variants.edges.map((e: any) => e.node) 
+                    : (Array.isArray(p.variants) ? p.variants : []);
+                  return {
                     id: p.id,
                     title: p.title,
-                    price: `${p.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(p.priceRange.minVariantPrice.amount).toLocaleString()}`,
+                    price: `${p.priceRange?.minVariantPrice?.currencyCode === 'INR' ? 'RS. ' : '$'}${priceAmount.toLocaleString()}`,
+                    amount: priceAmount,
                     src: p.images[0]?.url || "",
-                    desc: p.description,
-                    category: p.productType,
-                    handle: p.handle
-                  }));
-
-                } else if (products && products.length === 0) {
-                  // If Shopify specifically returned 0 nodes for existing IDs, 
-                  // it might mean products were deleted, but we'll be cautious.
-                  console.warn("Sync: Shopify returned no products for IDs:", wishlistIds);
-                }
-              } catch (err) {
-                console.error("Failed to fetch wishlist products:", err);
-                // Don't overwrite if fetch failed
-                set({ isSyncing: false });
-                return;
+                    desc: p.description || "",
+                    category: p.productType || "",
+                    handle: p.handle,
+                    variants: flattenedVariants
+                  };
+                });
               }
+            } catch (err) {
+              console.error("Failed to fetch wishlist products:", err);
             }
+          }
 
-            let newCartItems: CartItem[] = [];
-            if (cartData.length > 0) {
-              try {
-                const cartProductIds = cartData.map((item: any) => item.productId);
-                const products = await getProductsByIds(cartProductIds);
-                
-                if (products) {
-                  newCartItems = cartData.map((item: any) => {
-                    const product = products.find((p: any) => p.id === item.productId);
-                    if (!product) return null;
-                    return {
-                      product: {
-                        id: product.id,
-                        title: product.title,
-                        price: `${product.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(product.priceRange.minVariantPrice.amount).toLocaleString()}`,
-                        src: product.images[0]?.url || "",
-                        desc: product.description,
-                        category: product.productType,
-                        handle: product.handle,
-                        variants: product.variants
-                      },
-
-                      size: item.size,
-                      quantity: item.quantity,
-                      id: `${product.id}-${item.size}`
-                    };
-                  }).filter(Boolean) as CartItem[];
-                }
-              } catch (err) {
-                console.error("Failed to fetch cart products:", err);
-                // Don't overwrite if fetch failed
-                set({ isSyncing: false });
-                return;
+          let newCartItems: CartItem[] = [];
+          if (cartData.length > 0) {
+            try {
+              const cartProductIds = cartData.map((item: any) => item.productId);
+              const products = await getProductsByIds(cartProductIds);
+              if (products) {
+                newCartItems = cartData.map((item: any) => {
+                  const product = products.find((p: any) => p.id === item.productId);
+                  if (!product) return null;
+                  const priceAmount = parseFloat(product.priceRange?.minVariantPrice?.amount || '0');
+                  const flattenedVariants = product.variants?.edges 
+                    ? product.variants.edges.map((e: any) => e.node) 
+                    : (Array.isArray(product.variants) ? product.variants : []);
+                  return {
+                    product: {
+                      id: product.id,
+                      title: product.title,
+                      price: `${product.priceRange?.minVariantPrice?.currencyCode === 'INR' ? 'RS. ' : '$'}${priceAmount.toLocaleString()}`,
+                      amount: priceAmount,
+                      src: product.images[0]?.url || "",
+                      desc: product.description || "",
+                      category: product.productType || "",
+                      handle: product.handle,
+                      variants: flattenedVariants
+                    },
+                    size: item.size,
+                    quantity: item.quantity,
+                    id: `${product.id}-${item.size}`
+                  };
+                }).filter(Boolean) as CartItem[];
               }
+            } catch (err) {
+              console.error("Failed to fetch cart products:", err);
             }
+          }
 
-            if (merge) {
-              // Merge logic: Combine guest items with account items
-              const guestWishlist = get().wishlistItems;
-              const guestCart = get().items;
+          if (merge) {
+            // Merge logic: Combine guest items with account items
+            const guestWishlist = get().wishlistItems;
+            const guestCart = get().items;
 
-              // Merge wishlist (unique by id)
-              const mergedWishlist = [...newWishlistItems];
-              guestWishlist.forEach((item: Product) => {
-                if (!mergedWishlist.find(mw => mw.id === item.id)) {
-                  mergedWishlist.push(item);
-                }
-              });
+            // Merge wishlist (unique by id)
+            const mergedWishlist = [...newWishlistItems];
+            guestWishlist.forEach((item: Product) => {
+              if (!mergedWishlist.find(mw => mw.id === item.id)) {
+                mergedWishlist.push(item);
+              }
+            });
 
-              // Merge cart (unique by product.id and size)
-              const mergedCart = [...newCartItems];
-              guestCart.forEach((item: CartItem) => {
-                const exists = mergedCart.find(mc => mc.product.id === item.product.id && mc.size === item.size);
-                if (exists) {
-                  exists.quantity += item.quantity;
-                } else {
-                  mergedCart.push(item);
-                }
-              });
+            // Merge cart (unique by product.id and size)
+            const mergedCart = [...newCartItems];
+            guestCart.forEach((item: CartItem) => {
+              const exists = mergedCart.find(mc => mc.product.id === item.product.id && mc.size === item.size);
+              if (exists) {
+                exists.quantity += item.quantity;
+              } else {
+                mergedCart.push(item);
+              }
+            });
 
-              set({
-                wishlistItems: mergedWishlist,
-                items: mergedCart,
-                isSyncing: false,
-                lastSyncedCustomerId: customerId
-              });
+            set({
+              wishlistItems: mergedWishlist,
+              items: mergedCart,
+              isSyncing: false,
+              lastSyncedCustomerId: customerId || email
+            });
 
-              // Save the merged state back to Shopify
-              await get().saveData();
-            } else {
-              set({
-                wishlistItems: newWishlistItems,
-                items: newCartItems,
-                isSyncing: false,
-                lastSyncedCustomerId: customerId
-              });
-            }
+            // Save the merged state back to Shopify
+            await get().saveData();
+          } else {
+            set({
+              wishlistItems: newWishlistItems,
+              items: newCartItems,
+              isSyncing: false,
+              lastSyncedCustomerId: customerId || email
+            });
           }
         } catch (error) {
           console.error("Sync error:", error);
+          set({ isSyncing: false });
+        } finally {
           set({ isSyncing: false });
         }
       },
 
       saveData: async () => {
-        const { customerId, isLoggedIn, accessToken, wishlistItems, items } = get();
-        if (!isLoggedIn || !customerId) return;
+        const { customerId, isLoggedIn, user, wishlistItems, items } = get();
+        if (!isLoggedIn || (!customerId && !user?.email)) return;
 
         try {
-          const wishlist = wishlistItems.map((item: Product) => item.id);
+          const email = user?.email;
+          if (!email) return;
+
+          const wishlist = wishlistItems.map((item: Product) => String(item.id));
           const cart = items.map((item: CartItem) => ({
-            productId: item.product.id,
+            productId: String(item.product.id),
             size: item.size,
             quantity: item.quantity
           }));
 
-          await fetch('/api/shopify/sync', {
-            method: 'POST',
-            headers: { 
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${accessToken}`
-            },
-            body: JSON.stringify({ customerId, wishlist, cart })
-          });
+          await adminSaveSyncData(email, customerId || undefined, wishlist, cart);
         } catch (error) {
           console.error("Save error:", error);
         }

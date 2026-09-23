@@ -65,10 +65,35 @@ function SyncManagerInternal() {
     }
   }, [status, session, isLoggedIn, hasLoggedOut]);
 
+  // Window focus & tab visibility change: sync data when returning to tab
   useEffect(() => {
-    if (isLoggedIn && !isSyncing && customerId) {
+    const handleFocus = () => {
+      const state = useCartStore.getState();
+      if (state.isLoggedIn && (state.customerId || state.user?.email) && !state.isSyncing) {
+        state.refreshCustomerData();
+        state.syncData(false);
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        handleFocus();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, []);
+
+  useEffect(() => {
+    const activeCustomerId = customerId || user?.email;
+    if (isLoggedIn && !isSyncing && activeCustomerId) {
       // Avoid redundant syncs if we've already synced for this specific customer session
-      if (lastSyncedCustomerId === customerId) return;
+      if (lastSyncedCustomerId === activeCustomerId) return;
 
       // If we just transitioned from logged out to logged in, perform a MERGE sync
       // If we are on initial mount and already logged in, shouldMerge will be false because wasLoggedIn.current was initialized to true
@@ -82,7 +107,7 @@ function SyncManagerInternal() {
       // Reset tracking when logged out
       wasLoggedIn.current = false;
     }
-  }, [isLoggedIn, customerId, isSyncing, syncData, lastSyncedCustomerId]);
+  }, [isLoggedIn, customerId, user?.email, isSyncing, syncData, lastSyncedCustomerId]);
 
   return null;
 }

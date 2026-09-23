@@ -389,81 +389,105 @@ export async function adminGetCustomerData(email: string) {
 }
 
 
-export async function syncWishlist(email: string, productIds: string[]) {
-
-  if (!domain || !clientId || !clientSecret) return { success: false };
+export async function adminSaveSyncData(
+  email: string,
+  customerId?: string,
+  wishlist: string[] = [],
+  cart: any[] = []
+) {
+  if (!domain || !clientId || !clientSecret) return { success: false, error: "Missing Shopify configuration" };
 
   try {
     const adminToken = await getAdminToken();
 
-    // 1. Find customer ID
-    const findQuery = `query { customers(first: 1, query: "email:${email}") { edges { node { id } } } }`;
-    const findResponse = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': adminToken },
-      body: JSON.stringify({ query: findQuery }),
-    });
-    const findData = await findResponse.json();
-    const customerId = findData.data?.customers?.edges[0]?.node?.id;
+    let targetCustomerId = customerId && customerId.startsWith('gid://shopify/Customer/') ? customerId : null;
 
-    if (!customerId) return { success: false };
+    if (!targetCustomerId && email) {
+      const findQuery = `query { customers(first: 1, query: "email:${email}") { edges { node { id } } } }`;
+      const findResponse = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': adminToken },
+        body: JSON.stringify({ query: findQuery }),
+      });
+      const findData = await findResponse.json();
+      targetCustomerId = findData.data?.customers?.edges[0]?.node?.id || null;
+    }
 
-    // 2. Update Metafield
+    if (!targetCustomerId) {
+      return { success: false, error: "Customer not found in Shopify" };
+    }
+
     const updateMutation = `
       mutation customerUpdate($input: CustomerInput!) {
         customerUpdate(input: $input) {
           customer { id }
-          userErrors { message }
+          userErrors { field message }
         }
       }
     `;
 
-    await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
+    const updateResponse = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': adminToken },
       body: JSON.stringify({
         query: updateMutation,
         variables: {
           input: {
-            id: customerId,
+            id: targetCustomerId,
             metafields: [
-              {
-                namespace: "custom",
-                key: "wishlist",
-                value: JSON.stringify(productIds),
-                type: "json"
-              }
+              { namespace: "custom", key: "wishlist", value: JSON.stringify(wishlist), type: "json" },
+              { namespace: "custom", key: "cart", value: JSON.stringify(cart), type: "json" }
             ]
           }
         }
       }),
     });
 
+    const updateData = await updateResponse.json();
+    const userErrors = updateData.data?.customerUpdate?.userErrors;
+    if (userErrors && userErrors.length > 0) {
+      console.error("Admin save sync data userErrors:", userErrors);
+      return { success: false, error: userErrors[0].message };
+    }
+
     return { success: true };
-  } catch (error) {
-    console.error("Wishlist sync error:", error);
-    return { success: false };
+  } catch (error: any) {
+    console.error("Admin save sync data error:", error);
+    return { success: false, error: error?.message || "Sync failed" };
   }
 }
 
-export async function getWishlist(email: string) {
-  if (!domain || !clientId || !clientSecret) return { success: false };
+export async function adminGetSyncData(email: string, customerId?: string) {
+  if (!domain || !clientId || !clientSecret) return { success: false, wishlist: [], cart: [] };
 
   try {
     const adminToken = await getAdminToken();
-    const query = `
-      query {
+
+    let targetCustomerId = customerId && customerId.startsWith('gid://shopify/Customer/') ? customerId : null;
+
+    let query = '';
+    if (targetCustomerId) {
+      query = `query {
+        customer(id: "${targetCustomerId}") {
+          wishlist: metafield(namespace: "custom", key: "wishlist") { value }
+          cart: metafield(namespace: "custom", key: "cart") { value }
+        }
+      }`;
+    } else if (email) {
+      query = `query {
         customers(first: 1, query: "email:${email}") {
           edges {
             node {
-              metafield(namespace: "custom", key: "wishlist") {
-                value
-              }
+              id
+              wishlist: metafield(namespace: "custom", key: "wishlist") { value }
+              cart: metafield(namespace: "custom", key: "cart") { value }
             }
           }
         }
-      }
-    `;
+      }`;
+    } else {
+      return { success: false, wishlist: [], cart: [] };
+    }
 
     const response = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
       method: 'POST',
@@ -472,15 +496,33 @@ export async function getWishlist(email: string) {
     });
 
     const data = await response.json();
-    const metafieldValue = data.data?.customers?.edges[0]?.node?.metafield?.value;
-    
-    return { 
-      success: true, 
-      productIds: metafieldValue ? JSON.parse(metafieldValue) : [] 
+    const node = targetCustomerId ? data.data?.customer : data.data?.customers?.edges[0]?.node;
+
+    if (!node) {
+      return { success: false, wishlist: [], cart: [] };
+    }
+
+    const wishlistRaw = node.wishlist?.value;
+    const cartRaw = node.cart?.value;
+
+    return {
+      success: true,
+      wishlist: wishlistRaw ? JSON.parse(wishlistRaw) : [],
+      cart: cartRaw ? JSON.parse(cartRaw) : []
     };
   } catch (error) {
-    return { success: false, productIds: [] };
+    console.error("Admin get sync data error:", error);
+    return { success: false, wishlist: [], cart: [] };
   }
+}
+
+export async function syncWishlist(email: string, productIds: string[]) {
+  return adminSaveSyncData(email, undefined, productIds, []);
+}
+
+export async function getWishlist(email: string) {
+  const result = await adminGetSyncData(email);
+  return { success: result.success, productIds: result.wishlist };
 }
 
 export async function createDraftOrder(items: any[], customerInfo: any) {
