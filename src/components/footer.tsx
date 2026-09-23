@@ -27,6 +27,8 @@ export function Footer() {
   if (!showFooter) return null;
 
   const isAboutPage = pathname === "/about";
+  const isProfileOrOrders = pathname === "/profile" || pathname === "/orders";
+  const footerBg = isAboutPage ? "bg-transparent" : isProfileOrOrders ? "bg-[#fcfcfc]" : "bg-white";
 
   const sections = [
     {
@@ -84,7 +86,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className={`relative w-full z-40 bg-transparent ${isAboutPage ? "mt-[-60px] md:mt-[-100px]" : "mt-0"}`}>
+    <footer className={`relative w-full z-40 ${footerBg} ${isAboutPage ? "mt-[-60px] md:mt-[-100px]" : "mt-0"}`}>
       <div className={`relative w-full rounded-t-[30px] md:rounded-t-[60px] pt-12 pb-8 px-8 md:px-12 overflow-hidden transition-all duration-1000 shadow-[0_-20px_50px_rgba(0,0,0,0.15)] ${isAboutPage ? "bg-black/20 backdrop-blur-3xl text-white" : "bg-[#f2f2f4] text-black"
         }`}>
 

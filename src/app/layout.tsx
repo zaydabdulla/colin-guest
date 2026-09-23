@@ -71,7 +71,7 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className="antialiased overflow-x-hidden max-w-full w-full">
+      <body className="antialiased overflow-x-hidden max-w-full w-full bg-white text-black">
         <SessionProvider>
           <ComingSoonWrapper>
             {/* Desktop Navbar - Strict Isolation */}
