@@ -220,7 +220,7 @@ export async function adminUpdateAddress(email: string, addressId: string, addre
   }
 }
 
-export async function adminDeleteAddress(addressId: string, email?: string) {
+export async function adminDeleteAddress(addressId: string, email?: string, explicitCustomerId?: string) {
   if (!domain || !clientId || !clientSecret) {
     return { success: false, error: "Shopify Admin API is not configured." };
   }
@@ -228,9 +228,12 @@ export async function adminDeleteAddress(addressId: string, email?: string) {
   try {
     const adminToken = await getAdminToken();
 
-    // 1. Resolve customer ID if email is provided
-    let customerId: string | null = null;
-    if (email) {
+    // 1. Resolve customer ID
+    let customerId = explicitCustomerId && explicitCustomerId.startsWith("gid://shopify/Customer/") 
+      ? explicitCustomerId 
+      : null;
+
+    if (!customerId && email) {
       const findQuery = `query { customers(first: 1, query: "email:${email}") { edges { node { id } } } }`;
       const findResponse = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
         method: 'POST',
@@ -241,38 +244,28 @@ export async function adminDeleteAddress(addressId: string, email?: string) {
       customerId = findData.data?.customers?.edges[0]?.node?.id;
     }
 
-    const deleteMutation = customerId
-      ? `
-        mutation customerAddressDelete($addressId: ID!, $customerId: ID!) {
-          customerAddressDelete(addressId: $addressId, customerId: $customerId) {
-            deletedAddressId
-            userErrors {
-              field
-              message
-            }
-          }
-        }
-      `
-      : `
-        mutation customerAddressDelete($id: ID!) {
-          customerAddressDelete(id: $id) {
-            deletedCustomerAddressId
-            userErrors {
-              field
-              message
-            }
-          }
-        }
-      `;
+    if (!customerId) {
+      return { success: false, error: "Customer account could not be identified for address deletion." };
+    }
 
-    const variables = customerId ? { addressId, customerId } : { id: addressId };
+    const deleteMutation = `
+      mutation customerAddressDelete($addressId: ID!, $customerId: ID!) {
+        customerAddressDelete(addressId: $addressId, customerId: $customerId) {
+          deletedAddressId
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `;
 
     const deleteResponse = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': adminToken },
       body: JSON.stringify({
         query: deleteMutation,
-        variables,
+        variables: { addressId, customerId },
       }),
     });
 
@@ -289,7 +282,7 @@ export async function adminDeleteAddress(addressId: string, email?: string) {
 
     return {
       success: true,
-      deletedAddressId: payload?.deletedAddressId || payload?.deletedCustomerAddressId || addressId
+      deletedAddressId: payload?.deletedAddressId || addressId
     };
 
   } catch (error: any) {

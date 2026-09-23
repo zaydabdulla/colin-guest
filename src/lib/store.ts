@@ -482,7 +482,8 @@ export const useCartStore = create<CartState>()(
 
         // Google login: use Admin API adminDeleteAddress
         try {
-          const result = await adminDeleteAddress(addressId, user.email);
+          const { customerId } = get();
+          const result = await adminDeleteAddress(addressId, user.email, customerId || undefined);
           if (result.success) {
             set({
               user: {
@@ -494,10 +495,11 @@ export const useCartStore = create<CartState>()(
             return { success: true };
           }
           set({ isSyncing: false });
-          return { success: false, error: result.error };
-        } catch (error) {
+          return { success: false, error: result.error || "Failed to delete address" };
+        } catch (error: any) {
+          console.error("Delete address error:", error);
           set({ isSyncing: false });
-          return { success: false, error: "An unexpected error occurred during Admin sync" };
+          return { success: false, error: error?.message || "An unexpected error occurred during Admin sync" };
         }
       },
 
