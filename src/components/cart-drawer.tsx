@@ -4,7 +4,7 @@ import { useCartStore, type CartItem } from "@/lib/store";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { X, ShoppingBag, ArrowRight, Plus, ChevronRight, ArrowLeft, Loader2 } from "lucide-react";
+import { X, ShoppingBag, ArrowRight, Plus, ChevronRight, ArrowLeft, Loader2, MapPin } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { getAllProducts, createShopifyCheckout } from "@/lib/shopify";
 import { Product } from "@/lib/data";
@@ -13,13 +13,17 @@ import { trackMetaEvent } from "@/lib/meta-pixel";
 
 export function CartDrawer() {
   const router = useRouter();
-  const { items, isOpen, closeCart, removeFromCart, updateQuantity, addToCart } = useCartStore();
+  const { items, isOpen, closeCart, removeFromCart, updateQuantity, addToCart, user, isLoggedIn } = useCartStore();
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [showScrollArrow, setShowScrollArrow] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [isSocialLoading, setIsSocialLoading] = useState(false);
+  const [selectedAddressIndex, setSelectedAddressIndex] = useState(0);
+
+  const availableAddresses = (user?.addresses || []).filter((a: any) => Boolean(a && a.id && a.address1));
+  const selectedAddress = availableAddresses[selectedAddressIndex] || availableAddresses[0] || null;
 
   useEffect(() => {
     if (!isOpen) {
@@ -224,7 +228,12 @@ export function CartDrawer() {
                           setShowAuthPrompt(false);
                           setIsCheckingOut(true);
                           const state = useCartStore.getState();
-                          const result = await createShopifyCheckout(items, state.user?.email, state.accessToken);
+                          const targetAddress = selectedAddress ? {
+                            ...selectedAddress,
+                            firstName: (selectedAddress as any).firstName || state.user?.firstName || "",
+                            lastName: (selectedAddress as any).lastName || state.user?.lastName || ""
+                          } : null;
+                          const result = await createShopifyCheckout(items, state.user?.email, state.accessToken, targetAddress);
                           if (result.success && result.url) {
                             window.location.href = result.url;
                             setTimeout(() => setIsCheckingOut(false), 500);
@@ -373,6 +382,30 @@ export function CartDrawer() {
 
                       {items.length > 0 && (
                         <div className="p-5 pt-0 bg-[#fcfcfc] border-t border-black/[0.02]">
+                          {/* Selected Delivery Address Preview */}
+                          {isLoggedIn && selectedAddress && (
+                            <div className="mb-3 px-3.5 py-2.5 rounded-2xl bg-white border border-black/5 flex items-center justify-between shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                              <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                                <MapPin size={12} className="text-black/40 shrink-0" />
+                                <div className="min-w-0">
+                                  <p className="text-[7.5px] font-bold uppercase tracking-[0.2em] text-black/30 leading-none mb-0.5">Shipping Destination</p>
+                                  <p className="text-[10px] font-medium text-black truncate">
+                                    {selectedAddress.address1}{selectedAddress.city ? `, ${selectedAddress.city}` : ""}{selectedAddress.zip ? ` (${selectedAddress.zip})` : ""}
+                                  </p>
+                                </div>
+                              </div>
+                              {availableAddresses.length > 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedAddressIndex((prev) => (prev + 1) % availableAddresses.length)}
+                                  className="text-[8px] font-bold uppercase tracking-wider text-black/50 hover:text-black underline underline-offset-2 shrink-0 transition-colors"
+                                >
+                                  Change
+                                </button>
+                              )}
+                            </div>
+                          )}
+
                           <button
                             disabled={isCheckingOut}
                             onClick={async () => {
@@ -408,7 +441,13 @@ export function CartDrawer() {
                                 });
                               } catch (err) {}
 
-                              const result = await createShopifyCheckout(items, state.user?.email, state.accessToken);
+                              const targetAddress = selectedAddress ? {
+                                ...selectedAddress,
+                                firstName: (selectedAddress as any).firstName || state.user?.firstName || "",
+                                lastName: (selectedAddress as any).lastName || state.user?.lastName || ""
+                              } : null;
+
+                              const result = await createShopifyCheckout(items, state.user?.email, state.accessToken, targetAddress);
                               if (result.success && result.url) {
                                 window.location.href = result.url;
                                 setTimeout(() => setIsCheckingOut(false), 500);

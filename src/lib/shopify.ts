@@ -1033,7 +1033,24 @@ export async function customerAddressDelete(customerAccessToken: string, id: str
   return response.data?.customerAddressDelete;
 }
 
-export async function createShopifyCheckout(items: any[], email?: string, customerAccessToken?: string | null) {
+export interface ShippingAddressInput {
+  address1?: string;
+  address2?: string;
+  city?: string;
+  province?: string;
+  country?: string;
+  zip?: string;
+  phone?: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+export async function createShopifyCheckout(
+  items: any[], 
+  email?: string, 
+  customerAccessToken?: string | null,
+  shippingAddress?: ShippingAddressInput | null
+) {
   const lineItems = items.map(item => {
     let variantId = item.variantId;
     
@@ -1112,6 +1129,24 @@ export async function createShopifyCheckout(items: any[], email?: string, custom
   if (email) buyerIdentity.email = email;
   if (customerAccessToken) buyerIdentity.customerAccessToken = customerAccessToken;
 
+  if (shippingAddress && shippingAddress.address1) {
+    buyerIdentity.deliveryAddressPreferences = [
+      {
+        deliveryAddress: {
+          address1: shippingAddress.address1,
+          address2: shippingAddress.address2 || "",
+          city: shippingAddress.city || "",
+          province: shippingAddress.province || "",
+          country: "IN",
+          zip: shippingAddress.zip || "",
+          firstName: shippingAddress.firstName || "",
+          lastName: shippingAddress.lastName || "",
+          phone: shippingAddress.phone || ""
+        }
+      }
+    ];
+  }
+
   const variables = {
     input: {
       lines: lineItems,
@@ -1119,7 +1154,19 @@ export async function createShopifyCheckout(items: any[], email?: string, custom
     }
   };
 
-  const response = await shopifyFetch({ query, variables });
+  let response = await shopifyFetch({ query, variables });
+
+  // Fallback: If cartCreate failed because of address format in deliveryAddressPreferences, retry without it
+  if (response.data?.cartCreate?.userErrors?.length > 0 && buyerIdentity.deliveryAddressPreferences) {
+    delete buyerIdentity.deliveryAddressPreferences;
+    const fallbackVariables = {
+      input: {
+        lines: lineItems,
+        ...(Object.keys(buyerIdentity).length > 0 ? { buyerIdentity } : {})
+      }
+    };
+    response = await shopifyFetch({ query, variables: fallbackVariables });
+  }
 
   if (response.data?.cartCreate?.userErrors?.length > 0) {
     return { success: false, error: response.data.cartCreate.userErrors[0].message };
@@ -1128,7 +1175,26 @@ export async function createShopifyCheckout(items: any[], email?: string, custom
   const checkoutUrl = response.data?.cartCreate?.cart?.checkoutUrl;
 
   if (checkoutUrl) {
-    return { success: true, url: checkoutUrl };
+    try {
+      const url = new URL(checkoutUrl);
+      if (email) {
+        url.searchParams.set("checkout[email]", email);
+      }
+      if (shippingAddress) {
+        if (shippingAddress.firstName) url.searchParams.set("checkout[shipping_address][first_name]", shippingAddress.firstName);
+        if (shippingAddress.lastName) url.searchParams.set("checkout[shipping_address][last_name]", shippingAddress.lastName);
+        if (shippingAddress.address1) url.searchParams.set("checkout[shipping_address][address1]", shippingAddress.address1);
+        if (shippingAddress.address2) url.searchParams.set("checkout[shipping_address][address2]", shippingAddress.address2);
+        if (shippingAddress.city) url.searchParams.set("checkout[shipping_address][city]", shippingAddress.city);
+        if (shippingAddress.province) url.searchParams.set("checkout[shipping_address][province]", shippingAddress.province);
+        if (shippingAddress.zip) url.searchParams.set("checkout[shipping_address][zip]", shippingAddress.zip);
+        if (shippingAddress.country) url.searchParams.set("checkout[shipping_address][country]", shippingAddress.country || "India");
+        if (shippingAddress.phone) url.searchParams.set("checkout[shipping_address][phone]", shippingAddress.phone);
+      }
+      return { success: true, url: url.toString() };
+    } catch {
+      return { success: true, url: checkoutUrl };
+    }
   }
 
   return { success: false, error: "Failed to generate checkout URL." };
