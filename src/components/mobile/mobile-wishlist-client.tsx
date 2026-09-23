@@ -117,7 +117,7 @@ export function MobileWishlistClient() {
 
       {/* CONDITION 1: Guest + Empty Wishlist (Displays the splash screen) */}
       {!isLoggedIn && wishlistItems.length === 0 && (
-        <div className="max-w-[1400px] mx-auto px-6 pt-20 flex flex-col items-center">
+        <div className="max-w-[1400px] mx-auto px-6 pt-20 pb-28 flex flex-col items-center">
           <div className="text-center w-full max-w-[500px] mb-12">
             <div className="mb-8 flex justify-center">
               <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center border border-black/5 shadow-inner">

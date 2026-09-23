@@ -23,7 +23,7 @@ export default function WishlistDashboard() {
       </div>
 
       {/* DESKTOP VIEW: Strict Isolation */}
-      <main className="hidden md:block min-h-screen bg-white text-black font-sans relative pt-[72px]">
+      <div className="hidden md:block w-full min-h-[calc(100vh-160px)] bg-white text-black font-sans relative pt-[72px] pb-28 md:pb-36">
         {/* CONDITION 2: Guest + Has Items (Displays the slim top banner) */}
         {!isLoggedIn && wishlistItems.length > 0 && (
           <div className="w-full border-b border-black/10 flex justify-between items-center py-6 px-12 bg-white">
@@ -108,7 +108,7 @@ export default function WishlistDashboard() {
             </Link>
           </div>
         )}
-      </main>
+      </div>
     </>
   );
 }

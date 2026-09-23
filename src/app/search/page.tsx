@@ -12,12 +12,12 @@ export default async function SearchPage({
 
   if (!searchQuery) {
     return (
-      <main className="min-h-screen bg-white text-black font-sans pt-32 px-8">
+      <div className="w-full min-h-[calc(100vh-160px)] bg-white text-black font-sans pt-32 pb-28 md:pb-36 px-4 sm:px-8">
         <h1 className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">Search Results</h1>
         <div className="w-full py-32 flex flex-col items-center justify-center border border-dashed border-black/10 rounded-lg mt-8">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">Please enter a search query</p>
         </div>
-      </main>
+      </div>
     );
   }
 

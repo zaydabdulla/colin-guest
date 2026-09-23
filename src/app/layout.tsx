@@ -86,18 +86,18 @@ export default function RootLayout({
 
             <SmoothScroll>
               <div className="flex flex-col min-h-screen relative">
-                {/* Footers - Rendered before children for layering priority */}
-                <div className="block md:hidden order-last relative z-50">
-                  <MobileFooter />
-                </div>
-                <div className="hidden md:block order-last relative z-50">
-                  <Footer />
-                </div>
-
                 {/* Main content wrapper */}
-                <main className="flex-1 order-first">
+                <main className="flex-1 w-full relative">
                   {children}
                 </main>
+
+                {/* Footers */}
+                <div className="block md:hidden relative z-40 w-full">
+                  <MobileFooter />
+                </div>
+                <div className="hidden md:block relative z-40 w-full">
+                  <Footer />
+                </div>
               </div>
             </SmoothScroll>
 

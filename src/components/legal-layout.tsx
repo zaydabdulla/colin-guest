@@ -14,8 +14,8 @@ interface LegalPageProps {
 
 export default function LegalLayout({ title, content, children }: LegalPageProps) {
   return (
-    <main className="w-full bg-white text-black font-sans min-h-screen">
-      <div className="max-w-4xl pt-40 pb-80 px-6 md:px-24">
+    <div className="w-full bg-white text-black font-sans min-h-[calc(100vh-160px)]">
+      <div className="max-w-4xl pt-28 md:pt-40 pb-28 md:pb-36 px-6 md:px-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -56,6 +56,6 @@ export default function LegalLayout({ title, content, children }: LegalPageProps
 
         </motion.div>
       </div>
-    </main>
+    </div>
   );
 }

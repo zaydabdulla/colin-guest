@@ -199,7 +199,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#fcfcfc] pt-24 pb-16 px-8 font-sans">
+    <div className="w-full min-h-[calc(100vh-160px)] bg-[#fcfcfc] pt-24 pb-28 md:pb-36 px-4 sm:px-8 font-sans">
       <div className="max-w-4xl mx-auto relative">
         
         {/* Top Navigation */}
@@ -736,6 +736,6 @@ export default function ProfilePage() {
           </div>
         )}
       </AnimatePresence>
-    </main>
+    </div>
   );
 }
