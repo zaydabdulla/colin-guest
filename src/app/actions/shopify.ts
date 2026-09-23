@@ -124,13 +124,22 @@ export async function adminAddAddress(email: string, address: any) {
     });
  
     const addData = await addResponse.json();
+    if (addData.errors && addData.errors.length > 0) {
+      console.error("Shopify GraphQL errors in customerAddressCreate:", addData.errors);
+      return { success: false, error: addData.errors[0]?.message || "Shopify GraphQL error" };
+    }
     if (addData.data?.customerAddressCreate?.userErrors?.length > 0) {
       return { success: false, error: addData.data.customerAddressCreate.userErrors[0].message };
     }
  
+    const createdAddress = addData.data?.customerAddressCreate?.customerAddress;
+    if (!createdAddress || !createdAddress.id) {
+      return { success: false, error: "Shopify did not return a valid address." };
+    }
+
     return { 
       success: true, 
-      address: addData.data?.customerAddressCreate?.customerAddress
+      address: createdAddress
     };
 
   } catch (error: any) {
@@ -305,7 +314,7 @@ export async function adminGetCustomerData(email: string) {
               id
               firstName
               lastName
-              addresses(first: 10) {
+              addresses {
                 id
                 address1
                 address2

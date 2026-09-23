@@ -15,8 +15,12 @@ function SyncManagerInternal() {
   // Multi-tab sync: automatically rehydrate store when another tab updates localStorage
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "bluorng-storage") {
-        useCartStore.persist.rehydrate();
+      if (e.key === "bluorng-storage" && typeof window !== "undefined") {
+        try {
+          useCartStore.persist.rehydrate();
+        } catch (err) {
+          console.error("Storage rehydrate error:", err);
+        }
       }
     };
 
@@ -24,12 +28,14 @@ function SyncManagerInternal() {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  // Fresh profile & address fetch on page load/refresh
+  // Fresh profile & address fetch once on page load/refresh
+  const hasRefreshedRef = useRef(false);
   useEffect(() => {
-    if (isLoggedIn && user?.email) {
+    if (isLoggedIn && user?.email && !hasRefreshedRef.current) {
+      hasRefreshedRef.current = true;
       refreshCustomerData();
     }
-  }, [isLoggedIn, user?.email]);
+  }, [isLoggedIn, user?.email, refreshCustomerData]);
 
   useEffect(() => {
     // If user is logged in via Google but not in our store, sync them

@@ -315,12 +315,13 @@ export const useCartStore = create<CartState>()(
           if (accessToken) {
             const customer = await getCustomer(accessToken);
             if (customer) {
+              const freshAddresses = (customer.addresses?.edges?.map((e: any) => e.node) || []).filter((a: any) => Boolean(a && a.id));
               set({
                 user: {
                   ...user,
                   firstName: customer.firstName || user.firstName,
                   lastName: customer.lastName || user.lastName,
-                  addresses: customer.addresses?.edges.map((e: any) => e.node) || []
+                  addresses: freshAddresses
                 }
               });
               return;
@@ -329,13 +330,14 @@ export const useCartStore = create<CartState>()(
 
           // 2. If no accessToken (Google user) or token expired, use Shopify Admin server action
           const dataResult = await adminGetCustomerData(user.email);
-          if (dataResult.success && dataResult.addresses) {
+          if (dataResult.success && Array.isArray(dataResult.addresses)) {
+            const freshAddresses = dataResult.addresses.filter((a: any) => Boolean(a && a.id));
             set({
               user: {
                 ...user,
                 firstName: dataResult.firstName || user.firstName,
                 lastName: dataResult.lastName || user.lastName,
-                addresses: dataResult.addresses
+                addresses: freshAddresses
               }
             });
           }
@@ -355,11 +357,12 @@ export const useCartStore = create<CartState>()(
         if (accessToken) {
           try {
             const result = await customerAddressCreate(accessToken, address);
-            if (result?.customerAddress) {
+            if (result?.customerAddress?.id) {
+              const safeAddresses = (user.addresses || []).filter((a: any) => Boolean(a && a.id));
               set({
                 user: {
                   ...user,
-                  addresses: [...(user.addresses || []), result.customerAddress]
+                  addresses: [...safeAddresses, result.customerAddress]
                 },
                 isSyncing: false
               });
@@ -379,18 +382,19 @@ export const useCartStore = create<CartState>()(
         // If we DON'T have an accessToken (Google login), use Admin API via Server Action
         try {
           const result = await adminAddAddress(user.email, address);
-          if (result.success) {
+          if (result.success && result.address?.id) {
+            const safeAddresses = (user.addresses || []).filter((a: any) => Boolean(a && a.id));
             set({
               user: {
                 ...user,
-                addresses: [...(user.addresses || []), result.address]
+                addresses: [...safeAddresses, result.address]
               },
               isSyncing: false
             });
             return { success: true };
           }
           set({ isSyncing: false });
-          return { success: false, error: result.error };
+          return { success: false, error: result.error || "Failed to add address to your account" };
         } catch (error) {
           set({ isSyncing: false });
           return { success: false, error: "An unexpected error occurred during Admin sync" };
@@ -406,11 +410,11 @@ export const useCartStore = create<CartState>()(
         if (accessToken) {
           try {
             const result = await customerAddressUpdate(accessToken, addressId, address);
-            if (result?.customerAddress) {
+            if (result?.customerAddress?.id) {
               set({
                 user: {
                   ...user,
-                  addresses: (user.addresses || []).map((a: any) =>
+                  addresses: (user.addresses || []).filter((a: any) => Boolean(a && a.id)).map((a: any) =>
                     a.id === addressId ? { ...a, ...result.customerAddress } : a
                   )
                 },
@@ -429,11 +433,11 @@ export const useCartStore = create<CartState>()(
         // Google login: use Admin API adminUpdateAddress
         try {
           const result = await adminUpdateAddress(user.email, addressId, address);
-          if (result.success) {
+          if (result.success && result.address?.id) {
             set({
               user: {
                 ...user,
-                addresses: (user.addresses || []).map((a: any) =>
+                addresses: (user.addresses || []).filter((a: any) => Boolean(a && a.id)).map((a: any) =>
                   a.id === addressId ? { ...a, ...result.address } : a
                 )
               },
@@ -442,7 +446,7 @@ export const useCartStore = create<CartState>()(
             return { success: true };
           }
           set({ isSyncing: false });
-          return { success: false, error: result.error };
+          return { success: false, error: result.error || "Failed to update address" };
         } catch (error) {
           set({ isSyncing: false });
           return { success: false, error: "An unexpected error occurred during Admin sync" };

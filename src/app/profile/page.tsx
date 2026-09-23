@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/store";
 import { motion, AnimatePresence } from "framer-motion";
@@ -85,12 +85,29 @@ export default function ProfilePage() {
     }
   }, [isHydrated, isLoggedIn, router]);
 
-  // Re-fetch fresh customer details & addresses from Shopify on mount/refresh
+  // Re-fetch fresh customer details & addresses from Shopify once on mount/refresh
+  const hasRefreshedData = useRef(false);
   useEffect(() => {
-    if (isHydrated && isLoggedIn && user?.email) {
+    if (isHydrated && isLoggedIn && user?.email && !hasRefreshedData.current) {
+      hasRefreshedData.current = true;
       refreshCustomerData();
     }
-  }, [isHydrated, isLoggedIn, user?.email]);
+  }, [isHydrated, isLoggedIn, user?.email, refreshCustomerData]);
+
+  // Self-heal: Sanitize any corrupted/null addresses in localStorage immediately
+  useEffect(() => {
+    if (user?.addresses && Array.isArray(user.addresses)) {
+      const hasBad = user.addresses.some(a => !a || typeof a !== "object" || !a.id);
+      if (hasBad) {
+        useCartStore.setState({
+          user: {
+            ...user,
+            addresses: user.addresses.filter(a => Boolean(a && typeof a === "object" && a.id))
+          }
+        });
+      }
+    }
+  }, [user]);
 
   useEffect(() => {
     if (user) {
@@ -433,10 +450,10 @@ export default function ProfilePage() {
               </AnimatePresence>
 
               <div className="space-y-4">
-                {user.addresses && user.addresses.length > 0 ? (
-                  user.addresses.map((address, idx) => (
+                {user.addresses && user.addresses.filter(a => Boolean(a && typeof a === "object" && a.id)).length > 0 ? (
+                  user.addresses.filter(a => Boolean(a && typeof a === "object" && a.id)).map((address, idx) => (
                     <motion.div 
-                      key={address.id}
+                      key={address.id || `address-${idx}`}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.1 }}
@@ -533,10 +550,10 @@ export default function ProfilePage() {
                                 <Building2 size={16} className="text-black/20" />
                               </div>
                               <div className="space-y-0.5">
-                                <p className="text-[11px] font-bold text-black tracking-wide">{address.address1}</p>
+                                <p className="text-[11px] font-bold text-black tracking-wide">{address.address1 || "Address"}</p>
                                 {address.address2 && <p className="text-[10px] font-medium text-black/60">{address.address2}</p>}
-                                <p className="text-[10px] font-medium text-black/60">{address.city}, {address.province} {address.zip}</p>
-                                <p className="text-[10px] font-medium text-black/60 uppercase tracking-widest">{address.country}</p>
+                                <p className="text-[10px] font-medium text-black/60">{[address.city, address.province, address.zip].filter(Boolean).join(", ")}</p>
+                                <p className="text-[10px] font-medium text-black/60 uppercase tracking-widest">{address.country || "India"}</p>
                               </div>
                             </div>
                             <div className="flex items-center gap-3 opacity-60 md:opacity-40 group-hover:opacity-100 transition-opacity">
