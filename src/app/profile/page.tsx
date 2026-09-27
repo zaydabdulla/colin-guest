@@ -444,9 +444,9 @@ export default function ProfilePage() {
                               type="tel" 
                               inputMode="numeric"
                               maxLength={10}
-                              value={newAddress.phone.replace(/^\+91/, '').replace(/[^0-9]/g, '')}
+                              value={newAddress.phone ? newAddress.phone.replace(/[^0-9]/g, '').slice(-10) : ''}
                               onChange={(e) => {
-                                const val = e.target.value.replace(/[^0-9]/g, '');
+                                const val = e.target.value.replace(/[^0-9]/g, '').slice(-10);
                                 setNewAddress({...newAddress, phone: val ? `+91${val}` : ''});
                               }}
                               className="w-full text-xs outline-none bg-transparent text-black"
@@ -547,9 +547,9 @@ export default function ProfilePage() {
                                     type="tel" 
                                     inputMode="numeric"
                                     maxLength={10}
-                                    value={(editAddress.phone || '').replace(/^\+91/, '').replace(/[^0-9]/g, '')}
+                                    value={editAddress.phone ? editAddress.phone.replace(/[^0-9]/g, '').slice(-10) : ''}
                                     onChange={(e) => {
-                                      const val = e.target.value.replace(/[^0-9]/g, '');
+                                      const val = e.target.value.replace(/[^0-9]/g, '').slice(-10);
                                       setEditAddress({...editAddress, phone: val ? `+91${val}` : ''});
                                     }}
                                     className="w-full text-xs outline-none bg-transparent text-black"

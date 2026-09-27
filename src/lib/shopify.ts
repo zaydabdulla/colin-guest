@@ -1059,14 +1059,14 @@ export interface ShippingAddressInput {
 
 export function formatIndianPhone(phone?: string): string {
   if (!phone) return "";
-  const cleaned = phone.replace(/[^0-9+]/g, "");
-  if (!cleaned) return "";
-  if (cleaned.startsWith("+91")) return cleaned;
-  if (cleaned.startsWith("91") && cleaned.length === 12) return `+${cleaned}`;
-  if (cleaned.startsWith("0") && cleaned.length === 11) return `+91${cleaned.slice(1)}`;
-  if (cleaned.length === 10) return `+91${cleaned}`;
-  if (cleaned.startsWith("+")) return cleaned;
-  return `+91${cleaned}`;
+  const digits = phone.replace(/[^0-9]/g, "");
+  if (!digits) return "";
+  // Extract last 10 digits to strip any accidental +1 or foreign country codes
+  if (digits.length >= 10) {
+    const last10 = digits.slice(-10);
+    return `+91${last10}`;
+  }
+  return `+91${digits}`;
 }
 
 export async function createShopifyCheckout(
@@ -1149,11 +1149,14 @@ export async function createShopifyCheckout(
     }
   `;
 
-  const buyerIdentity: any = {};
+  const normalizedPhone = shippingAddress?.phone ? formatIndianPhone(shippingAddress.phone) : "";
+
+  const buyerIdentity: any = {
+    countryCode: "IN"
+  };
   if (email) buyerIdentity.email = email;
   if (customerAccessToken) buyerIdentity.customerAccessToken = customerAccessToken;
-
-  const normalizedPhone = shippingAddress?.phone ? formatIndianPhone(shippingAddress.phone) : "";
+  if (normalizedPhone) buyerIdentity.phone = normalizedPhone;
 
   if (shippingAddress && shippingAddress.address1) {
     buyerIdentity.deliveryAddressPreferences = [
@@ -1206,6 +1209,12 @@ export async function createShopifyCheckout(
       if (email) {
         url.searchParams.set("checkout[email]", email);
       }
+      url.searchParams.set("checkout[country]", "IN");
+      url.searchParams.set("locale", "en-IN");
+      if (normalizedPhone) {
+        url.searchParams.set("checkout[phone]", normalizedPhone);
+        url.searchParams.set("checkout[shipping_address][phone]", normalizedPhone);
+      }
       if (shippingAddress) {
         if (shippingAddress.firstName) url.searchParams.set("checkout[shipping_address][first_name]", shippingAddress.firstName);
         if (shippingAddress.lastName) url.searchParams.set("checkout[shipping_address][last_name]", shippingAddress.lastName);
@@ -1214,8 +1223,8 @@ export async function createShopifyCheckout(
         if (shippingAddress.city) url.searchParams.set("checkout[shipping_address][city]", shippingAddress.city);
         if (shippingAddress.province) url.searchParams.set("checkout[shipping_address][province]", shippingAddress.province);
         if (shippingAddress.zip) url.searchParams.set("checkout[shipping_address][zip]", shippingAddress.zip);
-        url.searchParams.set("checkout[shipping_address][country]", shippingAddress.country || "India");
-        if (normalizedPhone) url.searchParams.set("checkout[shipping_address][phone]", normalizedPhone);
+        url.searchParams.set("checkout[shipping_address][country]", "India");
+        url.searchParams.set("checkout[shipping_address][country_code]", "IN");
       }
       return { success: true, url: url.toString() };
     } catch {
