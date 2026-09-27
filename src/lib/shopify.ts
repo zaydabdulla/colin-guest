@@ -940,6 +940,12 @@ export async function customerReset(id: string, input: any) {
 }
 
 export async function customerAddressCreate(customerAccessToken: string, address: any) {
+  const sanitizedAddress = {
+    ...address,
+    country: address.country || "India",
+    phone: formatIndianPhone(address.phone)
+  };
+
   const query = `
     mutation customerAddressCreate($customerAccessToken: String!, $address: MailingAddressInput!) {
       customerAddressCreate(customerAccessToken: $customerAccessToken, address: $address) {
@@ -966,7 +972,7 @@ export async function customerAddressCreate(customerAccessToken: string, address
     query,
     variables: {
       customerAccessToken,
-      address,
+      address: sanitizedAddress,
     },
   });
 
@@ -974,6 +980,12 @@ export async function customerAddressCreate(customerAccessToken: string, address
 }
 
 export async function customerAddressUpdate(customerAccessToken: string, id: string, address: any) {
+  const sanitizedAddress = {
+    ...address,
+    country: address.country || "India",
+    phone: formatIndianPhone(address.phone)
+  };
+
   const query = `
     mutation customerAddressUpdate($customerAccessToken: String!, $id: ID!, $address: MailingAddressInput!) {
       customerAddressUpdate(customerAccessToken: $customerAccessToken, id: $id, address: $address) {
@@ -1001,7 +1013,7 @@ export async function customerAddressUpdate(customerAccessToken: string, id: str
     variables: {
       customerAccessToken,
       id,
-      address,
+      address: sanitizedAddress,
     },
   });
 

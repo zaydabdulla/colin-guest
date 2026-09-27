@@ -1,7 +1,7 @@
 "use server";
 
 import { getAdminToken } from "@/lib/shopify-admin";
-import { customerRecover } from "@/lib/shopify";
+import { customerRecover, formatIndianPhone } from "@/lib/shopify";
 import { headers } from "next/headers";
 import { checkRateLimit } from "@/lib/rate-limit";
 
@@ -108,6 +108,12 @@ export async function adminAddAddress(email: string, address: any) {
       }
     `;
 
+    const sanitizedAddress = {
+      ...address,
+      country: address.country || "India",
+      phone: formatIndianPhone(address.phone)
+    };
+
     const addResponse = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
       method: 'POST',
       headers: {
@@ -118,7 +124,7 @@ export async function adminAddAddress(email: string, address: any) {
         query: addQuery,
         variables: {
           customerId: customerId,
-          address: address
+          address: sanitizedAddress
         }
       }),
     });
@@ -186,12 +192,18 @@ export async function adminUpdateAddress(email: string, addressId: string, addre
       }
     `;
 
+    const sanitizedAddress = {
+      ...address,
+      country: address.country || "India",
+      phone: formatIndianPhone(address.phone)
+    };
+
     const updateResponse = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': adminToken },
       body: JSON.stringify({
         query: updateMutation,
-        variables: { customerId, addressId, address }
+        variables: { customerId, addressId, address: sanitizedAddress }
       }),
     });
 
