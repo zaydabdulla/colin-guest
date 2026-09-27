@@ -23,6 +23,7 @@ import {
   ArrowUpRight
 } from "lucide-react";
 import Link from "next/link";
+import { formatIndianPhone } from "@/lib/shopify";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -141,7 +142,12 @@ export default function ProfilePage() {
     e.preventDefault();
     setError(null);
     setIsAddingAddressLoading(true);
-    const result = await addAddress(newAddress);
+    const sanitizedAddress = {
+      ...newAddress,
+      phone: formatIndianPhone(newAddress.phone),
+      country: "India"
+    };
+    const result = await addAddress(sanitizedAddress);
     setIsAddingAddressLoading(false);
     if (result.success) {
       setIsAddingAddress(false);
@@ -178,7 +184,12 @@ export default function ProfilePage() {
     if (!editingAddressId) return;
     setError(null);
     setIsUpdatingAddress(true);
-    const result = await updateAddress(editingAddressId, editAddress);
+    const sanitizedAddress = {
+      ...editAddress,
+      phone: formatIndianPhone(editAddress.phone),
+      country: "India"
+    };
+    const result = await updateAddress(editingAddressId, sanitizedAddress);
     setIsUpdatingAddress(false);
     if (result.success) {
       setEditingAddressId(null);
@@ -426,14 +437,22 @@ export default function ProfilePage() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[8px] font-bold uppercase tracking-widest text-black/30">Phone Number</label>
-                          <input 
-                            type="text" 
-                            value={newAddress.phone}
-                            onChange={(e) => setNewAddress({...newAddress, phone: e.target.value})}
-                            className="w-full border-b border-black/10 py-1 text-xs focus:border-black outline-none transition-colors bg-transparent text-black"
-                            placeholder="Phone number"
-                          />
+                          <label className="text-[8px] font-bold uppercase tracking-widest text-black/30">Phone Number (India)</label>
+                          <div className="flex items-center border-b border-black/10 focus-within:border-black transition-colors py-1">
+                            <span className="text-xs font-semibold text-black/40 pr-2 select-none">+91</span>
+                            <input 
+                              type="tel" 
+                              inputMode="numeric"
+                              maxLength={10}
+                              value={newAddress.phone.replace(/^\+91/, '').replace(/[^0-9]/g, '')}
+                              onChange={(e) => {
+                                const val = e.target.value.replace(/[^0-9]/g, '');
+                                setNewAddress({...newAddress, phone: val ? `+91${val}` : ''});
+                              }}
+                              className="w-full text-xs outline-none bg-transparent text-black"
+                              placeholder="10-digit mobile number"
+                            />
+                          </div>
                         </div>
                       </div>
                       
@@ -521,11 +540,22 @@ export default function ProfilePage() {
                                 />
                               </div>
                               <div className="space-y-1">
-                                <label className="text-[8px] font-bold uppercase tracking-widest text-black/30">Phone Number</label>
-                                <input type="text" value={editAddress.phone}
-                                  onChange={(e) => setEditAddress({...editAddress, phone: e.target.value})}
-                                  className="w-full border-b border-black/10 py-1 text-xs focus:border-black outline-none transition-colors bg-transparent text-black"
-                                />
+                                <label className="text-[8px] font-bold uppercase tracking-widest text-black/30">Phone Number (India)</label>
+                                <div className="flex items-center border-b border-black/10 focus-within:border-black transition-colors py-1">
+                                  <span className="text-xs font-semibold text-black/40 pr-2 select-none">+91</span>
+                                  <input 
+                                    type="tel" 
+                                    inputMode="numeric"
+                                    maxLength={10}
+                                    value={(editAddress.phone || '').replace(/^\+91/, '').replace(/[^0-9]/g, '')}
+                                    onChange={(e) => {
+                                      const val = e.target.value.replace(/[^0-9]/g, '');
+                                      setEditAddress({...editAddress, phone: val ? `+91${val}` : ''});
+                                    }}
+                                    className="w-full text-xs outline-none bg-transparent text-black"
+                                    placeholder="10-digit mobile number"
+                                  />
+                                </div>
                               </div>
                             </div>
 
@@ -554,6 +584,7 @@ export default function ProfilePage() {
                                 {address.address2 && <p className="text-[10px] font-medium text-black/60">{address.address2}</p>}
                                 <p className="text-[10px] font-medium text-black/60">{[address.city, address.province, address.zip].filter(Boolean).join(", ")}</p>
                                 <p className="text-[10px] font-medium text-black/60 uppercase tracking-widest">{address.country || "India"}</p>
+                                {address.phone && <p className="text-[10px] font-medium text-black/40 tracking-wider">{formatIndianPhone(address.phone)}</p>}
                               </div>
                             </div>
                             <div className="flex items-center gap-3 opacity-60 md:opacity-40 group-hover:opacity-100 transition-opacity">

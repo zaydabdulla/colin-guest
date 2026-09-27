@@ -1045,6 +1045,18 @@ export interface ShippingAddressInput {
   lastName?: string;
 }
 
+export function formatIndianPhone(phone?: string): string {
+  if (!phone) return "";
+  const cleaned = phone.replace(/[^0-9+]/g, "");
+  if (!cleaned) return "";
+  if (cleaned.startsWith("+91")) return cleaned;
+  if (cleaned.startsWith("91") && cleaned.length === 12) return `+${cleaned}`;
+  if (cleaned.startsWith("0") && cleaned.length === 11) return `+91${cleaned.slice(1)}`;
+  if (cleaned.length === 10) return `+91${cleaned}`;
+  if (cleaned.startsWith("+")) return cleaned;
+  return `+91${cleaned}`;
+}
+
 export async function createShopifyCheckout(
   items: any[], 
   email?: string, 
@@ -1129,6 +1141,8 @@ export async function createShopifyCheckout(
   if (email) buyerIdentity.email = email;
   if (customerAccessToken) buyerIdentity.customerAccessToken = customerAccessToken;
 
+  const normalizedPhone = shippingAddress?.phone ? formatIndianPhone(shippingAddress.phone) : "";
+
   if (shippingAddress && shippingAddress.address1) {
     buyerIdentity.deliveryAddressPreferences = [
       {
@@ -1141,7 +1155,7 @@ export async function createShopifyCheckout(
           zip: shippingAddress.zip || "",
           firstName: shippingAddress.firstName || "",
           lastName: shippingAddress.lastName || "",
-          phone: shippingAddress.phone || ""
+          phone: normalizedPhone || ""
         }
       }
     ];
@@ -1188,8 +1202,8 @@ export async function createShopifyCheckout(
         if (shippingAddress.city) url.searchParams.set("checkout[shipping_address][city]", shippingAddress.city);
         if (shippingAddress.province) url.searchParams.set("checkout[shipping_address][province]", shippingAddress.province);
         if (shippingAddress.zip) url.searchParams.set("checkout[shipping_address][zip]", shippingAddress.zip);
-        if (shippingAddress.country) url.searchParams.set("checkout[shipping_address][country]", shippingAddress.country || "India");
-        if (shippingAddress.phone) url.searchParams.set("checkout[shipping_address][phone]", shippingAddress.phone);
+        url.searchParams.set("checkout[shipping_address][country]", shippingAddress.country || "India");
+        if (normalizedPhone) url.searchParams.set("checkout[shipping_address][phone]", normalizedPhone);
       }
       return { success: true, url: url.toString() };
     } catch {

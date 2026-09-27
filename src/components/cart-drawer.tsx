@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { X, ShoppingBag, ArrowRight, Plus, ChevronRight, ArrowLeft, Loader2 } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
-import { getAllProducts, createShopifyCheckout } from "@/lib/shopify";
+import { getAllProducts, createShopifyCheckout, formatIndianPhone } from "@/lib/shopify";
 import { Product } from "@/lib/data";
 import { signIn as socialSignIn } from "next-auth/react";
 import { trackMetaEvent } from "@/lib/meta-pixel";
@@ -228,6 +228,7 @@ export function CartDrawer() {
                           const state = useCartStore.getState();
                           const targetAddress = primaryAddress ? {
                             ...primaryAddress,
+                            phone: formatIndianPhone(primaryAddress.phone),
                             firstName: (primaryAddress as any).firstName || state.user?.firstName || "",
                             lastName: (primaryAddress as any).lastName || state.user?.lastName || ""
                           } : null;
@@ -417,6 +418,7 @@ export function CartDrawer() {
 
                               const targetAddress = primaryAddress ? {
                                 ...primaryAddress,
+                                phone: formatIndianPhone(primaryAddress.phone),
                                 firstName: (primaryAddress as any).firstName || state.user?.firstName || "",
                                 lastName: (primaryAddress as any).lastName || state.user?.lastName || ""
                               } : null;
