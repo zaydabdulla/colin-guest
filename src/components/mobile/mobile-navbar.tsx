@@ -206,7 +206,7 @@ export function MobileNavbar() {
 
 
       {/* 2. iOS-STYLE GLIDING BOTTOM NAV (Mobile Only) */}
-      <div className="fixed bottom-6 left-0 right-0 z-40 px-6 flex justify-center pointer-events-none">
+      <div className="fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] left-0 right-0 z-[320] px-6 flex justify-center pointer-events-none">
         <div className="pointer-events-auto relative flex items-center justify-between px-7 py-2.5 bg-white/[0.08] backdrop-blur-[40px] backdrop-saturate-[2.1] border border-white/20 border-t-white/40 border-l-white/30 rounded-full shadow-[0_15px_35px_rgba(0,0,0,0.25)] w-full max-w-[260px] overflow-hidden">
           {/* Active Gliding Pill Background */}
           <div className="absolute inset-y-1.5 left-7 right-7 flex pointer-events-none">

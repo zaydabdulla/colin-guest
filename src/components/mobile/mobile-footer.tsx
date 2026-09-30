@@ -86,8 +86,8 @@ export function MobileFooter() {
   ];
 
   return (
-    <footer className={`relative w-full z-40 ${footerBg} ${isAboutPage ? "mt-[-40px]" : "mt-0"}`}>
-      <div className={`relative w-full rounded-t-[30px] pt-10 pb-20 px-6 overflow-hidden transition-all duration-1000 shadow-[0_-15px_40px_rgba(0,0,0,0.08)] ${isAboutPage ? "bg-black/20 backdrop-blur-3xl text-white" : "bg-[#f2f2f4] text-black"
+    <footer className={`relative w-full z-10 ${footerBg} ${isAboutPage ? "mt-[-40px]" : "mt-0"}`}>
+      <div className={`relative w-full rounded-t-[30px] pt-10 pb-[calc(6.5rem+env(safe-area-inset-bottom,0px))] px-6 overflow-hidden transition-all duration-1000 shadow-[0_-15px_40px_rgba(0,0,0,0.08)] ${isAboutPage ? "bg-black/20 backdrop-blur-3xl text-white" : "bg-[#f2f2f4] text-black"
         }`}>
 
         {/* LOGO WATERMARK - Slightly smaller and higher */}

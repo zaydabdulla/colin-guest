@@ -90,10 +90,10 @@ export default function RootLayout({
                 </main>
 
                 {/* Footers */}
-                <div className="block md:hidden relative z-40 w-full">
+                <div className="block md:hidden relative z-10 w-full">
                   <MobileFooter />
                 </div>
-                <div className="hidden md:block relative z-40 w-full">
+                <div className="hidden md:block relative z-10 w-full">
                   <Footer />
                 </div>
               </div>
