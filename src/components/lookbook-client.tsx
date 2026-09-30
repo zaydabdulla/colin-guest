@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -20,6 +20,16 @@ export default function LookbookClient({ products }: LookbookClientProps) {
 
   // Track the scroll of the whole page
   const { scrollYProgress } = useScroll({ container: containerRef });
+  const activeFloat = useTransform(scrollYProgress, [0, 1], [0, totalItems - 0.7]);
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  useEffect(() => {
+    const unsubscribe = activeFloat.on("change", (latest) => {
+      const rounded = Math.round(latest);
+      setActiveIdx((prev) => (prev !== rounded ? rounded : prev));
+    });
+    return () => unsubscribe();
+  }, [activeFloat]);
   
   return (
     <main ref={containerRef} className="bg-[#f9f9fa] text-black font-sans relative h-screen overflow-y-scroll snap-y snap-mandatory hide-scrollbar">
@@ -27,15 +37,18 @@ export default function LookbookClient({ products }: LookbookClientProps) {
         {/* LEFT/CENTER: Sticky Carousel */}
         <div className="w-[75%] sticky top-20 h-[calc(100vh-5rem)] flex items-center justify-center z-10 overflow-hidden">
           <div className="relative w-full h-[85%] flex items-center justify-center">
-             {repeatedProducts.map((model, index) => (
-                <ScrollModel 
-                  key={`${model.id}-${index}`}
-                  model={model}
-                  index={index}
-                  total={totalItems}
-                  progress={scrollYProgress}
-                />
-             ))}
+             {repeatedProducts.map((model, index) => {
+                // Windowing: only render models within active visible range
+                if (Math.abs(index - activeIdx) > 3) return null;
+                return (
+                  <ScrollModel 
+                    key={`${model.id}-${index}`}
+                    model={model}
+                    index={index}
+                    activeFloat={activeFloat}
+                  />
+                );
+             })}
           </div>
         </div>
 
@@ -88,15 +101,14 @@ export default function LookbookClient({ products }: LookbookClientProps) {
   );
 }
 
-function ScrollModel({ model, index, total, progress }: any) {
-  const activeFloat = useTransform(progress, [0, 1], [0, total - 0.7]);
-  const relativePosRaw = useTransform(activeFloat, v => index - v);
-  const relativePos = useTransform(relativePosRaw, v => Math.max(-1.5, Math.min(v, 4)));
+function ScrollModel({ model, index, activeFloat }: any) {
+  const relativePosRaw = useTransform(activeFloat, (v: number) => index - v);
+  const relativePos = useTransform(relativePosRaw, (v: number) => Math.max(-1.5, Math.min(v, 4)));
 
   const x = useTransform(relativePos, [-1, 0, 1, 2, 3], [600, 180, -120, -320, -480], { clamp: true });
   const scale = useTransform(relativePos, [-1, 0, 1, 2, 3], [1.1, 1.0, 0.72, 0.52, 0.35], { clamp: true });
   const opacity = useTransform(relativePos, [-1, -0.5, 0, 1, 2, 3], [0, 0.8, 1, 0.75, 0.35, 0], { clamp: true });
-  const zIndex = useTransform(relativePos, v => Math.round(100 - Math.abs(v) * 20));
+  const zIndex = useTransform(relativePos, (v: number) => Math.round(100 - Math.abs(v) * 20));
   
   return (
     <motion.div 
@@ -106,18 +118,17 @@ function ScrollModel({ model, index, total, progress }: any) {
         opacity, 
         zIndex,
         z: 0,
-        willChange: "transform, opacity",
         backfaceVisibility: "hidden" as any
       }}
       className="absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center pointer-events-none"
     >
-      <div className="relative w-full h-[85vh] max-w-[80vw]">
+      <div className="relative w-full h-full max-w-[80vw] flex items-center justify-center">
         <Image 
           src={model.src} 
           alt={model.title} 
           fill 
           className="object-contain" 
-          priority={index < 10} 
+          priority={index < 5} 
           sizes="(max-width: 768px) 100vw, 80vw"
         />
       </div>
