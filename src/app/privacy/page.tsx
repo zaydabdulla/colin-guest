@@ -60,7 +60,7 @@ export default function PrivacyPage() {
       ]
     },
     {
-      text: "To exercise any of these rights, contact us at info@colinguest.com."
+      text: "To exercise any of these rights, contact us at colinguestofficial@gmail.com."
     },
     {
       section: "8. Third-Party Links",
@@ -72,7 +72,7 @@ export default function PrivacyPage() {
     },
     {
       section: "10. Contact Us",
-      text: "If you have any questions about this Privacy Policy, please reach out to us:\n\nEmail: info@colinguest.com\nWebsite: www.colinguest.com"
+      text: "If you have any questions about this Privacy Policy, please reach out to us:\n\nEmail: colinguestofficial@gmail.com\nWebsite: www.colinguest.com"
     }
   ];
 

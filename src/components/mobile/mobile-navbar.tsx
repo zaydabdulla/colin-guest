@@ -393,9 +393,7 @@ export function MobileNavbar() {
                 </svg>
               </a>
               <a
-                href="https://mail.google.com/mail/?view=cm&fs=1&to=colinguestofficial@gmail.com"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="mailto:colinguestofficial@gmail.com"
                 className="text-black/30 hover:text-black transition-colors"
                 aria-label="Email"
               >

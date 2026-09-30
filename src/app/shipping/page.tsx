@@ -38,7 +38,7 @@ export default function ShippingPage() {
     },
     {
       section: "6. Lost or Damaged Shipments",
-      text: "If your order arrives damaged or goes missing in transit, please contact us within 48 hours of the expected delivery date at info@colinguest.com. We will raise a dispute with the courier and arrange a replacement or refund as applicable."
+      text: "If your order arrives damaged or goes missing in transit, please contact us within 48 hours of the expected delivery date at colinguestofficial@gmail.com. We will raise a dispute with the courier and arrange a replacement or refund as applicable."
     },
     {
       section: "7. International Shipping",

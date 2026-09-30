@@ -47,7 +47,7 @@ export default function ReturnsPage() {
     },
     {
       section: "6. Defective, Damaged or Incorrect Pieces",
-      text: "In the rare event that an item is received with a manufacturing defect or an incorrect size/style was delivered, please initiate a return within 48 hours or contact us at info@colinguest.com with photos. We will arrange prioritized reverse pickup and dispatch a replacement at zero cost."
+      text: "In the rare event that an item is received with a manufacturing defect or an incorrect size/style was delivered, please initiate a return within 48 hours or contact us at colinguestofficial@gmail.com with photos. We will arrange prioritized reverse pickup and dispatch a replacement at zero cost."
     }
   ];
 

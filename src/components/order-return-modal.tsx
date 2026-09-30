@@ -84,8 +84,8 @@ Please advise on the next steps for reverse pickup and assistance.
 
 Thank you!`;
 
-  // Gmail web compose link matching profile page with mailto fallback
-  const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=colinguestofficial@gmail.com&su=${encodeURIComponent(
+  // Standard mailto link with prefilled subject and body
+  const mailtoUrl = `mailto:colinguestofficial@gmail.com?subject=${encodeURIComponent(
     emailSubject
   )}&body=${encodeURIComponent(emailBody)}`;
 
@@ -169,9 +169,7 @@ Thank you!`;
 
             {/* Email Option */}
             <a
-              href={gmailUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={mailtoUrl}
               className="flex items-center justify-between p-4 rounded-2xl border border-black/5 bg-[#fbfbfb] hover:bg-black hover:text-white transition-all duration-300 group"
             >
               <div className="flex items-center gap-3.5 min-w-0">

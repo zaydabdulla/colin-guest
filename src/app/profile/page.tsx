@@ -723,9 +723,7 @@ export default function ProfilePage() {
 
                 {/* Email Option */}
                 <a
-                  href="https://mail.google.com/mail/?view=cm&fs=1&to=colinguestofficial@gmail.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="mailto:colinguestofficial@gmail.com"
                   className="flex items-center justify-between p-4 rounded-2xl border border-black/5 bg-[#fbfbfb] hover:bg-black hover:text-white transition-all duration-300 group"
                 >
                   <div className="flex items-center gap-3.5 min-w-0">

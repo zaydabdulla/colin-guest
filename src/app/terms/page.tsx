@@ -54,7 +54,7 @@ export default function TermsPage() {
     },
     {
       section: "9. Contact Us",
-      text: "For any queries regarding these terms, please contact us at info@colinguest.com"
+      text: "For any queries regarding these terms, please contact us at colinguestofficial@gmail.com"
     }
   ];
 
