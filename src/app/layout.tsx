@@ -42,7 +42,6 @@ export const viewport: Viewport = {
 import { SessionProvider } from "next-auth/react";
 
 import { ScrollToTop } from "@/components/scroll-to-top";
-import { ComingSoonWrapper } from "@/components/coming-soon-wrapper";
 
 export default function RootLayout({
   children,
@@ -73,7 +72,6 @@ export default function RootLayout({
       </head>
       <body className="antialiased overflow-x-hidden max-w-full w-full bg-white text-black">
         <SessionProvider>
-          <ComingSoonWrapper>
             {/* Desktop Navbar - Strict Isolation */}
             <div className="hidden md:block">
               <Navbar />
@@ -105,7 +103,6 @@ export default function RootLayout({
             <WishlistPopup />
             <SyncManager />
             <ScrollToTop />
-          </ComingSoonWrapper>
           <Suspense fallback={null}>
             <MetaPixelListener />
           </Suspense>
