@@ -93,8 +93,8 @@ export default function AboutPage() {
               Architectural <br /> Integrity.
             </h2>
             <div className="space-y-6">
-              <p className="text-[12px] lg:text-[14px] font-medium leading-[1.8] text-white/80 tracking-wide uppercase max-w-xl mx-auto">
-                COLIN GUEST is a digital-first editorial house focused on the intersection of modern silhouette and raw materiality.
+              <p className="text-[13px] lg:text-[15px] font-medium leading-[1.9] text-white/85 tracking-wide max-w-xl mx-auto font-sans">
+                Redefining modern streetwear and casual wear, Colinguest is made for those who move to their own rhythm. Bold cuts, premium fabrics, and unapologetic style—welcome to your new wardrobe staple.
               </p>
               <div className="w-[1px] h-12 bg-white/20 mx-auto" />
               <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-white/40">
