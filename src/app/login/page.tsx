@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
 import { useCartStore } from "@/lib/store";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { signIn as socialSignIn } from "next-auth/react";
@@ -10,8 +10,14 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { checkEmailExists } from "@/app/actions/shopify";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams?.get("redirect");
+  const redirectUrl = redirectParam 
+    ? (redirectParam === "cart" ? "/?cart=open" : decodeURIComponent(redirectParam)) 
+    : "/";
+
   const { isLoggedIn, login, recoverPassword, isSyncing } = useCartStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,9 +30,9 @@ export default function LoginPage() {
   useEffect(() => {
     setIsHydrated(true);
     if (isLoggedIn) {
-      router.push("/");
+      router.push(redirectUrl);
     }
-  }, [isLoggedIn, router]);
+  }, [isLoggedIn, router, redirectUrl]);
 
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -59,7 +65,7 @@ export default function LoginPage() {
 
     const result = await login(email.trim(), password);
     if (result.success) {
-      router.push("/");
+      router.push(redirectUrl);
     } else {
       // If login fails, check if it's a Google account to give a better hint
       if (exists.exists) {
@@ -224,7 +230,7 @@ export default function LoginPage() {
                     onClick={async () => {
                       setIsGoogleLoading(true);
                       try {
-                        await socialSignIn('google', { callbackUrl: '/' });
+                        await socialSignIn('google', { callbackUrl: redirectUrl });
                       } catch (error) {
                         setIsGoogleLoading(false);
                       }
@@ -249,7 +255,10 @@ export default function LoginPage() {
 
                 <div className="mt-6 pt-4 border-t border-black/5 flex items-center justify-center gap-2 text-black/60">
                   <span className="text-[9px] font-bold uppercase tracking-widest">New to the house?</span>
-                  <Link href="/signup" className="text-[9px] font-bold uppercase tracking-[0.2em] border-b border-black/60 pb-0.5 hover:text-black transition-all">
+                  <Link 
+                    href={redirectUrl !== '/' ? `/signup?redirect=${encodeURIComponent(redirectUrl)}` : '/signup'} 
+                    className="text-[9px] font-bold uppercase tracking-[0.2em] border-b border-black/60 pb-0.5 hover:text-black transition-all"
+                  >
                     Create Account
                   </Link>
                 </div>
@@ -301,5 +310,17 @@ export default function LoginPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen bg-[#fcfcfc] flex items-center justify-center">
+        <Loader2 className="animate-spin text-black/40" size={24} />
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }

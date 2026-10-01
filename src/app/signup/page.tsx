@@ -1,13 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Search, ShoppingBag, Bookmark, User, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useCartStore } from "@/lib/store";
 
-export default function SignupPage() {
+function SignupContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams?.get("redirect");
+  const redirectUrl = redirectParam 
+    ? (redirectParam === "cart" ? "/?cart=open" : decodeURIComponent(redirectParam)) 
+    : "/";
+
   const { items, signup, isSyncing } = useCartStore();
   
   const [formData, setFormData] = useState({
@@ -54,7 +60,7 @@ export default function SignupPage() {
     });
 
     if (result.success) {
-      router.push("/");
+      router.push(redirectUrl);
     } else {
       setError(result.error || "Failed to create account. Please try again.");
     }
@@ -185,7 +191,7 @@ export default function SignupPage() {
                Log in to access your saved items and manage your account.
             </p>
             <Link 
-              href="/login"
+              href={redirectUrl !== '/' ? `/login?redirect=${encodeURIComponent(redirectUrl)}` : '/login'}
               className="w-full max-w-[200px] border border-black/10 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-[0.15em] flex items-center justify-center gap-3 hover:bg-black/5 transition-colors text-black/60"
             >
                Sign In
@@ -194,5 +200,17 @@ export default function SignupPage() {
          
       </div>
     </main>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#fcfcfc] flex items-center justify-center">
+        <Loader2 className="animate-spin text-black/40" size={24} />
+      </div>
+    }>
+      <SignupContent />
+    </Suspense>
   );
 }

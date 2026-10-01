@@ -20,7 +20,7 @@ export function MobileWishlistClient() {
             <h4 className="font-extrabold text-sm tracking-tight mb-1 uppercase">Don't lose your Lists!</h4>
             <p className="text-[10px] text-black/50 font-medium tracking-wide uppercase">Login to save your favorites and access them whenever, wherever!</p>
           </div>
-          <Link href="/login"
+          <Link href="/login?redirect=/wishlist"
             className="flex items-center gap-2 bg-[#d7d7d7] text-black px-6 py-3 rounded-full text-[11px] font-bold tracking-wide hover:bg-[#c0c0c0] transition-colors w-full justify-center uppercase"
           >
             Login to Save <ArrowRight size={14} />
@@ -133,7 +133,7 @@ export function MobileWishlistClient() {
             </div>
 
             <div className="flex flex-col gap-3">
-              <Link href="/login" className="w-full text-center bg-black text-white rounded-full py-4 text-[11px] font-bold uppercase tracking-widest shadow-lg active:scale-95 transition-transform">
+              <Link href="/login?redirect=/wishlist" className="w-full text-center bg-black text-white rounded-full py-4 text-[11px] font-bold uppercase tracking-widest shadow-lg active:scale-95 transition-transform">
                 Log in to save permanently →
               </Link>
               <button onClick={() => router.back()} className="w-full bg-[#f3f3f3] text-black rounded-full py-4 text-[11px] font-bold uppercase tracking-widest hover:bg-[#e5e5e5] transition-colors">
@@ -142,7 +142,7 @@ export function MobileWishlistClient() {
             </div>
 
             <p className="text-[10px] font-bold text-black/40 mt-8 tracking-widest uppercase">
-              No account? <Link href="/signup" className="text-black underline underline-offset-4 transition-colors">Sign up</Link>
+              No account? <Link href="/signup?redirect=/wishlist" className="text-black underline underline-offset-4 transition-colors">Sign up</Link>
             </p>
           </div>
         </div>

@@ -9,9 +9,6 @@ function SyncManagerInternal() {
   const { isLoggedIn, user, refreshCustomerData, syncData, isSyncing, customerId, hasLoggedOut, lastSyncedCustomerId } = useCartStore();
   const { data: session, status } = useSession();
   
-  // Track state to manage initial merge and prevent redundant syncs
-  const wasLoggedIn = useRef(isLoggedIn);
-
   // Multi-tab sync: automatically rehydrate store when another tab updates localStorage
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
@@ -26,6 +23,19 @@ function SyncManagerInternal() {
 
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  // Handle URL cart parameter to reopen cart after login/checkout flow
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("cart") === "open") {
+        useCartStore.getState().openCart();
+        params.delete("cart");
+        const newSearch = params.toString() ? `?${params.toString()}` : "";
+        window.history.replaceState({}, "", window.location.pathname + newSearch);
+      }
+    }
   }, []);
 
   // Fresh profile & address fetch once on page load/refresh
@@ -49,7 +59,8 @@ function SyncManagerInternal() {
       Promise.all([
         getOrCreateShopifyCustomer(email, firstName, lastName),
         adminGetCustomerData(email)
-      ]).then(([resolveResult, dataResult]) => {
+      ]).then(async ([resolveResult, dataResult]) => {
+        const resolvedCustomerId = resolveResult.customerId || `google-${email}`;
         useCartStore.setState({
           isLoggedIn: true,
           user: { 
@@ -58,9 +69,12 @@ function SyncManagerInternal() {
             lastName: dataResult.success ? dataResult.lastName : lastName,
             addresses: dataResult.success ? dataResult.addresses : []
           },
-          customerId: resolveResult.customerId || `google-${email}`,
+          customerId: resolvedCustomerId,
           hasLoggedOut: false
         });
+
+        // Immediately perform merge sync so any guest cart/wishlist items are preserved and synced
+        await useCartStore.getState().syncData(true);
       });
     }
   }, [status, session, isLoggedIn, hasLoggedOut]);
@@ -69,9 +83,12 @@ function SyncManagerInternal() {
   useEffect(() => {
     const handleFocus = () => {
       const state = useCartStore.getState();
-      if (state.isLoggedIn && (state.customerId || state.user?.email) && !state.isSyncing) {
+      const activeCustomerId = state.customerId || state.user?.email;
+      if (state.isLoggedIn && activeCustomerId && !state.isSyncing) {
         state.refreshCustomerData();
-        state.syncData(false);
+        // If not synced for this customer yet, merge; otherwise fetch remote updates
+        const shouldMerge = state.lastSyncedCustomerId !== activeCustomerId;
+        state.syncData(shouldMerge);
       }
     };
 
@@ -95,17 +112,8 @@ function SyncManagerInternal() {
       // Avoid redundant syncs if we've already synced for this specific customer session
       if (lastSyncedCustomerId === activeCustomerId) return;
 
-      // If we just transitioned from logged out to logged in, perform a MERGE sync
-      // If we are on initial mount and already logged in, shouldMerge will be false because wasLoggedIn.current was initialized to true
-      const shouldMerge = !wasLoggedIn.current;
-      
-      syncData(shouldMerge);
-      
-      // Update refs to track completion
-      wasLoggedIn.current = true;
-    } else if (!isLoggedIn) {
-      // Reset tracking when logged out
-      wasLoggedIn.current = false;
+      // When a customer logs in on this device, ALWAYS perform a merge sync so guest items are preserved
+      syncData(true);
     }
   }, [isLoggedIn, customerId, user?.email, isSyncing, syncData, lastSyncedCustomerId]);
 

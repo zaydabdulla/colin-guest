@@ -651,14 +651,19 @@ export const useCartStore = create<CartState>()(
             }
           }
 
-          if (merge) {
-            // Merge logic: Combine guest items with account items
-            const guestWishlist = get().wishlistItems;
-            const guestCart = get().items;
+          const activeCustomerId = customerId || email;
+          const isCustomerChanged = get().lastSyncedCustomerId !== activeCustomerId;
+          // Merge if explicitly requested, or if a new customer logged in on this device,
+          // or if local state has items that should not be wiped by an empty/unpopulated remote response.
+          const currentLocalWishlist = get().wishlistItems;
+          const currentLocalCart = get().items;
+          const shouldPerformMerge = merge ?? (isCustomerChanged || currentLocalCart.length > 0 || currentLocalWishlist.length > 0);
 
+          if (shouldPerformMerge || (currentLocalCart.length > 0 && newCartItems.length === 0) || (currentLocalWishlist.length > 0 && newWishlistItems.length === 0)) {
+            // Merge logic: Combine guest items with account items
             // Merge wishlist (unique by id)
             const mergedWishlist = [...newWishlistItems];
-            guestWishlist.forEach((item: Product) => {
+            currentLocalWishlist.forEach((item: Product) => {
               if (!mergedWishlist.find(mw => mw.id === item.id)) {
                 mergedWishlist.push(item);
               }
@@ -666,10 +671,10 @@ export const useCartStore = create<CartState>()(
 
             // Merge cart (unique by product.id and size)
             const mergedCart = [...newCartItems];
-            guestCart.forEach((item: CartItem) => {
+            currentLocalCart.forEach((item: CartItem) => {
               const exists = mergedCart.find(mc => mc.product.id === item.product.id && mc.size === item.size);
               if (exists) {
-                exists.quantity += item.quantity;
+                exists.quantity = Math.max(exists.quantity, item.quantity);
               } else {
                 mergedCart.push(item);
               }
@@ -679,17 +684,17 @@ export const useCartStore = create<CartState>()(
               wishlistItems: mergedWishlist,
               items: mergedCart,
               isSyncing: false,
-              lastSyncedCustomerId: customerId || email
+              lastSyncedCustomerId: activeCustomerId
             });
 
-            // Save the merged state back to Shopify
+            // Save the merged state back to Shopify customer metafields immediately
             await get().saveData();
           } else {
             set({
               wishlistItems: newWishlistItems,
               items: newCartItems,
               isSyncing: false,
-              lastSyncedCustomerId: customerId || email
+              lastSyncedCustomerId: activeCustomerId
             });
           }
         } catch (error) {
@@ -734,6 +739,7 @@ export const useCartStore = create<CartState>()(
         user: state.user,
         customerId: state.customerId,
         accessToken: state.accessToken,
+        lastSyncedCustomerId: state.lastSyncedCustomerId,
       }),
     }
   )

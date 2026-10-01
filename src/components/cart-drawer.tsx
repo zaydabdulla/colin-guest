@@ -182,7 +182,8 @@ export function CartDrawer() {
                           onClick={async () => {
                             setIsSocialLoading(true);
                             try {
-                              await socialSignIn('google', { callbackUrl: window.location.href });
+                              const returnUrl = typeof window !== 'undefined' ? `${window.location.pathname}${window.location.search ? window.location.search + '&cart=open' : '?cart=open'}` : '/?cart=open';
+                              await socialSignIn('google', { callbackUrl: returnUrl });
                             } catch (error) {
                               setIsSocialLoading(false);
                             }
@@ -207,7 +208,8 @@ export function CartDrawer() {
                         <button
                           onClick={() => {
                             closeCart();
-                            router.push('/login');
+                            const returnUrl = typeof window !== 'undefined' ? encodeURIComponent(`${window.location.pathname}?cart=open`) : 'cart';
+                            router.push(`/login?redirect=${returnUrl}`);
                           }}
                           className="w-full bg-black text-white py-3 rounded-full text-[9px] font-bold uppercase tracking-[0.2em] flex items-center justify-center hover:bg-black/80 transition-colors shadow-sm cursor-pointer"
                         >

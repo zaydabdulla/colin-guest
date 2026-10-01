@@ -31,7 +31,7 @@ export default function WishlistDashboard() {
               <h4 className="font-extrabold text-sm tracking-tight mb-1">Don't lose your Lists!</h4>
               <p className="text-[11px] text-black/50 font-medium tracking-wide">Login to save your favorites and access them whenever, wherever!</p>
             </div>
-            <Link href="/login"
+            <Link href="/login?redirect=/wishlist"
               className="flex items-center gap-2 bg-[#d7d7d7] text-black px-6 py-3 rounded-full text-[11px] font-bold tracking-wide hover:bg-[#c0c0c0] transition-colors"
             >
               Login to Save <ArrowRight size={14} />
@@ -73,7 +73,7 @@ export default function WishlistDashboard() {
               </div>
 
               <div className="flex flex-col gap-3">
-                <Link href="/login" className="w-full text-center border border-black rounded-[8px] py-4 text-sm font-bold shadow-sm hover:bg-black/5 transition-colors block">
+                <Link href="/login?redirect=/wishlist" className="w-full text-center border border-black rounded-[8px] py-4 text-sm font-bold shadow-sm hover:bg-black/5 transition-colors block">
                   Log in to save permanently →
                 </Link>
                 <button onClick={() => router.back()} className="w-full bg-[#ebebeb] text-black rounded-[8px] py-4 text-sm font-semibold hover:bg-black/10 transition-colors cursor-pointer">
@@ -82,7 +82,7 @@ export default function WishlistDashboard() {
               </div>
 
               <p className="text-[11px] font-medium text-black/40 mt-6 tracking-wide">
-                No account? <a href="#" className="font-bold text-black underline underline-offset-2 hover:text-black/60 transition-colors">Sign up — it takes a minute</a>
+                No account? <Link href="/signup?redirect=/wishlist" className="font-bold text-black underline underline-offset-2 hover:text-black/60 transition-colors">Sign up — it takes a minute</Link>
               </p>
             </div>
           </div>
