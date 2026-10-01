@@ -29,6 +29,21 @@ export function MobileNavbar() {
   const isCollectionsHub = pathname === "/collections" || pathname === "/collections/";
   const isHome = pathname === "/";
   const isTransparentPage = isAboutPage || isCollectionsHub || isHome;
+  const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // 95vh hero height; transition smoothly as the hero scrolls past
+      const threshold = window.innerHeight * 0.85;
+      setIsScrolledPastHero(window.scrollY > threshold);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const isTransparentNavbar = isAboutPage || ((isHome || isCollectionsHub) && !isScrolledPastHero);
   const isWhiteContent = isAboutPage;
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -133,8 +148,9 @@ export function MobileNavbar() {
   return (
     <>
       {/* 1. TOP ICONS: Menu (Left), Logo (Center), Wishlist + Cart (Right) */}
-      <div className={`fixed top-0 left-0 right-0 z-[500] h-[64px] safe-top px-5 transition-colors duration-500 ${isTransparentPage ? "bg-transparent" : "bg-white"
-        }`}>
+      <div className={`fixed top-0 left-0 right-0 z-[500] h-[64px] safe-top px-5 transition-all duration-500 ease-in-out ${
+        isTransparentNavbar ? "bg-transparent border-b border-transparent" : "bg-white border-b border-black/5"
+      }`}>
         <div className={`grid grid-cols-3 items-center h-full w-full relative transition-colors duration-500 ${isWhiteContent ? "text-white" : "text-black"
           }`}>
 
