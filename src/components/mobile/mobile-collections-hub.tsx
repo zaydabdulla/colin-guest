@@ -117,8 +117,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
             e.currentTarget.play().catch(() => {});
           }}
         >
-          <source src="/Mobile_video.MOV" type="video/quicktime" />
-          <source src="/Mobile_video.MOV" type="video/mp4" />
+          <source src="/Mobile_video.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent flex flex-col justify-end items-center p-16 pb-24">
           <Link
