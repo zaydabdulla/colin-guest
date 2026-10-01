@@ -86,15 +86,20 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
   return (
     <div className="bg-[#f4f4f4] min-h-screen pb-40 font-sans overflow-x-hidden">
 
-      {/* 1. LARGE HERO PHOTO */}
+      {/* 1. LARGE HERO VIDEO */}
       <section className="relative w-full h-[95vh] overflow-hidden bg-transparent">
-        <Image
-          src="/mobile_hero.png"
-          alt="Hero"
-          fill
-          className="object-cover"
-          priority
-        />
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster="/mobile_hero.png"
+          className="w-full h-full object-cover"
+        >
+          <source src="/Mobile_video.MOV" type="video/quicktime" />
+          <source src="/Mobile_video.MOV" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent flex flex-col justify-end items-center p-16 pb-24">
           <Link
             href="/collections/all"
