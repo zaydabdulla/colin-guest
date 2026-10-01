@@ -128,7 +128,7 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
     <div className="bg-[#f4f4f4] min-h-screen pb-40 font-sans overflow-x-hidden">
 
       {/* 1. LARGE HERO VIDEO */}
-      <section className="relative w-full h-[95vh] overflow-hidden bg-black">
+      <section className="relative w-full h-[95vh] overflow-hidden bg-transparent">
         <video
           ref={setVideoRef}
           src="/Mobile_video.mp4"
