@@ -16,10 +16,23 @@ interface MobileCollectionsHubProps {
 }
 
 export function MobileCollectionsHub({ collections, allProductsImage }: MobileCollectionsHubProps) {
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
   const [latestProducts, setLatestProducts] = useState<any[]>([]);
   const [importedProducts, setImportedProducts] = useState<any[]>([]);
   const [accessoryProducts, setAccessoryProducts] = useState<any[]>([]);
   const { toggleWishlist, wishlistItems } = useCartStore();
+
+  useEffect(() => {
+    const video = heroVideoRef.current;
+    if (video) {
+      video.defaultMuted = true;
+      video.muted = true;
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {});
+      }
+    }
+  }, []);
 
   const mapShopifyProduct = (p: any): Product => ({
     id: p.id,
@@ -87,15 +100,22 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
     <div className="bg-[#f4f4f4] min-h-screen pb-40 font-sans overflow-x-hidden">
 
       {/* 1. LARGE HERO VIDEO */}
-      <section className="relative w-full h-[95vh] overflow-hidden bg-transparent">
+      <section className="relative w-full h-[95vh] overflow-hidden bg-black">
         <video
+          ref={heroVideoRef}
           autoPlay
           muted
           loop
           playsInline
           preload="auto"
-          poster="/mobile_hero.png"
           className="w-full h-full object-cover"
+          onLoadedMetadata={(e) => {
+            e.currentTarget.muted = true;
+            e.currentTarget.play().catch(() => {});
+          }}
+          onCanPlay={(e) => {
+            e.currentTarget.play().catch(() => {});
+          }}
         >
           <source src="/Mobile_video.MOV" type="video/quicktime" />
           <source src="/Mobile_video.MOV" type="video/mp4" />
