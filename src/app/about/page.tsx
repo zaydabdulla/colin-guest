@@ -26,13 +26,15 @@ export default function AboutPage() {
   const videoScale = useTransform(smoothProgress, [0, 1], [1, 1.05]);
   const videoBlur = useTransform(smoothProgress, [0, 0.5], ["blur(0px)", "blur(2px)"]);
 
-  // TEXT ANIMATIONS: Tight simultaneous cross-fade — one decisive glide
-  // Step 1: COLIN GUEST fades out quickly in a tight band
-  const titleY = useTransform(smoothProgress, [0, 0.4], [0, -60]);
-  const titleOpacity = useTransform(smoothProgress, [0.1, 0.35], [0.85, 0]);
+  // TEXT ANIMATIONS: Seamless upward glide through the top viewport mask
+  // Step 1: COLIN GUEST title fades out and glides slightly up
+  const titleY = useTransform(smoothProgress, [0, 0.28], [0, -70]);
+  const titleOpacity = useTransform(smoothProgress, [0.05, 0.25], [0.85, 0]);
 
-  // Step 2: Content rises naturally — fades in as title exits, stays clearly readable, and dissolves as it scrolls upward toward the top bar
-  const contentOpacity = useTransform(smoothProgress, [0.18, 0.42, 0.62, 0.76], [0, 1, 1, 0]);
+  // Step 2: Content rises continuously through the viewport as you scroll:
+  // Starts below (35vh), arrives in the center (0vh) as title exits, and continues rising upward (-65vh) through the top mask!
+  const contentY = useTransform(smoothProgress, [0.18, 0.42, 0.95], ["35vh", "0vh", "-65vh"]);
+  const contentOpacity = useTransform(smoothProgress, [0.18, 0.38], [0, 1]);
 
   return (
     <motion.div 
@@ -41,7 +43,7 @@ export default function AboutPage() {
       transition={{ duration: 1, ease: "easeOut" }}
     >
       <link rel="preload" href="/about_bg.MP4" as="video" type="video/mp4" />
-      <main ref={containerRef} className="relative h-[240vh] bg-transparent">
+      <main ref={containerRef} className="relative h-[250vh] bg-transparent">
         
         {/* FIXED VIDEO BACKGROUND */}
         <div className="fixed inset-0 w-full h-screen z-0 overflow-hidden">
@@ -71,22 +73,21 @@ export default function AboutPage() {
           />
         </div>
 
-        {/* VIEWPORT 1: LANDING OVERLAY (Locked to first movement) */}
-        <section className="sticky top-0 h-screen flex flex-col items-center justify-center z-20 pointer-events-none">
+        {/* STICKY STAGE WITH TOP MASK (Always pinned to viewport, masking the top 75-170px) */}
+        <div className="sticky top-0 h-screen w-full flex items-center justify-center z-30 pointer-events-none [mask-image:linear-gradient(to_bottom,transparent_0px,transparent_75px,black_170px,black_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0px,transparent_75px,black_170px,black_100%)]">
+          {/* VIEWPORT 1: LANDING OVERLAY */}
           <motion.div
             style={{ y: titleY, opacity: titleOpacity }}
-            className="text-center"
+            className="absolute text-center pointer-events-none"
           >
             <h1 className="text-[10vw] font-serif italic font-bold leading-none mb-6 tracking-tighter text-white uppercase opacity-80">COLIN GUEST</h1>
             <p className="text-[10px] font-bold uppercase tracking-[1.5em] text-white/40">Scroll To Explore</p>
           </motion.div>
-        </section>
 
-        {/* VIEWPORT 2: THE STORY (Scrolls naturally up over the video, dissolving before the top bar) */}
-        <section className="relative min-h-screen flex items-center justify-center z-30 px-8 py-32 [mask-image:linear-gradient(to_bottom,transparent_0px,black_140px,black_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0px,black_140px,black_100%)]">
+          {/* VIEWPORT 2: THE STORY (Rises continuously as you scroll, dissolving line-by-line as each part reaches the top mask) */}
           <motion.div
-            style={{ opacity: contentOpacity }}
-            className="max-w-[700px] text-center space-y-10"
+            style={{ y: contentY, opacity: contentOpacity }}
+            className="absolute max-w-[700px] px-8 text-center space-y-8 md:space-y-10 pointer-events-auto"
           >
             <h2 className="text-4xl lg:text-6xl font-serif italic text-white leading-tight">
               Architectural <br /> Integrity.
@@ -105,7 +106,7 @@ export default function AboutPage() {
               Explore The Collections
             </Link>
           </motion.div>
-        </section>
+        </div>
 
         {/* BOTTOM SPACER: Ensures a clean gap before the footer */}
         <div className="h-[20vh]" />
