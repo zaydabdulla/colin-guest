@@ -16,22 +16,50 @@ interface MobileCollectionsHubProps {
 }
 
 export function MobileCollectionsHub({ collections, allProductsImage }: MobileCollectionsHubProps) {
-  const heroVideoRef = useRef<HTMLVideoElement>(null);
+  const heroVideoRef = useRef<HTMLVideoElement | null>(null);
   const [latestProducts, setLatestProducts] = useState<any[]>([]);
   const [importedProducts, setImportedProducts] = useState<any[]>([]);
   const [accessoryProducts, setAccessoryProducts] = useState<any[]>([]);
   const { toggleWishlist, wishlistItems } = useCartStore();
 
-  useEffect(() => {
-    const video = heroVideoRef.current;
-    if (video) {
-      video.defaultMuted = true;
-      video.muted = true;
-      const playPromise = video.play();
+  const setVideoRef = (el: HTMLVideoElement | null) => {
+    heroVideoRef.current = el;
+    if (el) {
+      el.defaultMuted = true;
+      el.muted = true;
+      el.playsInline = true;
+      el.setAttribute("playsinline", "");
+      el.setAttribute("webkit-playsinline", "");
+      const playPromise = el.play();
       if (playPromise !== undefined) {
         playPromise.catch(() => {});
       }
     }
+  };
+
+  useEffect(() => {
+    const tryPlay = () => {
+      const v = heroVideoRef.current;
+      if (v) {
+        v.defaultMuted = true;
+        v.muted = true;
+        v.play().catch(() => {});
+      }
+    };
+
+    tryPlay();
+
+    window.addEventListener("touchstart", tryPlay, { passive: true, once: true });
+    window.addEventListener("touchend", tryPlay, { passive: true, once: true });
+    window.addEventListener("scroll", tryPlay, { passive: true, once: true });
+    window.addEventListener("click", tryPlay, { passive: true, once: true });
+
+    return () => {
+      window.removeEventListener("touchstart", tryPlay);
+      window.removeEventListener("touchend", tryPlay);
+      window.removeEventListener("scroll", tryPlay);
+      window.removeEventListener("click", tryPlay);
+    };
   }, []);
 
   const mapShopifyProduct = (p: any): Product => ({
@@ -102,23 +130,23 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
       {/* 1. LARGE HERO VIDEO */}
       <section className="relative w-full h-[95vh] overflow-hidden bg-black">
         <video
-          ref={heroVideoRef}
+          ref={setVideoRef}
+          src="/Mobile_video.mp4"
           autoPlay
           muted
           loop
           playsInline
           preload="auto"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover pointer-events-none"
           onLoadedMetadata={(e) => {
             e.currentTarget.muted = true;
             e.currentTarget.play().catch(() => {});
           }}
           onCanPlay={(e) => {
+            e.currentTarget.muted = true;
             e.currentTarget.play().catch(() => {});
           }}
-        >
-          <source src="/Mobile_video.mp4" type="video/mp4" />
-        </video>
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent flex flex-col justify-end items-center p-16 pb-24">
           <Link
             href="/collections/all"

@@ -37,3 +37,11 @@ body.lightbox-open .safe-top {
   display: none !important;
 }
 
+video::-webkit-media-controls-start-playback-button,
+video::-webkit-media-controls-play-button,
+video::-webkit-media-controls {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+
