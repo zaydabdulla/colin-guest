@@ -29,6 +29,7 @@ export function MobileNavbar() {
   const isCollectionsHub = pathname === "/collections" || pathname === "/collections/";
   const isHome = pathname === "/";
   const isTransparentPage = isAboutPage || isCollectionsHub || isHome;
+  const isWhiteContent = isAboutPage;
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const [showScrollArrow, setShowScrollArrow] = useState(false);
@@ -134,7 +135,7 @@ export function MobileNavbar() {
       {/* 1. TOP ICONS: Menu (Left), Logo (Center), Wishlist + Cart (Right) */}
       <div className={`fixed top-0 left-0 right-0 z-[500] h-[64px] safe-top px-5 transition-colors duration-500 ${isTransparentPage ? "bg-transparent" : "bg-white"
         }`}>
-        <div className={`grid grid-cols-3 items-center h-full w-full relative transition-colors duration-500 ${isTransparentPage ? "text-white" : "text-black"
+        <div className={`grid grid-cols-3 items-center h-full w-full relative transition-colors duration-500 ${isWhiteContent ? "text-white" : "text-black"
           }`}>
 
           {/* Left: 2-Line Menu Icon */}
@@ -145,8 +146,8 @@ export function MobileNavbar() {
               aria-label="Open Menu"
             >
               <div className="w-4.5 flex flex-col gap-[2.5px]">
-                <div className={`h-[1.2px] w-full ${isTransparentPage ? "bg-white" : "bg-black"}`}></div>
-                <div className={`h-[1.2px] w-2/3 ${isTransparentPage ? "bg-white" : "bg-black"}`}></div>
+                <div className={`h-[1.2px] w-full ${isWhiteContent ? "bg-white" : "bg-black"}`}></div>
+                <div className={`h-[1.2px] w-2/3 ${isWhiteContent ? "bg-white" : "bg-black"}`}></div>
               </div>
             </button>
           </div>
@@ -157,7 +158,7 @@ export function MobileNavbar() {
               href="/"
               className="pointer-events-auto flex items-center justify-center h-[40px] w-full max-w-[100px] relative"
             >
-              <div className={`relative w-full h-full overflow-visible ${isTransparentPage ? "invert brightness-[10]" : ""}`}>
+              <div className={`relative w-full h-full overflow-visible ${isWhiteContent ? "invert brightness-[10]" : ""}`}>
                 <Image
                   src="/logo_cg.png"
                   alt="COLIN GUEST"
@@ -178,7 +179,7 @@ export function MobileNavbar() {
             >
               <Bookmark className="w-5.5 h-5.5" strokeWidth={1.2} />
               {wishlistItems.length > 0 && (
-                <span className={`absolute top-1.5 right-1.5 flex h-3 w-3 items-center justify-center rounded-full text-[7px] font-semibold border ${isTransparentPage ? "bg-white text-black border-black" : "bg-black text-white border-white"
+                <span className={`absolute top-1.5 right-1.5 flex h-3 w-3 items-center justify-center rounded-full text-[7px] font-semibold border ${isWhiteContent ? "bg-white text-black border-black" : "bg-black text-white border-white"
                   }`}>
                   {wishlistItems.length}
                 </span>
@@ -194,7 +195,7 @@ export function MobileNavbar() {
             >
               <ShoppingBag className="w-5.5 h-5.5" strokeWidth={1.2} />
               {totalItems > 0 && (
-                <span className={`absolute top-1.5 right-1.5 flex h-3 w-3 items-center justify-center rounded-full text-[7px] font-semibold border ${isTransparentPage ? "bg-white text-black border-black" : "bg-black text-white border-white"
+                <span className={`absolute top-1.5 right-1.5 flex h-3 w-3 items-center justify-center rounded-full text-[7px] font-semibold border ${isWhiteContent ? "bg-white text-black border-black" : "bg-black text-white border-white"
                   }`}>
                   {totalItems}
                 </span>
