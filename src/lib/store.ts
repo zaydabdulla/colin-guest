@@ -653,14 +653,17 @@ export const useCartStore = create<CartState>()(
 
           const activeCustomerId = customerId || email;
           const isCustomerChanged = get().lastSyncedCustomerId !== activeCustomerId;
-          // Merge if explicitly requested, or if a new customer logged in on this device,
-          // or if local state has items that should not be wiped by an empty/unpopulated remote response.
-          const currentLocalWishlist = get().wishlistItems;
-          const currentLocalCart = get().items;
-          const shouldPerformMerge = merge ?? (isCustomerChanged || currentLocalCart.length > 0 || currentLocalWishlist.length > 0);
+          // Merge is required when:
+          // 1. Explicitly requested with merge === true (e.g. login or signup)
+          // 2. A customer just logged in or session changed on this device (isCustomerChanged)
+          // If neither (i.e. background sync on already-synced session), apply authoritative server state
+          const shouldPerformMerge = merge ?? isCustomerChanged;
 
-          if (shouldPerformMerge || (currentLocalCart.length > 0 && newCartItems.length === 0) || (currentLocalWishlist.length > 0 && newWishlistItems.length === 0)) {
+          if (shouldPerformMerge) {
             // Merge logic: Combine guest items with account items
+            const currentLocalWishlist = get().wishlistItems;
+            const currentLocalCart = get().items;
+
             // Merge wishlist (unique by id)
             const mergedWishlist = [...newWishlistItems];
             currentLocalWishlist.forEach((item: Product) => {
