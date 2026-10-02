@@ -36,7 +36,7 @@ export function CartDrawer() {
   };
   
   const total = items.reduce((sum: number, item: CartItem) => sum + (parsePrice(item.product.price) * item.quantity), 0);
-  const formattedTotal = "RS. " + total.toLocaleString();
+  const formattedTotal = "Rs. " + total.toLocaleString();
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -436,10 +436,10 @@ export function CartDrawer() {
                             }}
                             className={`w-full bg-black text-white px-6 py-[18px] rounded-[2rem] flex justify-between items-center shadow-lg hover:scale-[1.02] transition-transform ${isCheckingOut ? 'opacity-70 pointer-events-none' : ''} cursor-pointer`}
                           >
-                            <span className="text-[11.5px] font-medium">{isCheckingOut ? 'Processing...' : 'Check out'}</span>
-                            <span className="text-[11.5px] font-medium tracking-wide flex items-center gap-1.5">
+                            <span className="text-[12.5px] font-medium">{isCheckingOut ? 'Processing...' : 'Checkout'}</span>
+                            <span className="text-[12.5px] font-medium tracking-wide flex items-center gap-1.5">
                               {formattedTotal}
-                              <ArrowRight size={13} />
+                              <ArrowRight size={14} />
                             </span>
                           </button>
                         </div>
