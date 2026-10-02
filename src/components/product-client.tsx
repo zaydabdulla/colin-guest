@@ -51,8 +51,11 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
   // Determine if all variants are sold out
   const isAllSoldOut = !product.variants || product.variants.length === 0 || product.variants.every(v => !v.availableForSale);
 
-  // If we only have 1 image, duplicate it twice so the scrolling feature still functions visually.
-  const displayImages = product.srcs && product.srcs.length > 1 ? product.srcs : [product.src, product.src, product.src];
+  const primaryImage = product.srcs?.[0] || product.src;
+  // Middle scrollable gallery starts from the 2nd image to prevent duplicating the leftmost primary image
+  const galleryImages = product.srcs && product.srcs.length > 1
+    ? product.srcs.slice(1)
+    : [primaryImage];
 
   return (
     <>
@@ -79,9 +82,9 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                   className={`transition-colors ${isWishlisted ? "fill-black text-black" : "text-black/40"}`}
                 />
               </button>
-              {displayImages[0] ? (
+              {primaryImage ? (
                 <Image 
-                  src={displayImages[0]}
+                  src={primaryImage}
                   alt={product.title}
                   fill
                   className="object-contain p-3"
@@ -93,12 +96,12 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
             </div>
           </div>
 
-          {/* Middle Column: Scrollable Gallery */}
+          {/* Middle Column: Scrollable Gallery (Starts from 2nd image) */}
           <div className="flex-1 flex flex-col gap-4 pb-[20vh]">
-            {displayImages.map((src, i) => (
+            {galleryImages.map((src, i) => (
                <div key={i} className="relative w-full aspect-[2/3] bg-white border border-black/5 rounded-2xl overflow-hidden shadow-sm flex items-center justify-center">
                    {src ? (
-                     <Image src={src} alt={`Gallery ${i}`} fill className="object-contain p-3" priority={i === 0} />
+                     <Image src={src} alt={`${product.title} view ${i + 2}`} fill className="object-contain p-3" priority={i === 0} />
                    ) : (
                      <div className="text-black/5 font-bold uppercase tracking-widest text-[10px]">No Detail Image</div>
                    )}
