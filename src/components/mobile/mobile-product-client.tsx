@@ -264,7 +264,16 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
                   <p>{product.washcare || "Machine wash cold inside out. Tumble dry low or hang dry to preserve structural integrity."}</p>
                 )}
                 {activeTab === 'Shipping' && (
-                  <p>{product.shipping || "Complimentary express worldwide shipping on orders above $500. Secure tracking provided upon dispatch."}</p>
+                  <div className="space-y-1">
+                    {product.shipping ? (
+                      <p className="whitespace-pre-line">{product.shipping}</p>
+                    ) : (
+                      <>
+                        <p>Ships within 24 hours.</p>
+                        <p>Estimated delivery: 3–5 business days.</p>
+                      </>
+                    )}
+                  </div>
                 )}
               </motion.div>
             </AnimatePresence>
