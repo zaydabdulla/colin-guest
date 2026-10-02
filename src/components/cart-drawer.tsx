@@ -436,10 +436,10 @@ export function CartDrawer() {
                             }}
                             className={`w-full bg-black text-white px-6 py-[18px] rounded-[2rem] flex justify-between items-center shadow-lg hover:scale-[1.02] transition-transform ${isCheckingOut ? 'opacity-70 pointer-events-none' : ''} cursor-pointer`}
                           >
-                            <span className="text-[13px] font-medium">{isCheckingOut ? 'Processing...' : 'Check out'}</span>
-                            <span className="text-[13px] font-medium tracking-wide flex items-center gap-2">
+                            <span className="text-[11.5px] font-medium">{isCheckingOut ? 'Processing...' : 'Check out'}</span>
+                            <span className="text-[11.5px] font-medium tracking-wide flex items-center gap-1.5">
                               {formattedTotal}
-                              <ArrowRight size={15} />
+                              <ArrowRight size={13} />
                             </span>
                           </button>
                         </div>
