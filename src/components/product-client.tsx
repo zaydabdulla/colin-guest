@@ -15,6 +15,7 @@ import { PincodeChecker } from "@/components/pincode-checker";
 import { CustomerCollage } from "@/components/customer-collage";
 import { OurStore } from "@/components/our-store";
 import { trackMetaEvent } from "@/lib/meta-pixel";
+import SizeGuideModal from "@/components/size-guide-modal";
 
 interface ProductClientProps {
   product: Product;
@@ -27,6 +28,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
     product.variants?.find(v => v.availableForSale)?.title || null
   );
   const [activeTab, setActiveTab] = useState<string>("Details & Description");
+  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
   const { openCart, addToCart, wishlistItems, toggleWishlist } = useCartStore();
   const isWishlisted = wishlistItems.some((item: Product) => item.id === product.id);
@@ -51,10 +53,20 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
   // Determine if all variants are sold out
   const isAllSoldOut = !product.variants || product.variants.length === 0 || product.variants.every(v => !v.availableForSale);
 
-  const primaryImage = product.srcs?.[0] || product.src;
-  // Middle scrollable gallery starts from the 2nd image to prevent duplicating the leftmost primary image
-  const galleryImages = product.srcs && product.srcs.length > 1
-    ? product.srcs.slice(1)
+  // The size chart image in Shopify is uploaded as the LAST image for each product.
+  // We exclude this last image from the gallery scroll and reserve it exclusively for the Size Guide button.
+  const hasMultipleImages = Boolean(product.srcs && product.srcs.length > 1);
+  const showcaseImages = hasMultipleImages
+    ? product.srcs!.slice(0, -1)
+    : (product.srcs && product.srcs.length > 0 ? product.srcs : [product.src]);
+  const sizeGuideImage = hasMultipleImages
+    ? product.srcs![product.srcs!.length - 1]
+    : null;
+
+  const primaryImage = showcaseImages[0] || product.src;
+  // Middle scrollable gallery starts from the 2nd image and excludes the size chart
+  const galleryImages = showcaseImages.length > 1
+    ? showcaseImages.slice(1)
     : [primaryImage];
 
   return (
@@ -121,7 +133,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                   </div>
                   <button
                     type="button"
-                    onClick={() => alert("Size Guide: " + (product.sizeGuide || "Standard fitting."))}
+                    onClick={() => setIsSizeGuideOpen(true)}
                     className="px-2 py-1 bg-black/5 rounded text-[8px] md:text-[9.5px] font-bold text-black/50 tracking-wider hover:bg-black/10 transition-colors shrink-0"
                   >
                     Size Guide
@@ -335,6 +347,14 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
           .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         `}} />
       </main>
+
+      <SizeGuideModal
+        isOpen={isSizeGuideOpen}
+        onClose={() => setIsSizeGuideOpen(false)}
+        imageUrl={sizeGuideImage}
+        productTitle={product.title}
+        fallbackText={product.sizeGuide}
+      />
     </>
   );
 }

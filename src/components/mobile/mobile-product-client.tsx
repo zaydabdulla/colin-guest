@@ -12,6 +12,7 @@ import { ShopTheLook } from "../shop-the-look";
 import { PincodeChecker } from "@/components/pincode-checker";
 import { CustomerCollage } from "@/components/customer-collage";
 import { OurStore } from "../our-store";
+import SizeGuideModal from "@/components/size-guide-modal";
 
 interface MobileProductClientProps {
   product: Product;
@@ -24,6 +25,7 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
     product.variants?.find(v => v.availableForSale)?.title || null
   );
   const [activeTab, setActiveTab] = useState<string>("Details & Description");
+  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -43,7 +45,15 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
     checkSuggestScroll();
   }, [suggestedProducts]);
 
-  const displayImages = product.srcs && product.srcs.length > 0 ? product.srcs : [product.src];
+  // The size chart image in Shopify is uploaded as the LAST image for each product.
+  // We exclude this last image from the sliding gallery and reserve it exclusively for the Size Guide button.
+  const hasMultipleImages = Boolean(product.srcs && product.srcs.length > 1);
+  const displayImages = hasMultipleImages
+    ? product.srcs!.slice(0, -1)
+    : (product.srcs && product.srcs.length > 0 ? product.srcs : [product.src]);
+  const sizeGuideImage = hasMultipleImages
+    ? product.srcs![product.srcs!.length - 1]
+    : null;
 
   const handleScroll = () => {
     if (scrollRef.current) {
@@ -126,7 +136,7 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
           </div>
           <button
             type="button"
-            onClick={() => alert("Size Guide: " + (product.sizeGuide || "Standard fitting."))}
+            onClick={() => setIsSizeGuideOpen(true)}
             className="px-2 py-1 bg-black/5 rounded text-[8px] font-bold text-black/50 tracking-wider hover:bg-black/10 transition-colors shrink-0"
           >
             Size Guide
@@ -356,6 +366,14 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}} />
+
+      <SizeGuideModal
+        isOpen={isSizeGuideOpen}
+        onClose={() => setIsSizeGuideOpen(false)}
+        imageUrl={sizeGuideImage}
+        productTitle={product.title}
+        fallbackText={product.sizeGuide}
+      />
     </div>
   );
 }
