@@ -61,10 +61,10 @@ export default function SizeGuideModal({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 16 }}
           transition={{ type: "spring", duration: 0.3, bounce: 0 }}
-          className="relative w-full max-w-md sm:max-w-lg md:max-w-xl max-h-[85vh] bg-white rounded-[22px] sm:rounded-[26px] p-3 sm:p-4 shadow-2xl border border-black/10 overflow-hidden z-10 flex flex-col font-sans"
+          className="relative w-fit max-w-[94vw] sm:max-w-[460px] md:max-w-[480px] max-h-[90vh] bg-white rounded-[22px] sm:rounded-[26px] p-4 sm:p-5 shadow-2xl border border-black/10 overflow-hidden z-10 flex flex-col font-sans"
         >
           {/* Header */}
-          <div className="flex items-center justify-between pb-2 sm:pb-3 border-b border-black/5 shrink-0">
+          <div className="flex items-center justify-between pb-3 border-b border-black/5 shrink-0 gap-4">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-full bg-black/5 flex items-center justify-center text-black/70">
                 <Ruler size={13} strokeWidth={1.75} />
@@ -74,7 +74,7 @@ export default function SizeGuideModal({
                   Size Guide
                 </h3>
                 {productTitle && (
-                  <p className="text-[8.5px] sm:text-[9.5px] text-black/40 font-medium tracking-wide truncate max-w-[180px] sm:max-w-xs">
+                  <p className="text-[8.5px] sm:text-[9.5px] text-black/40 font-medium tracking-wide truncate max-w-[200px] sm:max-w-xs">
                     {productTitle}
                   </p>
                 )}
@@ -91,18 +91,16 @@ export default function SizeGuideModal({
             </button>
           </div>
 
-          {/* Body Content - Fits strictly within one screen */}
-          <div className="flex-1 overflow-hidden py-2 sm:py-3 flex flex-col items-center justify-center min-h-0">
+          {/* Body Content - Seamless image display without nested borders or surplus margins */}
+          <div className="flex-1 py-3 flex items-center justify-center min-h-0 overflow-hidden">
             {imageUrl ? (
-              <div className="w-full h-full flex items-center justify-center bg-[#fafafa] rounded-xl sm:rounded-2xl p-1.5 sm:p-2 border border-black/5 overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={imageUrl}
-                  alt={productTitle ? `${productTitle} Size Chart` : "Size Guide Chart"}
-                  className="max-h-[50vh] sm:max-h-[60vh] w-auto max-w-full object-contain rounded-lg shadow-sm"
-                  loading="eager"
-                />
-              </div>
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={imageUrl}
+                alt={productTitle ? `${productTitle} Size Chart` : "Size Guide Chart"}
+                className="max-h-[66vh] sm:max-h-[70vh] w-auto max-w-full object-contain rounded-xl"
+                loading="eager"
+              />
             ) : (
               <div className="w-full text-center py-8 px-4">
                 <p className="text-xs text-black/60 leading-relaxed max-w-md mx-auto">
@@ -113,7 +111,7 @@ export default function SizeGuideModal({
           </div>
 
           {/* Footer */}
-          <div className="pt-2 sm:pt-2.5 border-t border-black/5 flex items-center justify-between text-[8px] sm:text-[9.5px] text-black/40 font-medium shrink-0">
+          <div className="pt-2.5 border-t border-black/5 flex items-center justify-between text-[8px] sm:text-[9.5px] text-black/40 font-medium shrink-0 gap-4">
             <span>Measurements in standard sizing</span>
             <button
               type="button"
