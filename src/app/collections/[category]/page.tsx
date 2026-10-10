@@ -113,9 +113,26 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
     ? 'All Products'
     : category.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
+  const canonicalUrl = `https://www.colinguest.com/collections/${category}`;
+  const description = `Explore our curated selection of ${formattedCategory} at COLIN GUEST. Timeless luxury designer silhouettes.`;
+
   return {
     title: `${formattedCategory} | COLIN GUEST`,
-    description: `Explore our curated selection of ${formattedCategory} at COLIN GUEST. Timeless luxury designer silhouettes.`,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: `${formattedCategory} | COLIN GUEST`,
+      description,
+      url: canonicalUrl,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${formattedCategory} | COLIN GUEST`,
+      description,
+    },
   };
 }
 

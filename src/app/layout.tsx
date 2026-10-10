@@ -26,10 +26,33 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Colin Guest",
+  metadataBase: new URL("https://www.colinguest.com"),
+  title: {
+    default: "COLIN GUEST | Luxury Haute Couture & Ready-to-Wear",
+    template: "%s | COLIN GUEST",
+  },
   description: "Discover the exclusive world of Colin Guest, where heritage meets haute couture. Explore timeless elegance and modern craftsmanship in every stitch.",
   verification: {
     google: "2Cm8VuAZnwF8LlOdE37dkF_4fuDzEv1_mxuIoNOcib8",
+  },
+  alternates: {
+    canonical: "https://www.colinguest.com",
+  },
+  openGraph: {
+    title: "COLIN GUEST | Luxury Haute Couture & Ready-to-Wear",
+    description: "Discover the exclusive world of Colin Guest, where heritage meets haute couture.",
+    url: "https://www.colinguest.com",
+    siteName: "COLIN GUEST",
+    images: [
+      {
+        url: "/collections_hero.jpg",
+        width: 1200,
+        height: 630,
+        alt: "COLIN GUEST",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
   },
 };
 

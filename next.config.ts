@@ -14,6 +14,25 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve("."),
   },
+  async redirects() {
+    return [
+      {
+        source: '/product/ladies-jeans',
+        destination: '/collections/all',
+        permanent: true,
+      },
+      {
+        source: '/product/11',
+        destination: '/collections/all',
+        permanent: true,
+      },
+      {
+        source: '/collections/bottoms',
+        destination: '/collections/jeans',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

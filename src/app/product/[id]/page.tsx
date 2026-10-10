@@ -1,11 +1,30 @@
 import { Product, extractProductMedia } from "@/lib/data";
 import { getProductById, getProductRecommendations, getAllProducts, getProductByHandle } from "@/lib/shopify";
 import ProductClient from "@/components/product-client";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
   const { id } = resolvedParams;
+
+  const decodedId = decodeURIComponent(id);
+  const isGid = decodedId.startsWith("gid://shopify/Product/");
+  const isNumericGid = /^\d+$/.test(decodedId);
+
+  // 301 Permanent Redirect for any old/crawled GID URLs to their clean handle URL
+  if (isGid || isNumericGid) {
+    try {
+      const gidToFetch = isGid ? decodedId : `gid://shopify/Product/${decodedId}`;
+      const gidProduct = await getProductById(gidToFetch);
+      if (gidProduct?.handle) {
+        permanentRedirect(`/product/${gidProduct.handle}`);
+      }
+    } catch (e: any) {
+      // If it's a redirect, Next.js throws NEXT_REDIRECT, which must be re-thrown
+      if (e?.message?.includes("NEXT_REDIRECT")) throw e;
+      console.error("Error redirecting GID product URL:", e);
+    }
+  }
 
   let product: Product | undefined;
   let suggestedProducts: Product[] = [];
@@ -13,8 +32,6 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   // If not found in mock data, try Shopify (if ID looks like a Shopify ID or mock failed)
   if (!product) {
     try {
-      const decodedId = decodeURIComponent(id);
-      const isGid = decodedId.startsWith("gid://shopify/Product/");
       const shopifyProduct = isGid
         ? await getProductById(decodedId)
         : await getProductByHandle(decodedId);
@@ -164,31 +181,48 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   try {
     const decodedId = decodeURIComponent(id);
     const isGid = decodedId.startsWith("gid://shopify/Product/");
-    const shopifyProduct = isGid
-      ? await getProductById(decodedId)
+    const isNumericGid = /^\d+$/.test(decodedId);
+
+    const shopifyProduct = (isGid || isNumericGid)
+      ? await getProductById(isGid ? decodedId : `gid://shopify/Product/${decodedId}`)
       : await getProductByHandle(decodedId);
 
     if (shopifyProduct) {
-      const imageUrls = shopifyProduct.images?.edges.map((e: any) => e.node.url) || [];
+      // Safe image extraction: works whether it's array of objects or GraphQL edges
+      const imageUrls: string[] = Array.isArray(shopifyProduct.images)
+        ? shopifyProduct.images.map((img: any) => (typeof img === 'string' ? img : img.url || '')).filter(Boolean)
+        : (shopifyProduct.images?.edges?.map((e: any) => e.node?.url).filter(Boolean) || []);
+
+      const productTitle = shopifyProduct.title || "Product";
+      const productHandle = shopifyProduct.handle || decodedId;
+      const canonicalUrl = `https://www.colinguest.com/product/${productHandle}`;
+      const description = shopifyProduct.description?.trim()
+        ? shopifyProduct.description.slice(0, 160)
+        : `Buy ${productTitle} online at COLIN GUEST. Premium designer clothing.`;
+
       return {
-        title: `${shopifyProduct.title} | COLIN GUEST`,
-        description: shopifyProduct.description?.slice(0, 160) || `Buy ${shopifyProduct.title} online at COLIN GUEST. Premium designer clothing.`,
+        title: `${productTitle} | COLIN GUEST`,
+        description,
+        alternates: {
+          canonical: canonicalUrl,
+        },
         openGraph: {
-          title: shopifyProduct.title,
-          description: shopifyProduct.description || `Buy ${shopifyProduct.title} online at COLIN GUEST.`,
-          images: imageUrls.map((url: string) => ({
+          title: `${productTitle} | COLIN GUEST`,
+          description,
+          url: canonicalUrl,
+          images: imageUrls.slice(0, 4).map((url: string) => ({
             url,
             width: 800,
             height: 1000,
-            alt: shopifyProduct.title,
+            alt: productTitle,
           })),
           type: 'website',
         },
         twitter: {
           card: 'summary_large_image',
-          title: shopifyProduct.title,
-          description: shopifyProduct.description || `Buy ${shopifyProduct.title} online at COLIN GUEST.`,
-          images: imageUrls,
+          title: `${productTitle} | COLIN GUEST`,
+          description,
+          images: imageUrls.slice(0, 1),
         }
       };
     }

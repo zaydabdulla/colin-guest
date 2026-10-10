@@ -3,6 +3,35 @@ import { CollectionsHubClient } from "@/components/collections-hub-client";
 import { MobileCollectionsHub } from "@/components/mobile/mobile-collections-hub";
 import Image from "next/image";
 import ExploreButton from "@/components/explore-button";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Collections | COLIN GUEST",
+  description: "Explore the complete luxury collections of COLIN GUEST. Contemporary tailoring, premium outerwear, and timeless design.",
+  alternates: {
+    canonical: "https://www.colinguest.com/collections",
+  },
+  openGraph: {
+    title: "Collections | COLIN GUEST",
+    description: "Explore the complete luxury collections of COLIN GUEST.",
+    url: "https://www.colinguest.com/collections",
+    images: [
+      {
+        url: "/collections_hero.jpg",
+        width: 1200,
+        height: 630,
+        alt: "COLIN GUEST Collections",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Collections | COLIN GUEST",
+    description: "Explore the complete luxury collections of COLIN GUEST.",
+    images: ["/collections_hero.jpg"],
+  },
+};
 
 export default async function CollectionsHub() {
   // Fetch all collections and products dynamically from Shopify

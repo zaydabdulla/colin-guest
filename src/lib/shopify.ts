@@ -315,6 +315,7 @@ export async function getAllProducts(sortKey: string = 'CREATED_AT', reverse: bo
             color8: metafield(namespace: "shopify", key: "name") { value }
             tags
             createdAt
+            updatedAt
             priceRange {
               minVariantPrice {
                 amount
@@ -668,6 +669,7 @@ export async function getAllCollections(): Promise<Collection[]> {
             id
             title
             handle
+            updatedAt
             image {
               url
               altText

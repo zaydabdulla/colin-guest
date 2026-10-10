@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/profile', '/orders', '/account/', '/api/'],
+      disallow: ['/profile', '/orders', '/account/', '/api/', '/login', '/signup', '/wishlist'],
     },
     sitemap: 'https://www.colinguest.com/sitemap.xml',
   };
