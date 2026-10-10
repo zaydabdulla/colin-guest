@@ -4,7 +4,7 @@ import { useRef, useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { Product, Collection } from "@/lib/data";
+import { Product, Collection, extractProductMedia } from "@/lib/data";
 import { Plus, Bookmark, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { getAllProducts, getCollectionProducts } from "@/lib/shopify";
@@ -23,20 +23,25 @@ export function MobileHomeClient({ products, collections }: MobileHomeClientProp
   const [importedProducts, setImportedProducts] = useState<any[]>([]);
   const { toggleWishlist, wishlistItems } = useCartStore();
 
-  const mapShopifyProduct = (p: any): Product => ({
-    id: p.id,
-    src: p.images?.[0]?.url || "",
-    secondarySrc: p.images?.[1]?.url,
-    srcs: p.images?.map((img: any) => img.url) || [],
-    title: p.title,
-    price: formatPrice(p),
-    amount: parseFloat(p.priceRange?.minVariantPrice?.amount || "0"),
-    desc: p.teaser?.value || p.description || "",
-    category: p.productType || "Collection",
-    type: p.productType || "General",
-    variants: p.variants || [],
-    handle: p.handle
-  });
+  const mapShopifyProduct = (p: any): Product => {
+    const rawUrls = p.images?.map((img: any) => img.url) || [];
+    const media = extractProductMedia(rawUrls);
+    return {
+      id: p.id,
+      src: media.primarySrc,
+      secondarySrc: media.secondarySrc,
+      srcs: media.showcaseImages,
+      sizeChartSrc: media.sizeChartImage || undefined,
+      title: p.title,
+      price: formatPrice(p),
+      amount: parseFloat(p.priceRange?.minVariantPrice?.amount || "0"),
+      desc: p.teaser?.value || p.description || "",
+      category: p.productType || "Collection",
+      type: p.productType || "General",
+      variants: p.variants || [],
+      handle: p.handle
+    };
+  };
 
   useEffect(() => {
     const fetchData = async () => {

@@ -1,4 +1,4 @@
-import { Product } from "@/lib/data";
+import { Product, extractProductMedia } from "@/lib/data";
 import { getProductById, getProductRecommendations, getAllProducts, getProductByHandle } from "@/lib/shopify";
 import ProductClient from "@/components/product-client";
 import { notFound } from "next/navigation";
@@ -20,12 +20,16 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         : await getProductByHandle(decodedId);
       
       if (shopifyProduct) {
+        const rawUrls = shopifyProduct.images?.map((img: any) => img.url) || [];
+        const media = extractProductMedia(rawUrls);
+
         product = {
           id: shopifyProduct.id,
           handle: shopifyProduct.handle,
-          src: shopifyProduct.images[0]?.url || "/placeholder.jpg",
-          secondarySrc: shopifyProduct.images[1]?.url,
-          srcs: shopifyProduct.images.map((img: any) => img.url),
+          src: media.primarySrc,
+          secondarySrc: media.secondarySrc,
+          srcs: media.showcaseImages,
+          sizeChartSrc: media.sizeChartImage || undefined,
           title: shopifyProduct.title,
           price: `${shopifyProduct.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(shopifyProduct.priceRange.minVariantPrice.amount).toLocaleString()}`,
           desc: shopifyProduct.description,
@@ -48,38 +52,46 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         // Fetch related products from Shopify
         const recommendations = await getProductRecommendations(shopifyProduct.id);
         if (recommendations && recommendations.length > 0) {
-          suggestedProducts = recommendations.map((p: any) => ({
-            id: p.id,
-            handle: p.handle,
-            src: p.images[0]?.url || "/placeholder.jpg",
-            secondarySrc: p.images[1]?.url,
-            srcs: p.images.map((img: any) => img.url),
-            title: p.title,
-            price: `${p.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(p.priceRange.minVariantPrice.amount).toLocaleString()}`,
-            desc: p.description,
-            category: p.productType || "Collection",
-            amount: parseFloat(p.priceRange.minVariantPrice.amount),
-            type: p.productType || "General"
-          }));
-        } else {
-          // Fallback: Fetch general products if no recommendations are found
-          const allProducts = await getAllProducts();
-          suggestedProducts = allProducts
-            .filter((p: any) => p.id !== shopifyProduct.id) // Don't show current product
-            .slice(0, 4)
-            .map((p: any) => ({
+          suggestedProducts = recommendations.map((p: any) => {
+            const pMedia = extractProductMedia(p.images?.map((img: any) => img.url) || []);
+            return {
               id: p.id,
               handle: p.handle,
-              src: p.images[0]?.url || "/placeholder.jpg",
-              secondarySrc: p.images[1]?.url,
-              srcs: p.images.map((img: any) => img.url),
+              src: pMedia.primarySrc,
+              secondarySrc: pMedia.secondarySrc,
+              srcs: pMedia.showcaseImages,
+              sizeChartSrc: pMedia.sizeChartImage || undefined,
               title: p.title,
               price: `${p.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(p.priceRange.minVariantPrice.amount).toLocaleString()}`,
               desc: p.description,
               category: p.productType || "Collection",
               amount: parseFloat(p.priceRange.minVariantPrice.amount),
               type: p.productType || "General"
-            }));
+            };
+          });
+        } else {
+          // Fallback: Fetch general products if no recommendations are found
+          const allProducts = await getAllProducts();
+          suggestedProducts = allProducts
+            .filter((p: any) => p.id !== shopifyProduct.id) // Don't show current product
+            .slice(0, 4)
+            .map((p: any) => {
+              const pMedia = extractProductMedia(p.images?.map((img: any) => img.url) || []);
+              return {
+                id: p.id,
+                handle: p.handle,
+                src: pMedia.primarySrc,
+                secondarySrc: pMedia.secondarySrc,
+                srcs: pMedia.showcaseImages,
+                sizeChartSrc: pMedia.sizeChartImage || undefined,
+                title: p.title,
+                price: `${p.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(p.priceRange.minVariantPrice.amount).toLocaleString()}`,
+                desc: p.description,
+                category: p.productType || "Collection",
+                amount: parseFloat(p.priceRange.minVariantPrice.amount),
+                type: p.productType || "General"
+              };
+            });
         }
       }
     } catch (error) {
@@ -89,25 +101,29 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
   // Fetch all products for "Shop the Look" logic
   const allRawProducts = await getAllProducts();
-  const allProducts: Product[] = allRawProducts.map((p: any) => ({
-    id: p.id,
-    handle: p.handle,
-    src: p.images[0]?.url || "/placeholder.jpg",
-    secondarySrc: p.images[1]?.url,
-    srcs: p.images.map((img: any) => img.url),
-    title: p.title,
-    price: `${p.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(p.priceRange.minVariantPrice.amount).toLocaleString()}`,
-    desc: p.description,
-    category: p.productType || "Collection",
-    amount: parseFloat(p.priceRange.minVariantPrice.amount),
-    type: p.productType || "General",
-    variants: p.variants?.edges.map((e: any) => ({
-      id: e.node.id,
-      title: e.node.title,
-      availableForSale: e.node.availableForSale,
-      selectedOptions: e.node.selectedOptions
-    }))
-  }));
+  const allProducts: Product[] = allRawProducts.map((p: any) => {
+    const pMedia = extractProductMedia(p.images?.map((img: any) => img.url) || []);
+    return {
+      id: p.id,
+      handle: p.handle,
+      src: pMedia.primarySrc,
+      secondarySrc: pMedia.secondarySrc,
+      srcs: pMedia.showcaseImages,
+      sizeChartSrc: pMedia.sizeChartImage || undefined,
+      title: p.title,
+      price: `${p.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(p.priceRange.minVariantPrice.amount).toLocaleString()}`,
+      desc: p.description,
+      category: p.productType || "Collection",
+      amount: parseFloat(p.priceRange.minVariantPrice.amount),
+      type: p.productType || "General",
+      variants: p.variants?.edges.map((e: any) => ({
+        id: e.node.id,
+        title: e.node.title,
+        availableForSale: e.node.availableForSale,
+        selectedOptions: e.node.selectedOptions
+      }))
+    };
+  });
 
   if (!product) {
     notFound();

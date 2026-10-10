@@ -1,7 +1,7 @@
 import { searchProducts, getAllCollections } from "@/lib/shopify";
 import CategoryClient from "@/components/category-client";
 import { MobileCollectionClient } from "@/components/mobile/mobile-collection-client";
-import { Product, Collection } from "@/lib/data";
+import { Product, Collection, extractProductMedia } from "@/lib/data";
 
 export default async function SearchPage({
   searchParams,
@@ -31,16 +31,20 @@ export default async function SearchPage({
     return title !== 'landing page' && title !== 'all products' && title !== 'all product';
   });
 
-  const displayProducts: Product[] = shopifyProducts.map((p: any, index: number) => ({
-    id: p.id,
-    handle: p.handle,
-    src: p.images[0]?.url || "/placeholder.jpg",
-    secondarySrc: p.images[1]?.url,
-    srcs: p.images.map((img: any) => img.url),
-    title: p.title,
-    price: `${p.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(p.priceRange.minVariantPrice.amount).toLocaleString()}`,
-    amount: parseFloat(p.priceRange.minVariantPrice.amount),
-    desc: p.description,
+  const displayProducts: Product[] = shopifyProducts.map((p: any, index: number) => {
+    const rawUrls = p.images?.map((img: any) => img.url) || [];
+    const media = extractProductMedia(rawUrls);
+    return {
+      id: p.id,
+      handle: p.handle,
+      src: media.primarySrc,
+      secondarySrc: media.secondarySrc,
+      srcs: media.showcaseImages,
+      sizeChartSrc: media.sizeChartImage || undefined,
+      title: p.title,
+      price: `${p.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(p.priceRange.minVariantPrice.amount).toLocaleString()}`,
+      amount: parseFloat(p.priceRange.minVariantPrice.amount),
+      desc: p.description,
     category: p.category?.name || p.productType || "Result",
     shopifyCategory: p.category?.name,
     type: p.productType || "General",
@@ -63,7 +67,8 @@ export default async function SearchPage({
       .map((m: any) => m.value)
       .join(','),
     tags: p.tags || []
-  }));
+  };
+});
 
   const formattedCategory = `SEARCH RESULTS FOR "${searchQuery.toUpperCase()}"`;
 

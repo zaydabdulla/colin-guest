@@ -53,15 +53,12 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
   // Determine if all variants are sold out
   const isAllSoldOut = !product.variants || product.variants.length === 0 || product.variants.every(v => !v.availableForSale);
 
-  // The size chart image in Shopify is uploaded as the LAST image for each product.
-  // We exclude this last image from the gallery scroll and reserve it exclusively for the Size Guide button.
-  const hasMultipleImages = Boolean(product.srcs && product.srcs.length > 1);
-  const showcaseImages = hasMultipleImages
-    ? product.srcs!.slice(0, -1)
-    : (product.srcs && product.srcs.length > 0 ? product.srcs : [product.src]);
-  const sizeGuideImage = hasMultipleImages
-    ? product.srcs![product.srcs!.length - 1]
-    : null;
+  // Priority: product.sizeChartSrc from data layer, with fallback to last image if multiple
+  const sizeGuideImage = product.sizeChartSrc || (product.srcs && product.srcs.length > 1 ? product.srcs[product.srcs.length - 1] : null);
+  // Ensure showcase gallery never contains the size chart image
+  const showcaseImages = (product.srcs || [product.src]).filter(
+    (src) => src && src !== sizeGuideImage
+  );
 
   const primaryImage = showcaseImages[0] || product.src;
   // Middle scrollable gallery starts from the 2nd image and excludes the size chart

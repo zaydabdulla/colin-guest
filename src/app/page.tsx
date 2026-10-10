@@ -1,6 +1,6 @@
 import { getCollectionProducts, getAllProducts, getAllCollections } from "@/lib/shopify";
 // Force Redeploy: 2026-04-24T00:50:12Z
-import { Product, Collection } from "@/lib/data";
+import { Product, Collection, extractProductMedia } from "@/lib/data";
 import LookbookClient from "@/components/lookbook-client";
 import { MobileCollectionsHub } from "@/components/mobile/mobile-collections-hub";
 
@@ -14,19 +14,24 @@ export default async function Home() {
   }
 
   // Map Shopify products to our Product type
-  const displayProducts: Product[] = shopifyProducts.map((p: any) => ({
-    id: p.id,
-    handle: p.handle,
-    src: p.images[0]?.url || "/placeholder.jpg",
-    secondarySrc: p.images[1]?.url,
-    srcs: p.images.map((img: any) => img.url),
-    title: p.title,
-    price: `${p.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(p.priceRange.minVariantPrice.amount).toLocaleString()}`,
-    amount: parseFloat(p.priceRange.minVariantPrice.amount),
-    desc: p.teaser?.value || p.description,
-    category: p.productType || "Collection",
-    type: p.productType || "General"
-  }));
+  const displayProducts: Product[] = shopifyProducts.map((p: any) => {
+    const rawUrls = p.images?.map((img: any) => img.url) || [];
+    const media = extractProductMedia(rawUrls);
+    return {
+      id: p.id,
+      handle: p.handle,
+      src: media.primarySrc,
+      secondarySrc: media.secondarySrc,
+      srcs: media.showcaseImages,
+      sizeChartSrc: media.sizeChartImage || undefined,
+      title: p.title,
+      price: `${p.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(p.priceRange.minVariantPrice.amount).toLocaleString()}`,
+      amount: parseFloat(p.priceRange.minVariantPrice.amount),
+      desc: p.teaser?.value || p.description,
+      category: p.productType || "Collection",
+      type: p.productType || "General"
+    };
+  });
 
   // Fetch collections for mobile integration
   const allCollections = await getAllCollections();

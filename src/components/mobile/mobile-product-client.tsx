@@ -45,15 +45,12 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
     checkSuggestScroll();
   }, [suggestedProducts]);
 
-  // The size chart image in Shopify is uploaded as the LAST image for each product.
-  // We exclude this last image from the sliding gallery and reserve it exclusively for the Size Guide button.
-  const hasMultipleImages = Boolean(product.srcs && product.srcs.length > 1);
-  const displayImages = hasMultipleImages
-    ? product.srcs!.slice(0, -1)
-    : (product.srcs && product.srcs.length > 0 ? product.srcs : [product.src]);
-  const sizeGuideImage = hasMultipleImages
-    ? product.srcs![product.srcs!.length - 1]
-    : null;
+  // Priority: product.sizeChartSrc from data layer, with fallback to last image if multiple
+  const sizeGuideImage = product.sizeChartSrc || (product.srcs && product.srcs.length > 1 ? product.srcs[product.srcs.length - 1] : null);
+  // Ensure sliding gallery never contains the size chart image
+  const displayImages = (product.srcs || [product.src]).filter(
+    (src) => src && src !== sizeGuideImage
+  );
 
   const handleScroll = () => {
     if (scrollRef.current) {

@@ -24,8 +24,15 @@ export function ProductCard({
   const { wishlistItems, toggleWishlist } = useCartStore();
   const isWishlisted = wishlistItems.some((item: Product) => item.id === product.id);
 
-  // We ensure there are multiple images for prototyping tracking unless disabled
-  const srcs = disableSlider ? [product.src] : (product.srcs && product.srcs.length > 1 ? product.srcs : [product.src, product.src, product.src]);
+  // Filter out any size chart image if present so cards never slide or hover onto the size chart
+  const availableSrcs = (product.srcs || [product.src]).filter(
+    (s) => s && s !== product.sizeChartSrc
+  );
+  const srcs = disableSlider
+    ? [availableSrcs[0] || product.src]
+    : availableSrcs.length > 0
+    ? availableSrcs
+    : [product.src];
 
   const handleNext = (e: React.MouseEvent) => {
     e.preventDefault(); 

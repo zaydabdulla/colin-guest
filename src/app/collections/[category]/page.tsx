@@ -2,7 +2,7 @@ import { getCollectionProducts, getAllProducts, getAllCollections } from "@/lib/
 import { ProductCard } from "@/components/product-card";
 import { SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
-import { Product, Collection } from "@/lib/data";
+import { Product, Collection, extractProductMedia } from "@/lib/data";
 import CategoryClient from "@/components/category-client";
 import { MobileCollectionClient } from "@/components/mobile/mobile-collection-client";
 
@@ -41,22 +41,26 @@ export default async function CategoryGrid({ params }: { params: Promise<{ categ
   const collections = allCollections.filter((c: Collection) => c.title.toLowerCase() !== 'landing page');
   
   // Map Shopify products to our Product type
-  const displayProducts: Product[] = shopifyProducts.map((p: any, index: number) => ({
-    id: p.id,
-    handle: p.handle,
-    src: p.images[0]?.url || "/placeholder.jpg",
-    secondarySrc: p.images[1]?.url,
-    srcs: p.images.map((img: any) => img.url),
-    title: p.title,
-    price: `${p.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(p.priceRange.minVariantPrice.amount).toLocaleString()}`,
-    amount: parseFloat(p.priceRange.minVariantPrice.amount),
-    desc: p.description,
-    category: p.category?.name || p.productType || category.charAt(0).toUpperCase() + category.slice(1),
-    type: p.productType || "General",
-    variants: p.variants?.edges.map((e: any) => e.node) || [],
-    options: p.options || [],
-    createdAt: p.createdAt,
-    salesCount: p.salesCount || 0,
+  const displayProducts: Product[] = shopifyProducts.map((p: any, index: number) => {
+    const rawUrls = p.images?.map((img: any) => img.url) || [];
+    const media = extractProductMedia(rawUrls);
+    return {
+      id: p.id,
+      handle: p.handle,
+      src: media.primarySrc,
+      secondarySrc: media.secondarySrc,
+      srcs: media.showcaseImages,
+      sizeChartSrc: media.sizeChartImage || undefined,
+      title: p.title,
+      price: `${p.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(p.priceRange.minVariantPrice.amount).toLocaleString()}`,
+      amount: parseFloat(p.priceRange.minVariantPrice.amount),
+      desc: p.description,
+      category: p.category?.name || p.productType || category.charAt(0).toUpperCase() + category.slice(1),
+      type: p.productType || "General",
+      variants: p.variants?.edges.map((e: any) => e.node) || [],
+      options: p.options || [],
+      createdAt: p.createdAt,
+      salesCount: p.salesCount || 0,
     metafieldKeys: [
       p.color1 && 'custom.color',
       p.color2 && 'custom.Color',
@@ -73,7 +77,8 @@ export default async function CategoryGrid({ params }: { params: Promise<{ categ
       .map((m: any) => m.value)
       .join(','),
     tags: p.tags || []
-  }));
+  };
+});
 
   const formattedCategory = category.toLowerCase() === 'all' ? 'ALL PRODUCTS' : category.split('-').join(' ');
 
