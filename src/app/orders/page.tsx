@@ -46,6 +46,8 @@ interface Order {
   total: string;
   currency: string;
   status: string;
+  financialStatus?: string;
+  fulfillmentStatus?: string;
   tags?: string[];
   returnStatus?: 'PENDING_REVIEW' | 'APPROVED' | 'REJECTED' | 'COMPLETED' | null;
   returnType?: 'EXCHANGE' | 'REFUND' | null;
@@ -117,6 +119,11 @@ export default function OrdersPage() {
 
   const getStatusIcon = (status: string) => {
     switch (status?.toUpperCase()) {
+      case 'REFUNDED':
+      case 'PARTIALLY REFUNDED':
+        return <RotateCcw size={12} className="text-emerald-700" />;
+      case 'CANCELLED':
+        return <Clock size={12} className="text-red-500" />;
       case 'FULFILLED':
         return <CheckCircle2 size={12} className="text-black" />;
       case 'IN_PROGRESS':
@@ -194,9 +201,15 @@ export default function OrdersPage() {
                       <p className="text-[12px] font-bold text-black">{order.currency} {parseFloat(order.total).toFixed(2)}</p>
                     </div>
                     
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5">
+                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${
+                      order.status?.toUpperCase() === 'REFUNDED'
+                        ? 'bg-emerald-500/15 border border-emerald-500/20 text-emerald-900'
+                        : order.status?.toUpperCase() === 'CANCELLED'
+                        ? 'bg-red-500/10 border border-red-500/20 text-red-900'
+                        : 'bg-black/5 text-black/60'
+                    }`}>
                       {getStatusIcon(order.status)}
-                      <span className="text-[8px] font-bold uppercase tracking-widest text-black/60">
+                      <span className="text-[8px] font-bold uppercase tracking-widest">
                         {order.status || 'Received'}
                       </span>
                     </div>
@@ -266,11 +279,11 @@ export default function OrdersPage() {
                         Return Approved • Delhivery Reverse Pickup Assigned
                       </span>
                     </div>
-                  ) : order.returnStatus === 'COMPLETED' ? (
-                    <div className="flex items-center gap-2 text-black/60 bg-black/5 px-3.5 py-1.5 rounded-full">
-                      <CheckCircle2 size={12} className="shrink-0" />
-                      <span className="text-[8.5px] font-bold uppercase tracking-wider">
-                        Return Completed & Settled
+                  ) : order.returnStatus === 'COMPLETED' || order.status?.toUpperCase() === 'REFUNDED' ? (
+                    <div className="flex items-center gap-2 text-emerald-950 bg-emerald-500/10 px-3.5 py-1.5 rounded-full border border-emerald-500/20">
+                      <CheckCircle2 size={12} className="shrink-0 text-emerald-700" />
+                      <span className="text-[8.5px] font-bold uppercase tracking-wider text-emerald-900">
+                        Return & Refund Completed • Settled
                       </span>
                     </div>
                   ) : (
@@ -307,7 +320,7 @@ export default function OrdersPage() {
                             Courier Partner: {order.fulfillments[0].company || "Delhivery Express"}
                           </span>
                           <span className="text-[7.5px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-black text-white">
-                            {order.status || "Fulfilled"}
+                            {order.status?.toUpperCase() === "REFUNDED" ? "Refunded" : order.fulfillmentStatus || order.status || "Fulfilled"}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 mt-1">

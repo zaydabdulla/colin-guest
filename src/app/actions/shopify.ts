@@ -663,6 +663,9 @@ export async function getCustomerOrders(email: string) {
                 }
               }
               displayFulfillmentStatus
+              displayFinancialStatus
+              cancelledAt
+              cancelReason
               fulfillments(first: 2) {
                 id
                 trackingInfo {
@@ -716,11 +719,18 @@ export async function getCustomerOrders(email: string) {
 
     const orders = data.data.orders.edges.map((edge: any) => {
       const tags: string[] = edge.node.tags || [];
+      const financialStatus: string = edge.node.displayFinancialStatus || '';
+      const fulfillmentStatus: string = edge.node.displayFulfillmentStatus || '';
+      const isCancelled: boolean = Boolean(edge.node.cancelledAt);
+      const isRefunded: boolean = financialStatus === 'REFUNDED';
+      const isPartiallyRefunded: boolean = financialStatus === 'PARTIALLY_REFUNDED';
+
       let returnStatus: 'PENDING_REVIEW' | 'APPROVED' | 'REJECTED' | 'COMPLETED' | null = null;
       let returnType: 'EXCHANGE' | 'REFUND' | null = null;
 
-      if (tags.some((t: string) => t.toLowerCase().includes('return completed') || t.toLowerCase().includes('refunded'))) {
+      if (isRefunded || isPartiallyRefunded || tags.some((t: string) => t.toLowerCase().includes('return completed') || t.toLowerCase().includes('refunded'))) {
         returnStatus = 'COMPLETED';
+        returnType = 'REFUND';
       } else if (tags.some((t: string) => t.toLowerCase().includes('return approved'))) {
         returnStatus = 'APPROVED';
       } else if (tags.some((t: string) => t.toLowerCase().includes('return rejected'))) {
@@ -731,8 +741,18 @@ export async function getCustomerOrders(email: string) {
 
       if (tags.some((t: string) => t.toLowerCase().includes('type: exchange') || t.toLowerCase().includes('return: exchange'))) {
         returnType = 'EXCHANGE';
-      } else if (tags.some((t: string) => t.toLowerCase().includes('type: refund') || t.toLowerCase().includes('return: refund'))) {
+      } else if (isRefunded || isPartiallyRefunded || tags.some((t: string) => t.toLowerCase().includes('type: refund') || t.toLowerCase().includes('return: refund'))) {
         returnType = 'REFUND';
+      }
+
+      // Resolve primary customer-facing status
+      let primaryStatus = fulfillmentStatus || 'Received';
+      if (isRefunded) {
+        primaryStatus = 'REFUNDED';
+      } else if (isPartiallyRefunded) {
+        primaryStatus = 'PARTIALLY REFUNDED';
+      } else if (isCancelled) {
+        primaryStatus = 'CANCELLED';
       }
 
       return {
@@ -741,7 +761,9 @@ export async function getCustomerOrders(email: string) {
         date: edge.node.createdAt,
         total: edge.node.totalPriceSet.shopMoney.amount,
         currency: edge.node.totalPriceSet.shopMoney.currencyCode,
-        status: edge.node.displayFulfillmentStatus,
+        status: primaryStatus,
+        financialStatus,
+        fulfillmentStatus,
         tags: tags,
         returnStatus,
         returnType,
