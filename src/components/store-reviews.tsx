@@ -225,77 +225,114 @@ export function StoreReviews({
 
   return (
     <section
-      className={`w-full py-16 md:py-24 bg-white text-black font-sans border-t border-black/5 overflow-hidden ${className}`}
+      className={`w-full py-10 md:py-20 bg-white text-black font-sans border-t border-black/5 overflow-hidden ${className}`}
     >
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12">
+      <div className="max-w-[1400px] mx-auto px-5 md:px-12">
         {/* HEADER SECTION */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-14 gap-6">
+        <div className="flex items-center justify-between mb-8 md:mb-12 gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-black/40">
-                Verified Clientele
-              </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-black/20" />
-              <div className="flex items-center text-black">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3 h-3 fill-black text-black" />
-                ))}
-              </div>
-              <span className="text-xs font-semibold text-black/80 ml-1">
-                {averageRating.toFixed(1)} / 5.0
-              </span>
-            </div>
-            <h2 className="text-3xl md:text-5xl font-light tracking-tight uppercase">
+            <span className="text-[10px] md:text-[11px] font-medium uppercase tracking-[0.2em] text-[#b89759] block mb-0.5 font-sans italic">
+              CLIENTELE FEEDBACK
+            </span>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-serif text-[#1a1a1a] tracking-tight font-sans">
               {title}
             </h2>
+            <div className="flex items-center gap-1.5 mt-1 text-[11px] text-black/60 font-sans">
+              <div className="flex items-center text-black">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-2.5 h-2.5 fill-black text-black" />
+                ))}
+              </div>
+              <span className="font-semibold text-black/85">{averageRating.toFixed(1)} / 5.0</span>
+              <span className="text-black/30">•</span>
+              <span>Verified Reviews</span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4 self-start md:self-auto">
-            {/* Slider Controls (Active on both Laptop & Mobile) */}
-            <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            {/* Desktop-Only Top Arrows */}
+            <div className="hidden md:flex items-center gap-2">
               <button
+                type="button"
                 onClick={() => scrollByDirection("left")}
                 disabled={!canScrollLeft}
                 aria-label="Previous review"
-                className={`w-10 h-10 md:w-11 md:h-11 rounded-full border border-black/10 flex items-center justify-center transition-all ${
+                className={`w-9 h-9 lg:w-10 lg:h-10 rounded-full border border-black/10 flex items-center justify-center transition-all ${
                   canScrollLeft
-                    ? "hover:bg-black hover:text-white text-black cursor-pointer shadow-sm"
+                    ? "hover:bg-black hover:text-white text-black cursor-pointer shadow-sm active:scale-95"
                     : "opacity-30 cursor-not-allowed text-black/40"
                 }`}
               >
-                <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
+                <ChevronLeft className="w-4 h-4 lg:w-4.5 lg:h-4.5" />
               </button>
               <button
+                type="button"
                 onClick={() => scrollByDirection("right")}
                 disabled={!canScrollRight}
                 aria-label="Next review"
-                className={`w-10 h-10 md:w-11 md:h-11 rounded-full border border-black/10 flex items-center justify-center transition-all ${
+                className={`w-9 h-9 lg:w-10 lg:h-10 rounded-full border border-black/10 flex items-center justify-center transition-all ${
                   canScrollRight
-                    ? "hover:bg-black hover:text-white text-black cursor-pointer shadow-sm"
+                    ? "hover:bg-black hover:text-white text-black cursor-pointer shadow-sm active:scale-95"
                     : "opacity-30 cursor-not-allowed text-black/40"
                 }`}
               >
-                <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+                <ChevronRight className="w-4 h-4 lg:w-4.5 lg:h-4.5" />
               </button>
             </div>
 
-            {/* Write a Review Button */}
+            {/* Write a Review Button - Compact & Perfectly Aligned */}
             <button
+              type="button"
               onClick={() => setIsWriteModalOpen(true)}
-              className="inline-flex items-center gap-2 px-5 md:px-6 py-2.5 md:py-3 rounded-full border border-black/15 hover:border-black text-black text-xs uppercase tracking-[0.2em] font-semibold transition-all duration-300 hover:bg-black hover:text-white shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 rounded-full border border-black/15 hover:border-black text-black text-[9px] sm:text-[10px] md:text-xs uppercase tracking-[0.15em] font-semibold transition-all duration-300 hover:bg-black hover:text-white shadow-sm flex-shrink-0 cursor-pointer"
             >
-              <PenLine className="w-3.5 h-3.5" />
+              <PenLine className="w-3 h-3 md:w-3.5 md:h-3.5" />
               <span>Write a Review</span>
             </button>
           </div>
         </div>
 
-        {/* HORIZONTAL CAROUSEL (LAPTOP + MOBILE) */}
-        <div
-          ref={scrollRef}
-          onScroll={handleScroll}
-          className="flex gap-5 md:gap-7 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-6 pt-2 -mx-6 px-6 md:-mx-12 md:px-12 scroll-smooth"
-        >
+        {/* HORIZONTAL CAROUSEL WITH SMOOTH EDGE FADES AND FLOATING ARROWS (LAPTOP) */}
+        <div className="relative w-full group">
+          {/* Left Edge Fade on Desktop */}
+          {canScrollLeft && (
+            <div className="hidden md:block pointer-events-none absolute left-0 top-0 bottom-6 w-24 lg:w-36 bg-gradient-to-r from-white via-white/80 to-transparent z-20 transition-opacity duration-300" />
+          )}
+
+          {/* Right Edge Fade on Desktop */}
+          {canScrollRight && (
+            <div className="hidden md:block pointer-events-none absolute right-0 top-0 bottom-6 w-28 lg:w-44 bg-gradient-to-l from-white via-white/80 to-transparent z-20 transition-opacity duration-300" />
+          )}
+
+          {/* Floating Left Arrow (Desktop Only) */}
+          {canScrollLeft && (
+            <button
+              type="button"
+              onClick={() => scrollByDirection("left")}
+              aria-label="Previous review"
+              className="hidden md:flex absolute left-4 lg:left-6 top-[45%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-white/95 backdrop-blur-md text-black border border-black/10 items-center justify-center hover:bg-black hover:text-white transition-all shadow-[0_6px_20px_rgba(0,0,0,0.08)] active:scale-95 cursor-pointer"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+          )}
+
+          {/* Floating Right Arrow (Desktop Only) */}
+          {canScrollRight && (
+            <button
+              type="button"
+              onClick={() => scrollByDirection("right")}
+              aria-label="Next review"
+              className="hidden md:flex absolute right-4 lg:right-6 top-[45%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-white/95 backdrop-blur-md text-black border border-black/10 items-center justify-center hover:bg-black hover:text-white transition-all shadow-[0_6px_20px_rgba(0,0,0,0.08)] active:scale-95 cursor-pointer"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          )}
+
+          <div
+            ref={scrollRef}
+            onScroll={handleScroll}
+            className="flex gap-4 md:gap-6 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-6 pt-2 -mx-5 px-5 md:-mx-12 md:px-12 scroll-smooth"
+          >
           {reviews.map((review) => (
             <div
               key={review.id}
@@ -367,6 +404,7 @@ export function StoreReviews({
             </div>
           ))}
         </div>
+      </div>
 
         {/* PROGRESS INDICATOR BAR */}
         <div className="w-full flex justify-center items-center mt-6">
