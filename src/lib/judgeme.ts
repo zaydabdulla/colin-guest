@@ -19,7 +19,7 @@ const FALLBACK_REVIEWS: ReviewItem[] = [
     title: "Exceptional Silhouette",
     comment: "Heavyweight cotton with the perfect drop shoulder. The drape and wash feel truly high-end. Highly recommend.",
     verified: true,
-    date: "Verified Buyer",
+    date: "2 days ago",
     images: ["/customer1.jpg"],
   },
   {
@@ -29,7 +29,7 @@ const FALLBACK_REVIEWS: ReviewItem[] = [
     title: "10/10 Fit & Quality",
     comment: "Fit and fabric wash are flawless. Exactly the luxury aesthetic I wanted. Looks even better in person.",
     verified: true,
-    date: "Verified Buyer",
+    date: "1 week ago",
     images: ["/customer2.jpg"],
   },
   {
@@ -39,7 +39,7 @@ const FALLBACK_REVIEWS: ReviewItem[] = [
     title: "Unmatched Tailoring",
     comment: "Quality is crazy good. Fits true to size, feels sturdy yet comfortable, and styles effortlessly with boots or sneakers.",
     verified: true,
-    date: "Verified Buyer",
+    date: "2 weeks ago",
     images: ["/customer3.jpg"],
   },
   {
@@ -49,7 +49,7 @@ const FALLBACK_REVIEWS: ReviewItem[] = [
     title: "Wardrobe Essential",
     comment: "Easily the best piece in my wardrobe right now. Express delivery was seamless as well.",
     verified: true,
-    date: "Verified Buyer",
+    date: "3 weeks ago",
     images: ["/customer4.jpg"],
   },
   {
@@ -59,7 +59,7 @@ const FALLBACK_REVIEWS: ReviewItem[] = [
     title: "Pure Luxury Feel",
     comment: "Unreal drape and fabric feel. Colin Guest never disappoints. Worth every single rupee.",
     verified: true,
-    date: "Verified Buyer",
+    date: "1 month ago",
     images: ["/customer5.jpg"],
   },
 ];
@@ -120,7 +120,7 @@ export async function getStoreReviews(): Promise<{
       title: r.title || "Customer Review",
       comment: r.body || "",
       verified: r.verified_buyer !== false,
-      date: r.created_at ? new Date(r.created_at).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" }) : "Verified Buyer",
+      date: r.created_at ? new Date(r.created_at).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" }) : "Recent",
       images: Array.isArray(r.pictures) ? r.pictures.map((p: any) => p.urls?.original || p.urls?.compact).filter(Boolean) : [],
       productTitle: r.product_title,
     }));

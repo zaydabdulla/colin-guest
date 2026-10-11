@@ -24,7 +24,7 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
     comment:
       "Heavyweight cotton with the perfect drop shoulder. The drape and wash feel truly high-end. Highly recommend.",
     verified: true,
-    date: "Verified Buyer",
+    date: "2 days ago",
     images: ["/customer1.jpg"],
   },
   {
@@ -35,7 +35,7 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
     comment:
       "Fit and fabric wash are flawless. Exactly the luxury aesthetic I wanted. Looks even better in person.",
     verified: true,
-    date: "Verified Buyer",
+    date: "1 week ago",
     images: ["/customer2.jpg"],
   },
   {
@@ -46,7 +46,7 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
     comment:
       "Quality is crazy good. Fits true to size, feels sturdy yet comfortable, and styles effortlessly with boots or sneakers.",
     verified: true,
-    date: "Verified Buyer",
+    date: "2 weeks ago",
     images: ["/customer3.jpg"],
   },
   {
@@ -57,7 +57,7 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
     comment:
       "Easily the best piece in my wardrobe right now. Express delivery was seamless as well.",
     verified: true,
-    date: "Verified Buyer",
+    date: "3 weeks ago",
     images: ["/customer4.jpg"],
   },
   {
@@ -68,7 +68,7 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
     comment:
       "Unreal drape and fabric feel. Colin Guest never disappoints. Worth every single rupee.",
     verified: true,
-    date: "Verified Buyer",
+    date: "1 month ago",
     images: ["/customer5.jpg"],
   },
 ];
@@ -137,7 +137,7 @@ export function StoreReviews({
 
     const maxScroll = scrollWidth - clientWidth;
     if (maxScroll > 0) {
-      setScrollProgress(scrollLeft / maxScroll);
+      setScrollProgress(Math.max(0, Math.min(1, scrollLeft / maxScroll)));
     }
   };
 
@@ -301,7 +301,8 @@ export function StoreReviews({
           <div
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex gap-4 md:gap-6 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-6 pt-2 scroll-smooth"
+            className="flex gap-4 md:gap-6 overflow-x-auto snap-x snap-mandatory hide-scrollbar no-scrollbar pb-6 pt-2 scroll-smooth"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
           {reviews.map((review) => (
             <div
@@ -344,7 +345,7 @@ export function StoreReviews({
               <div>
                 {/* Attached Customer Photos */}
                 {review.images && review.images.length > 0 && (
-                  <div className="flex gap-2.5 mb-5 overflow-x-auto hide-scrollbar">
+                  <div className="flex gap-2.5 mb-5 overflow-x-auto hide-scrollbar no-scrollbar">
                     {review.images.map((img, idx) => (
                       <button
                         key={idx}
@@ -368,7 +369,9 @@ export function StoreReviews({
                   <span className="font-semibold text-black/85 tracking-wide">
                     {review.name}
                   </span>
-                  <span className="tracking-tight">{review.date}</span>
+                  {review.date && review.date !== "Verified Buyer" && (
+                    <span className="tracking-tight">{review.date}</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -377,13 +380,14 @@ export function StoreReviews({
       </div>
 
         {/* PROGRESS INDICATOR BAR */}
-        <div className="w-full flex justify-center items-center mt-6">
-          <div className="w-36 h-1 bg-black/10 rounded-full overflow-hidden relative">
+        <div className="w-full flex justify-center items-center mt-4 md:mt-6">
+          <div className="w-28 sm:w-36 h-1 bg-black/10 rounded-full overflow-hidden relative">
             <div
-              className="h-full bg-black rounded-full transition-all duration-150"
+              className="h-full bg-black rounded-full"
               style={{
                 width: "40%",
-                transform: `translateX(${scrollProgress * 150}%)`,
+                transform: `translateX(${Math.max(0, Math.min(1, scrollProgress)) * 150}%)`,
+                willChange: "transform",
               }}
             />
           </div>
