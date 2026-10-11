@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { Star, CheckCircle, X, PenLine, Loader2 } from "lucide-react";
+import { Star, CheckCircle, X, PenLine, Loader2, Camera, UploadCloud, Trash2 } from "lucide-react";
 import { ReviewItem } from "@/lib/judgeme";
 
 const DEFAULT_REVIEWS: ReviewItem[] = [
@@ -85,8 +85,11 @@ export function StoreReviews({
   const [formEmail, setFormEmail] = useState("");
   const [formTitle, setFormTitle] = useState("");
   const [formBody, setFormBody] = useState("");
+  const [formImages, setFormImages] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Sync live reviews from Judge.me endpoint on client mount
   useEffect(() => {
@@ -101,6 +104,31 @@ export function StoreReviews({
       })
       .catch((err) => console.log("Reviews sync silent fallback:", err));
   }, []);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const remainingSlots = 3 - formImages.length;
+    const filesToRead = Array.from(files).slice(0, remainingSlots);
+
+    filesToRead.forEach((file) => {
+      if (!file.type.startsWith("image/")) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result && typeof event.target.result === "string") {
+          setFormImages((prev) => [...prev, event.target!.result as string].slice(0, 3));
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const removeImage = (indexToRemove: number) => {
+    setFormImages((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,6 +145,7 @@ export function StoreReviews({
           rating: formRating,
           title: formTitle,
           body: formBody,
+          images: formImages,
         }),
       });
 
@@ -132,6 +161,7 @@ export function StoreReviews({
           setFormEmail("");
           setFormTitle("");
           setFormBody("");
+          setFormImages([]);
         }, 2200);
       } else {
         setSubmitStatus({ type: "error", message: data.message || "Could not submit review." });
@@ -273,7 +303,7 @@ export function StoreReviews({
       {/* WRITE A REVIEW MODAL */}
       {isWriteModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="relative bg-white w-full max-w-lg p-6 md:p-8 rounded shadow-2xl border border-black/10">
+          <div className="relative bg-white w-full max-w-lg p-6 md:p-8 rounded shadow-2xl border border-black/10 max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setIsWriteModalOpen(false)}
               className="absolute top-6 right-6 text-black/40 hover:text-black transition-colors"
@@ -301,7 +331,7 @@ export function StoreReviews({
                 {/* Rating Stars Selection */}
                 <div>
                   <label className="block text-[10px] uppercase tracking-widest font-bold text-black/60 mb-1.5">
-                    Rating
+                    Rating *
                   </label>
                   <div className="flex items-center gap-1.5">
                     {[1, 2, 3, 4, 5].map((star) => (
@@ -382,11 +412,61 @@ export function StoreReviews({
                   />
                 </div>
 
+                {/* Photos Upload Section */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-[10px] uppercase tracking-widest font-bold text-black/60">
+                      Add Try-on Photos <span className="font-normal text-black/40">(Optional - Max 3)</span>
+                    </label>
+                    <span className="text-[10px] text-black/40">{formImages.length}/3</span>
+                  </div>
+
+                  {/* Thumbnail Previews */}
+                  {formImages.length > 0 && (
+                    <div className="flex gap-2 mb-3">
+                      {formImages.map((img, idx) => (
+                        <div key={idx} className="relative w-16 h-20 rounded bg-black/5 overflow-hidden border border-black/10 group">
+                          <Image src={img} alt="Preview" fill className="object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => removeImage(idx)}
+                            className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 text-white flex items-center justify-center hover:bg-black transition-colors"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* File Upload Trigger */}
+                  {formImages.length < 3 && (
+                    <>
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        accept="image/*"
+                        multiple
+                        onChange={handleFileSelect}
+                        className="hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-full py-3 px-4 border border-dashed border-black/20 hover:border-black text-black/60 hover:text-black flex items-center justify-center gap-2 text-xs transition-colors bg-[#fafafa]"
+                      >
+                        <Camera className="w-4 h-4" />
+                        <span>Upload photo from your device</span>
+                      </button>
+                    </>
+                  )}
+                </div>
+
                 {/* Submit button */}
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 bg-black text-white text-xs uppercase tracking-[0.2em] font-semibold hover:bg-black/85 transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-3.5 bg-black text-white text-xs uppercase tracking-[0.2em] font-semibold hover:bg-black/85 transition-colors flex items-center justify-center gap-2 mt-4"
                 >
                   {isSubmitting ? (
                     <>

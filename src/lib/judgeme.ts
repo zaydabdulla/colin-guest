@@ -149,6 +149,7 @@ export async function submitReviewAction(formData: {
   rating: number;
   title: string;
   body: string;
+  pictureUrls?: string[];
 }) {
   const privateToken = process.env.JUDGE_ME_PRIVATE_TOKEN;
   const shopDomain = process.env.JUDGE_ME_SHOP_DOMAIN || "wewts9-ud.myshopify.com";
@@ -158,21 +159,27 @@ export async function submitReviewAction(formData: {
   }
 
   try {
+    const payload: any = {
+      shop_domain: shopDomain,
+      platform: "shopify",
+      name: formData.name,
+      email: formData.email,
+      rating: formData.rating,
+      title: formData.title || "Customer Review",
+      body: formData.body,
+    };
+
+    if (formData.pictureUrls && formData.pictureUrls.length > 0) {
+      payload.picture_urls = formData.pictureUrls;
+    }
+
     const res = await fetch("https://api.judge.me/api/v1/reviews", {
       method: "POST",
       headers: {
         "X-Api-Token": privateToken || "",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        shop_domain: shopDomain,
-        platform: "shopify",
-        name: formData.name,
-        email: formData.email,
-        rating: formData.rating,
-        title: formData.title || "Customer Review",
-        body: formData.body,
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (res.ok) {
