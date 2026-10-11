@@ -2,7 +2,17 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { Star, CheckCircle, X, PenLine, Loader2, Camera, UploadCloud, Trash2 } from "lucide-react";
+import {
+  Star,
+  CheckCircle,
+  X,
+  PenLine,
+  Loader2,
+  Camera,
+  ChevronLeft,
+  ChevronRight,
+  Quote,
+} from "lucide-react";
 import { ReviewItem } from "@/lib/judgeme";
 
 const DEFAULT_REVIEWS: ReviewItem[] = [
@@ -11,7 +21,8 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
     name: "Zayd Abdulla",
     rating: 5,
     title: "Exceptional Silhouette",
-    comment: "Heavyweight cotton with the perfect drop shoulder. The drape and wash feel truly high-end. Highly recommend.",
+    comment:
+      "Heavyweight cotton with the perfect drop shoulder. The drape and wash feel truly high-end. Highly recommend.",
     verified: true,
     date: "Verified Buyer",
     images: ["/customer1.jpg"],
@@ -21,7 +32,8 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
     name: "Fidel Shaan",
     rating: 5,
     title: "10/10 Fit & Quality",
-    comment: "Fit and fabric wash are flawless. Exactly the luxury aesthetic I wanted. Looks even better in person.",
+    comment:
+      "Fit and fabric wash are flawless. Exactly the luxury aesthetic I wanted. Looks even better in person.",
     verified: true,
     date: "Verified Buyer",
     images: ["/customer2.jpg"],
@@ -31,7 +43,8 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
     name: "Farhan Ahammed",
     rating: 5,
     title: "Unmatched Tailoring",
-    comment: "Quality is crazy good. Fits true to size, feels sturdy yet comfortable, and styles effortlessly with boots or sneakers.",
+    comment:
+      "Quality is crazy good. Fits true to size, feels sturdy yet comfortable, and styles effortlessly with boots or sneakers.",
     verified: true,
     date: "Verified Buyer",
     images: ["/customer3.jpg"],
@@ -41,7 +54,8 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
     name: "Mowfaq Rahman",
     rating: 5,
     title: "Wardrobe Essential",
-    comment: "Easily the best piece in my wardrobe right now. Express delivery was seamless as well.",
+    comment:
+      "Easily the best piece in my wardrobe right now. Express delivery was seamless as well.",
     verified: true,
     date: "Verified Buyer",
     images: ["/customer4.jpg"],
@@ -51,7 +65,8 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
     name: "Faaz Mohammed",
     rating: 5,
     title: "Pure Luxury Feel",
-    comment: "Unreal drape and fabric feel. Colin Guest never disappoints. Worth every single rupee.",
+    comment:
+      "Unreal drape and fabric feel. Colin Guest never disappoints. Worth every single rupee.",
     verified: true,
     date: "Verified Buyer",
     images: ["/customer5.jpg"],
@@ -79,6 +94,12 @@ export function StoreReviews({
   const [activePhoto, setActivePhoto] = useState<string | null>(null);
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
 
+  // Slider State
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
   // Form State
   const [formRating, setFormRating] = useState(5);
   const [formName, setFormName] = useState("");
@@ -87,11 +108,14 @@ export function StoreReviews({
   const [formBody, setFormBody] = useState("");
   const [formImages, setFormImages] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Sync live reviews from Judge.me endpoint on client mount
+  // Sync live reviews from Judge.me API on mount
   useEffect(() => {
     fetch("/api/reviews")
       .then((res) => (res.ok ? res.json() : null))
@@ -104,6 +128,27 @@ export function StoreReviews({
       })
       .catch((err) => console.log("Reviews sync silent fallback:", err));
   }, []);
+
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+    setCanScrollLeft(scrollLeft > 20);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 20);
+
+    const maxScroll = scrollWidth - clientWidth;
+    if (maxScroll > 0) {
+      setScrollProgress(scrollLeft / maxScroll);
+    }
+  };
+
+  const scrollByDirection = (direction: "left" | "right") => {
+    if (!scrollRef.current) return;
+    const cardWidth = window.innerWidth < 768 ? window.innerWidth * 0.85 : 440;
+    scrollRef.current.scrollBy({
+      left: direction === "left" ? -cardWidth : cardWidth,
+      behavior: "smooth",
+    });
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -164,19 +209,27 @@ export function StoreReviews({
           setFormImages([]);
         }, 2200);
       } else {
-        setSubmitStatus({ type: "error", message: data.message || "Could not submit review." });
+        setSubmitStatus({
+          type: "error",
+          message: data.message || "Could not submit review.",
+        });
       }
     } catch {
       setIsSubmitting(false);
-      setSubmitStatus({ type: "error", message: "Network error submitting review." });
+      setSubmitStatus({
+        type: "error",
+        message: "Network error submitting review.",
+      });
     }
   };
 
   return (
-    <section className={`w-full py-16 md:py-24 bg-white text-black font-sans border-t border-black/5 ${className}`}>
+    <section
+      className={`w-full py-16 md:py-24 bg-white text-black font-sans border-t border-black/5 overflow-hidden ${className}`}
+    >
       <div className="max-w-[1400px] mx-auto px-6 md:px-12">
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 md:mb-16 gap-6">
+        {/* HEADER SECTION */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-14 gap-6">
           <div>
             <div className="flex items-center gap-2 mb-3">
               <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-black/40">
@@ -197,33 +250,71 @@ export function StoreReviews({
             </h2>
           </div>
 
-          <button
-            onClick={() => setIsWriteModalOpen(true)}
-            className="self-start md:self-auto inline-flex items-center gap-2.5 px-6 py-3.5 border border-black/15 hover:border-black text-black text-xs uppercase tracking-[0.2em] font-semibold transition-all duration-300 hover:bg-black hover:text-white"
-          >
-            <PenLine className="w-3.5 h-3.5" />
-            <span>Write a Review</span>
-          </button>
+          <div className="flex items-center gap-4 self-start md:self-auto">
+            {/* Slider Controls (Active on both Laptop & Mobile) */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => scrollByDirection("left")}
+                disabled={!canScrollLeft}
+                aria-label="Previous review"
+                className={`w-10 h-10 md:w-11 md:h-11 rounded-full border border-black/10 flex items-center justify-center transition-all ${
+                  canScrollLeft
+                    ? "hover:bg-black hover:text-white text-black cursor-pointer shadow-sm"
+                    : "opacity-30 cursor-not-allowed text-black/40"
+                }`}
+              >
+                <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
+              </button>
+              <button
+                onClick={() => scrollByDirection("right")}
+                disabled={!canScrollRight}
+                aria-label="Next review"
+                className={`w-10 h-10 md:w-11 md:h-11 rounded-full border border-black/10 flex items-center justify-center transition-all ${
+                  canScrollRight
+                    ? "hover:bg-black hover:text-white text-black cursor-pointer shadow-sm"
+                    : "opacity-30 cursor-not-allowed text-black/40"
+                }`}
+              >
+                <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+              </button>
+            </div>
+
+            {/* Write a Review Button */}
+            <button
+              onClick={() => setIsWriteModalOpen(true)}
+              className="inline-flex items-center gap-2 px-5 md:px-6 py-2.5 md:py-3 rounded-full border border-black/15 hover:border-black text-black text-xs uppercase tracking-[0.2em] font-semibold transition-all duration-300 hover:bg-black hover:text-white shadow-sm"
+            >
+              <PenLine className="w-3.5 h-3.5" />
+              <span>Write a Review</span>
+            </button>
+          </div>
         </div>
 
-        {/* Reviews Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* HORIZONTAL CAROUSEL (LAPTOP + MOBILE) */}
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex gap-5 md:gap-7 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-6 pt-2 -mx-6 px-6 md:-mx-12 md:px-12 scroll-smooth"
+        >
           {reviews.map((review) => (
             <div
               key={review.id}
-              className="bg-[#fafafa] border border-black/5 p-6 md:p-8 flex flex-col justify-between transition-all duration-300 hover:border-black/20 hover:shadow-sm"
+              className="w-[84vw] max-w-[360px] md:w-[400px] flex-shrink-0 snap-start bg-[#fafafa] hover:bg-white rounded-3xl border border-black/[0.08] hover:border-black/25 p-7 md:p-8 flex flex-col justify-between transition-all duration-300 hover:shadow-[0_16px_40px_rgba(0,0,0,0.06)] group min-h-[340px] md:min-h-[360px]"
             >
               <div>
                 {/* Top Row: Stars + Verified Badge */}
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-5">
                   <div className="flex items-center gap-1">
                     {[...Array(review.rating)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-black text-black" />
+                      <Star
+                        key={i}
+                        className="w-3.5 h-3.5 fill-black text-black"
+                      />
                     ))}
                   </div>
 
                   {review.verified && (
-                    <div className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-black/60 bg-black/5 px-2 py-0.5 rounded-full font-medium">
+                    <div className="inline-flex items-center gap-1.5 text-[9px] uppercase tracking-wider text-black bg-black/[0.06] px-3 py-1 rounded-full font-medium">
                       <CheckCircle className="w-2.5 h-2.5 text-black" />
                       <span>Verified Buyer</span>
                     </div>
@@ -232,13 +323,13 @@ export function StoreReviews({
 
                 {/* Review Title */}
                 {review.title && (
-                  <h4 className="text-sm font-semibold tracking-wide uppercase text-black mb-2">
+                  <h4 className="text-sm font-semibold tracking-wide uppercase text-black mb-2.5 line-clamp-1">
                     {review.title}
                   </h4>
                 )}
 
                 {/* Review Comment */}
-                <p className="text-xs md:text-sm text-black/70 leading-relaxed font-normal mb-6">
+                <p className="text-xs md:text-sm text-black/75 leading-relaxed font-normal mb-6 line-clamp-4">
                   "{review.comment}"
                 </p>
               </div>
@@ -246,19 +337,19 @@ export function StoreReviews({
               <div>
                 {/* Attached Customer Photos */}
                 {review.images && review.images.length > 0 && (
-                  <div className="flex gap-2 mb-4 overflow-x-auto hide-scrollbar">
+                  <div className="flex gap-2.5 mb-5 overflow-x-auto hide-scrollbar">
                     {review.images.map((img, idx) => (
                       <button
                         key={idx}
                         onClick={() => setActivePhoto(img)}
-                        className="relative w-14 h-18 rounded bg-black/5 overflow-hidden flex-shrink-0 border border-black/10 hover:opacity-80 transition-opacity"
+                        className="relative w-14 h-16 md:w-16 md:h-18 rounded-xl bg-black/5 overflow-hidden flex-shrink-0 border border-black/10 hover:border-black hover:scale-105 transition-all shadow-sm"
                       >
                         <Image
                           src={img}
                           alt="Customer Try-on"
                           fill
                           className="object-cover"
-                          sizes="60px"
+                          sizes="70px"
                         />
                       </button>
                     ))}
@@ -266,26 +357,41 @@ export function StoreReviews({
                 )}
 
                 {/* Reviewer Details */}
-                <div className="border-t border-black/5 pt-4 flex items-center justify-between text-[11px] text-black/50">
-                  <span className="font-semibold text-black/80">{review.name}</span>
-                  <span>{review.date}</span>
+                <div className="border-t border-black/[0.07] pt-4 flex items-center justify-between text-[11px] text-black/50">
+                  <span className="font-semibold text-black/85 tracking-wide">
+                    {review.name}
+                  </span>
+                  <span className="tracking-tight">{review.date}</span>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* PROGRESS INDICATOR BAR */}
+        <div className="w-full flex justify-center items-center mt-6">
+          <div className="w-36 h-1 bg-black/10 rounded-full overflow-hidden relative">
+            <div
+              className="h-full bg-black rounded-full transition-all duration-150"
+              style={{
+                width: "40%",
+                transform: `translateX(${scrollProgress * 150}%)`,
+              }}
+            />
+          </div>
         </div>
       </div>
 
       {/* PHOTO LIGHTBOX MODAL */}
       {activePhoto && (
         <div
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4"
           onClick={() => setActivePhoto(null)}
         >
-          <div className="relative max-w-lg w-full max-h-[85vh] aspect-[3/4] bg-black rounded overflow-hidden">
+          <div className="relative max-w-lg w-full max-h-[85vh] aspect-[3/4] bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/10">
             <button
               onClick={() => setActivePhoto(null)}
-              className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/20 text-white flex items-center justify-center hover:bg-white/40 transition-colors"
+              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/20 text-white flex items-center justify-center hover:bg-white/40 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -302,23 +408,25 @@ export function StoreReviews({
 
       {/* WRITE A REVIEW MODAL */}
       {isWriteModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="relative bg-white w-full max-w-lg p-6 md:p-8 rounded shadow-2xl border border-black/10 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="relative bg-white w-full max-w-lg p-7 md:p-9 rounded-3xl shadow-2xl border border-black/10 max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setIsWriteModalOpen(false)}
-              className="absolute top-6 right-6 text-black/40 hover:text-black transition-colors"
+              className="absolute top-6 right-6 w-8 h-8 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center text-black/60 hover:text-black transition-colors"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
 
-            <h3 className="text-xl font-light uppercase tracking-tight mb-2">Write a Review</h3>
+            <h3 className="text-2xl font-light uppercase tracking-tight mb-2">
+              Write a Review
+            </h3>
             <p className="text-xs text-black/50 mb-6">
-              Share your honest experience. Verified reviews appear on Colin Guest.
+              Share your honest feedback. Verified reviews appear on Colin Guest.
             </p>
 
             {submitStatus ? (
               <div
-                className={`p-4 rounded text-xs font-medium text-center ${
+                className={`p-5 rounded-2xl text-xs font-medium text-center ${
                   submitStatus.type === "success"
                     ? "bg-emerald-50 text-emerald-900 border border-emerald-200"
                     : "bg-red-50 text-red-900 border border-red-200"
@@ -330,10 +438,10 @@ export function StoreReviews({
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Rating Stars Selection */}
                 <div>
-                  <label className="block text-[10px] uppercase tracking-widest font-bold text-black/60 mb-1.5">
+                  <label className="block text-[10px] uppercase tracking-widest font-bold text-black/60 mb-2">
                     Rating *
                   </label>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
                         type="button"
@@ -342,7 +450,7 @@ export function StoreReviews({
                         className="p-1 hover:scale-110 transition-transform"
                       >
                         <Star
-                          className={`w-5 h-5 ${
+                          className={`w-6 h-6 ${
                             star <= formRating
                               ? "fill-black text-black"
                               : "text-black/20"
@@ -365,7 +473,7 @@ export function StoreReviews({
                       placeholder="e.g. Rahul Sharma"
                       value={formName}
                       onChange={(e) => setFormName(e.target.value)}
-                      className="w-full px-3 py-2 text-xs border border-black/15 rounded-none focus:outline-none focus:border-black"
+                      className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-black/15 focus:outline-none focus:border-black transition-colors"
                     />
                   </div>
                   <div>
@@ -378,7 +486,7 @@ export function StoreReviews({
                       placeholder="rahul@example.com"
                       value={formEmail}
                       onChange={(e) => setFormEmail(e.target.value)}
-                      className="w-full px-3 py-2 text-xs border border-black/15 rounded-none focus:outline-none focus:border-black"
+                      className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-black/15 focus:outline-none focus:border-black transition-colors"
                     />
                   </div>
                 </div>
@@ -390,10 +498,10 @@ export function StoreReviews({
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. Unbelievable Quality & Fit"
+                    placeholder="e.g. Exceptional Tailoring & Heavyweight Drape"
                     value={formTitle}
                     onChange={(e) => setFormTitle(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-black/15 rounded-none focus:outline-none focus:border-black"
+                    className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-black/15 focus:outline-none focus:border-black transition-colors"
                   />
                 </div>
 
@@ -405,28 +513,41 @@ export function StoreReviews({
                   <textarea
                     required
                     rows={4}
-                    placeholder="Tell us what you liked about the garment, the silhouette, and the fabric feel..."
+                    placeholder="Tell us what you loved about the silhouette, quality, and fit..."
                     value={formBody}
                     onChange={(e) => setFormBody(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-black/15 rounded-none focus:outline-none focus:border-black resize-none"
+                    className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-black/15 focus:outline-none focus:border-black resize-none transition-colors"
                   />
                 </div>
 
-                {/* Photos Upload Section */}
+                {/* Photo Upload Area */}
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <label className="block text-[10px] uppercase tracking-widest font-bold text-black/60">
-                      Add Try-on Photos <span className="font-normal text-black/40">(Optional - Max 3)</span>
+                      Add Try-on Photos{" "}
+                      <span className="font-normal text-black/40">
+                        (Optional - Max 3)
+                      </span>
                     </label>
-                    <span className="text-[10px] text-black/40">{formImages.length}/3</span>
+                    <span className="text-[10px] text-black/40">
+                      {formImages.length}/3
+                    </span>
                   </div>
 
                   {/* Thumbnail Previews */}
                   {formImages.length > 0 && (
-                    <div className="flex gap-2 mb-3">
+                    <div className="flex gap-2.5 mb-3">
                       {formImages.map((img, idx) => (
-                        <div key={idx} className="relative w-16 h-20 rounded bg-black/5 overflow-hidden border border-black/10 group">
-                          <Image src={img} alt="Preview" fill className="object-cover" />
+                        <div
+                          key={idx}
+                          className="relative w-16 h-20 rounded-xl bg-black/5 overflow-hidden border border-black/10 group"
+                        >
+                          <Image
+                            src={img}
+                            alt="Preview"
+                            fill
+                            className="object-cover"
+                          />
                           <button
                             type="button"
                             onClick={() => removeImage(idx)}
@@ -439,7 +560,7 @@ export function StoreReviews({
                     </div>
                   )}
 
-                  {/* File Upload Trigger */}
+                  {/* Trigger */}
                   {formImages.length < 3 && (
                     <>
                       <input
@@ -453,7 +574,7 @@ export function StoreReviews({
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="w-full py-3 px-4 border border-dashed border-black/20 hover:border-black text-black/60 hover:text-black flex items-center justify-center gap-2 text-xs transition-colors bg-[#fafafa]"
+                        className="w-full py-3.5 px-4 rounded-xl border border-dashed border-black/20 hover:border-black text-black/60 hover:text-black flex items-center justify-center gap-2 text-xs transition-colors bg-[#fafafa]"
                       >
                         <Camera className="w-4 h-4" />
                         <span>Upload photo from your device</span>
@@ -466,7 +587,7 @@ export function StoreReviews({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 bg-black text-white text-xs uppercase tracking-[0.2em] font-semibold hover:bg-black/85 transition-colors flex items-center justify-center gap-2 mt-4"
+                  className="w-full py-3.5 bg-black text-white text-xs uppercase tracking-[0.2em] font-semibold hover:bg-black/85 transition-colors flex items-center justify-center gap-2 rounded-full mt-4 cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>
