@@ -291,22 +291,17 @@ export function StoreReviews({
           </div>
         </div>
 
-        {/* HORIZONTAL CAROUSEL (CLEAN & GLITCH-FREE) */}
-        <div className="relative w-full overflow-hidden">
-          {/* Subtle 28px Smooth Edge Fade on Right (Desktop Only) */}
+        {/* HORIZONTAL CAROUSEL (CLEAN & UNCLIPPED AT START) */}
+        <div className="relative w-full">
+          {/* Subtle Smooth Edge Fade on Right Only (Desktop Only) */}
           {canScrollRight && (
-            <div className="hidden md:block pointer-events-none absolute right-0 top-0 bottom-6 w-12 lg:w-16 bg-gradient-to-l from-white to-transparent z-10 transition-opacity duration-300" />
-          )}
-
-          {/* Subtle 28px Smooth Edge Fade on Left (Desktop Only) */}
-          {canScrollLeft && (
-            <div className="hidden md:block pointer-events-none absolute left-0 top-0 bottom-6 w-12 lg:w-16 bg-gradient-to-r from-white to-transparent z-10 transition-opacity duration-300" />
+            <div className="hidden md:block pointer-events-none absolute right-0 top-0 bottom-6 w-16 lg:w-24 bg-gradient-to-l from-white to-transparent z-10 transition-opacity duration-300" />
           )}
 
           <div
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex gap-4 md:gap-6 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-6 pt-2 -mx-5 px-5 md:-mx-12 md:px-12 scroll-smooth"
+            className="flex gap-4 md:gap-6 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-6 pt-2 scroll-smooth"
           >
           {reviews.map((review) => (
             <div
