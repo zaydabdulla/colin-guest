@@ -229,28 +229,27 @@ export function StoreReviews({
     >
       <div className="max-w-[1400px] mx-auto px-5 md:px-12">
         {/* HEADER SECTION */}
-        <div className="flex items-center justify-between mb-8 md:mb-12 gap-4">
-          <div>
-            <span className="text-[10px] md:text-[11px] font-medium uppercase tracking-[0.2em] text-[#b89759] block mb-0.5 font-sans italic">
-              CLIENTELE FEEDBACK
-            </span>
+        <div className="flex items-center justify-between mb-8 md:mb-12 gap-3 sm:gap-4">
+          <div className="min-w-0">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-serif text-[#1a1a1a] tracking-tight font-sans">
               {title}
             </h2>
-            <div className="flex items-center gap-1.5 mt-1 text-[11px] text-black/60 font-sans">
-              <div className="flex items-center text-black">
+            <div className="flex items-center gap-1.5 mt-1 text-[11px] sm:text-xs text-black/60 font-sans whitespace-nowrap flex-nowrap">
+              <div className="flex items-center text-black flex-shrink-0">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-2.5 h-2.5 fill-black text-black" />
                 ))}
               </div>
-              <span className="font-semibold text-black/85">{averageRating.toFixed(1)} / 5.0</span>
+              <span className="font-semibold text-black/85 whitespace-nowrap">
+                {averageRating.toFixed(1)}
+              </span>
               <span className="text-black/30">•</span>
-              <span>Verified Reviews</span>
+              <span className="whitespace-nowrap">Verified Reviews</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Desktop-Only Top Arrows */}
+          <div className="flex items-center gap-3 flex-shrink-0">
+            {/* Minimalist Top Arrows (Desktop Only) */}
             <div className="hidden md:flex items-center gap-2">
               <button
                 type="button"
@@ -292,40 +291,16 @@ export function StoreReviews({
           </div>
         </div>
 
-        {/* HORIZONTAL CAROUSEL WITH SMOOTH EDGE FADES AND FLOATING ARROWS (LAPTOP) */}
-        <div className="relative w-full group">
-          {/* Left Edge Fade on Desktop */}
-          {canScrollLeft && (
-            <div className="hidden md:block pointer-events-none absolute left-0 top-0 bottom-6 w-24 lg:w-36 bg-gradient-to-r from-white via-white/80 to-transparent z-20 transition-opacity duration-300" />
-          )}
-
-          {/* Right Edge Fade on Desktop */}
+        {/* HORIZONTAL CAROUSEL (CLEAN & GLITCH-FREE) */}
+        <div className="relative w-full overflow-hidden">
+          {/* Subtle 28px Smooth Edge Fade on Right (Desktop Only) */}
           {canScrollRight && (
-            <div className="hidden md:block pointer-events-none absolute right-0 top-0 bottom-6 w-28 lg:w-44 bg-gradient-to-l from-white via-white/80 to-transparent z-20 transition-opacity duration-300" />
+            <div className="hidden md:block pointer-events-none absolute right-0 top-0 bottom-6 w-12 lg:w-16 bg-gradient-to-l from-white to-transparent z-10 transition-opacity duration-300" />
           )}
 
-          {/* Floating Left Arrow (Desktop Only) */}
+          {/* Subtle 28px Smooth Edge Fade on Left (Desktop Only) */}
           {canScrollLeft && (
-            <button
-              type="button"
-              onClick={() => scrollByDirection("left")}
-              aria-label="Previous review"
-              className="hidden md:flex absolute left-4 lg:left-6 top-[45%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-white/95 backdrop-blur-md text-black border border-black/10 items-center justify-center hover:bg-black hover:text-white transition-all shadow-[0_6px_20px_rgba(0,0,0,0.08)] active:scale-95 cursor-pointer"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-          )}
-
-          {/* Floating Right Arrow (Desktop Only) */}
-          {canScrollRight && (
-            <button
-              type="button"
-              onClick={() => scrollByDirection("right")}
-              aria-label="Next review"
-              className="hidden md:flex absolute right-4 lg:right-6 top-[45%] -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-white/95 backdrop-blur-md text-black border border-black/10 items-center justify-center hover:bg-black hover:text-white transition-all shadow-[0_6px_20px_rgba(0,0,0,0.08)] active:scale-95 cursor-pointer"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
+            <div className="hidden md:block pointer-events-none absolute left-0 top-0 bottom-6 w-12 lg:w-16 bg-gradient-to-r from-white to-transparent z-10 transition-opacity duration-300" />
           )}
 
           <div
