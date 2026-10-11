@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/lib/data";
 import { OurStore } from "@/components/our-store";
+import { StoreReviews } from "@/components/store-reviews";
 
 interface LookbookClientProps {
   products: Product[];
@@ -87,6 +88,7 @@ export default function LookbookClient({ products }: LookbookClientProps) {
            </div>
         </div>
       </div>
+      <StoreReviews />
       <OurStore />
       <style dangerouslySetInnerHTML={{ __html: `
         .hide-scrollbar::-webkit-scrollbar {

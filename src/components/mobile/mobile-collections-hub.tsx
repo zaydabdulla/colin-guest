@@ -9,6 +9,7 @@ import { Plus, Bookmark, ChevronRight, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { getAllProducts, getCollectionProducts } from "@/lib/shopify";
 import { OurStore } from "@/components/our-store";
+import { StoreReviews } from "@/components/store-reviews";
 
 interface MobileCollectionsHubProps {
   collections: Collection[];
@@ -378,6 +379,9 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
             </div>
           </Link>
         </div>
+
+        {/* Store Reviews Section */}
+        <StoreReviews className="py-12 bg-white" />
 
         {/* Our Store Section */}
         <OurStore className="pt-2 sm:pt-4" />

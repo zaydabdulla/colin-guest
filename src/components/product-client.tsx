@@ -13,6 +13,7 @@ import { ShopTheLook } from "@/components/shop-the-look";
 import { motion, AnimatePresence } from "framer-motion";
 import { PincodeChecker } from "@/components/pincode-checker";
 import { CustomerCollage } from "@/components/customer-collage";
+import { StoreReviews } from "@/components/store-reviews";
 import { OurStore } from "@/components/our-store";
 import { trackMetaEvent } from "@/lib/meta-pixel";
 import SizeGuideModal from "@/components/size-guide-modal";
@@ -321,6 +322,9 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
             </div>
           </div>
         </section>
+
+        {/* Store Reviews Section */}
+        <StoreReviews className="max-w-[1400px] mx-auto border-t-0" />
 
         {/* Visit Our Store Section */}
         <OurStore className="max-w-[1400px] mx-auto pb-28 md:pb-36 mt-4" />

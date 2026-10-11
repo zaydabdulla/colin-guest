@@ -11,6 +11,7 @@ import { ProductCard } from "../product-card";
 import { ShopTheLook } from "../shop-the-look";
 import { PincodeChecker } from "@/components/pincode-checker";
 import { CustomerCollage } from "@/components/customer-collage";
+import { StoreReviews } from "@/components/store-reviews";
 import { OurStore } from "../our-store";
 import SizeGuideModal from "@/components/size-guide-modal";
 
@@ -352,6 +353,9 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
           </div>
         </Link>
       </div>
+
+      {/* Store Reviews Section */}
+      <StoreReviews className="mt-8 mb-6" />
 
       {/* Visit Our Store Section */}
       <OurStore className="mt-6 mb-12" />
