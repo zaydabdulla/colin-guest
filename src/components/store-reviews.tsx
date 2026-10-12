@@ -500,16 +500,9 @@ export function StoreReviews({
                 {/* Name & Email */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <label className="block text-[10px] uppercase tracking-widest font-bold text-black/60">
-                        Your Name *
-                      </label>
-                      {(isLoggedIn || session?.user) && formName && (
-                        <span className="text-[9px] text-[#b89759] font-medium tracking-normal">
-                          Auto-filled
-                        </span>
-                      )}
-                    </div>
+                    <label className="block text-[10px] uppercase tracking-widest font-bold text-black/60 mb-1">
+                      Your Name *
+                    </label>
                     <input
                       type="text"
                       required
@@ -520,16 +513,9 @@ export function StoreReviews({
                     />
                   </div>
                   <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <label className="block text-[10px] uppercase tracking-widest font-bold text-black/60">
-                        Your Email *
-                      </label>
-                      {(isLoggedIn || session?.user) && formEmail && (
-                        <span className="text-[9px] text-[#b89759] font-medium tracking-normal">
-                          Auto-filled
-                        </span>
-                      )}
-                    </div>
+                    <label className="block text-[10px] uppercase tracking-widest font-bold text-black/60 mb-1">
+                      Your Email *
+                    </label>
                     <input
                       type="email"
                       required
