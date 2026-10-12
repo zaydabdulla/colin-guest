@@ -14,6 +14,8 @@ import {
   Quote,
 } from "lucide-react";
 import { ReviewItem } from "@/lib/judgeme";
+import { useCartStore } from "@/lib/store";
+import { useSession } from "next-auth/react";
 
 const DEFAULT_REVIEWS: ReviewItem[] = [
   {
@@ -94,6 +96,10 @@ export function StoreReviews({
   const [activePhoto, setActivePhoto] = useState<string | null>(null);
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
 
+  // Authenticated User Detection
+  const { isLoggedIn, user: storeUser } = useCartStore();
+  const { data: session } = useSession();
+
   // Slider State
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -114,6 +120,24 @@ export function StoreReviews({
   } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-fill logged-in customer name and email when opening modal
+  useEffect(() => {
+    if (isWriteModalOpen) {
+      const email = storeUser?.email || session?.user?.email || "";
+      const name =
+        [storeUser?.firstName, storeUser?.lastName].filter(Boolean).join(" ") ||
+        session?.user?.name ||
+        "";
+
+      if (email && !formEmail) {
+        setFormEmail(email);
+      }
+      if (name && !formName) {
+        setFormName(name);
+      }
+    }
+  }, [isWriteModalOpen, storeUser, session, formEmail, formName]);
 
   // Sync live reviews from Judge.me API on mount
   useEffect(() => {
@@ -476,9 +500,16 @@ export function StoreReviews({
                 {/* Name & Email */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[10px] uppercase tracking-widest font-bold text-black/60 mb-1">
-                      Your Name *
-                    </label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-[10px] uppercase tracking-widest font-bold text-black/60">
+                        Your Name *
+                      </label>
+                      {(isLoggedIn || session?.user) && formName && (
+                        <span className="text-[9px] text-[#b89759] font-medium tracking-normal">
+                          Auto-filled
+                        </span>
+                      )}
+                    </div>
                     <input
                       type="text"
                       required
@@ -489,9 +520,16 @@ export function StoreReviews({
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] uppercase tracking-widest font-bold text-black/60 mb-1">
-                      Your Email *
-                    </label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-[10px] uppercase tracking-widest font-bold text-black/60">
+                        Your Email *
+                      </label>
+                      {(isLoggedIn || session?.user) && formEmail && (
+                        <span className="text-[9px] text-[#b89759] font-medium tracking-normal">
+                          Auto-filled
+                        </span>
+                      )}
+                    </div>
                     <input
                       type="email"
                       required

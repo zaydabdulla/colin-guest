@@ -111,15 +111,8 @@ export default function SizeGuideModal({
           </div>
 
           {/* Footer */}
-          <div className="pt-2.5 border-t border-black/5 flex items-center justify-between text-[8px] sm:text-[9.5px] text-black/40 font-medium shrink-0 gap-4">
+          <div className="pt-2.5 border-t border-black/5 flex items-center justify-center text-[8.5px] sm:text-[9.5px] text-black/40 font-medium shrink-0">
             <span>Measurements in standard sizing</span>
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-3 py-1 rounded-full bg-black text-white text-[8.5px] sm:text-[9px] font-bold uppercase tracking-widest hover:bg-black/80 transition-colors"
-            >
-              Close
-            </button>
           </div>
         </motion.div>
       </div>
