@@ -2,20 +2,18 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Play,
-  Pause,
   Volume2,
   VolumeX,
   X,
   ChevronLeft,
   ChevronRight,
-  ShoppingBag,
+  ArrowUpRight,
   CheckCircle,
-  Sparkles,
 } from "lucide-react";
 import { Product } from "@/lib/data";
-import { useCartStore } from "@/lib/store";
 
 export interface ReelItem {
   id: string;
@@ -28,6 +26,7 @@ export interface ReelItem {
   productTitle?: string;
   productPrice?: string;
   productImage?: string;
+  productHandle?: string;
 }
 
 interface PdpReelsProps {
@@ -89,21 +88,32 @@ const DEFAULT_REELS: ReelItem[] = [
 export function PdpReels({
   product,
   className = "",
-  title = "Client Results & Try-Ons",
-  subtitle = "Real fits, styling & silhouettes on our community",
+  title = "Clientele Looks",
+  subtitle = "Real silhouettes & styling from our community",
 }: PdpReelsProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
-  // Active full-screen reel lightbox
+  // Active full-screen reel lightbox modal
   const [activeReelIndex, setActiveReelIndex] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
 
   const activeVideoRef = useRef<HTMLVideoElement>(null);
-  const { addToCart, openCart } = useCartStore();
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (activeReelIndex !== null) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [activeReelIndex]);
 
   // Parse reels from product metafield if available, else use curated defaults
   const reels: ReelItem[] = (() => {
@@ -124,6 +134,7 @@ export function PdpReels({
           productTitle: item.productTitle || product.title,
           productPrice: item.productPrice || product.price,
           productImage: item.productImage || product.src,
+          productHandle: item.productHandle || product.handle || String(product.id),
         }));
       }
     } catch {
@@ -144,6 +155,7 @@ export function PdpReels({
           productTitle: product.title,
           productPrice: product.price,
           productImage: product.src,
+          productHandle: product.handle || String(product.id),
         }));
       }
     }
@@ -216,41 +228,40 @@ export function PdpReels({
     }
   };
 
-  const handleQuickAdd = () => {
-    if (!product) return;
-    const firstVariant = product.variants?.[0];
-    addToCart(product, firstVariant?.title || "M");
-    openCart();
-    setActiveReelIndex(null);
-  };
-
   if (!reels || reels.length === 0) return null;
+
+  // Active reel item and its tagged product info
+  const activeReel = activeReelIndex !== null ? reels[activeReelIndex] : null;
+  const featuredProduct = activeReel
+    ? {
+        title: activeReel.productTitle || product?.title || "Colin Guest Archive",
+        price: activeReel.productPrice || product?.price || "",
+        image: activeReel.productImage || product?.src || "/customer1.jpg",
+        handle: activeReel.productHandle || product?.handle || String(product?.id || ""),
+      }
+    : null;
 
   return (
     <section className={`w-full py-8 md:py-16 bg-white text-black font-sans ${className}`}>
       <div className="max-w-[1400px] mx-auto px-5 md:px-12">
-        {/* HEADER SECTION */}
-        <div className="flex items-center justify-between mb-6 md:mb-10 gap-3">
+        {/* HEADER SECTION (EXACT LUXURY EDITORIAL STYLE MATCHING CLIENT FEEDBACK) */}
+        <div className="flex items-center justify-between mb-8 md:mb-12 gap-3 sm:gap-4">
           <div className="min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/[0.05] text-[9px] uppercase tracking-wider font-semibold text-black/70">
-                <Sparkles className="w-2.5 h-2.5 text-[#b89759]" />
-                Customer Try-Ons
-              </span>
-            </div>
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-serif text-[#1a1a1a] tracking-tight">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-serif text-[#1a1a1a] tracking-tight font-sans">
               {title}
             </h2>
-            <p className="text-xs text-black/55 mt-1 font-sans">{subtitle}</p>
+            <p className="text-[11px] sm:text-xs text-black/60 font-sans mt-1">
+              {subtitle}
+            </p>
           </div>
 
-          {/* Desktop-Only Arrow Controls */}
+          {/* Desktop-Only Arrow Controls (Matching StoreReviews) */}
           <div className="hidden md:flex items-center gap-2 flex-shrink-0">
             <button
               type="button"
               onClick={() => scrollByDirection("left")}
               disabled={!canScrollLeft}
-              aria-label="Previous reels"
+              aria-label="Previous looks"
               className={`w-9 h-9 lg:w-10 lg:h-10 rounded-full border border-black/10 flex items-center justify-center transition-all ${
                 canScrollLeft
                   ? "hover:bg-black hover:text-white text-black cursor-pointer shadow-sm active:scale-95"
@@ -263,7 +274,7 @@ export function PdpReels({
               type="button"
               onClick={() => scrollByDirection("right")}
               disabled={!canScrollRight}
-              aria-label="Next reels"
+              aria-label="Next looks"
               className={`w-9 h-9 lg:w-10 lg:h-10 rounded-full border border-black/10 flex items-center justify-center transition-all ${
                 canScrollRight
                   ? "hover:bg-black hover:text-white text-black cursor-pointer shadow-sm active:scale-95"
@@ -291,12 +302,14 @@ export function PdpReels({
             {reels.map((reel, index) => (
               <div
                 key={reel.id}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                   setActiveReelIndex(index);
                   setIsPlaying(true);
                   setIsMuted(false);
                 }}
-                className="group relative w-[190px] sm:w-[220px] md:w-[245px] h-[340px] sm:h-[390px] md:h-[435px] flex-shrink-0 snap-start rounded-[24px] md:rounded-[28px] overflow-hidden bg-black/5 border border-black/[0.08] hover:border-black/30 transition-all duration-300 hover:shadow-[0_16px_36px_rgba(0,0,0,0.12)] cursor-pointer select-none"
+                className="group relative w-[190px] sm:w-[220px] md:w-[245px] h-[340px] sm:h-[390px] md:h-[435px] flex-shrink-0 snap-start rounded-3xl overflow-hidden bg-black/5 border border-black/[0.08] hover:border-black/25 transition-all duration-300 hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] cursor-pointer select-none"
               >
                 {/* Looping Muted Preview Video */}
                 <video
@@ -311,7 +324,7 @@ export function PdpReels({
                 />
 
                 {/* Scrim Overlay Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/30 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30 pointer-events-none" />
 
                 {/* Top Badge: Customer Stats / Size */}
                 <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between z-10">
@@ -336,7 +349,7 @@ export function PdpReels({
                 {/* Bottom Details */}
                 <div className="absolute bottom-0 inset-x-0 p-4 text-white z-10 flex flex-col justify-end">
                   <div className="flex items-center gap-1.5 mb-1.5">
-                    <span className="text-xs font-semibold tracking-wide drop-shadow-sm">
+                    <span className="text-xs font-semibold tracking-wide drop-shadow-sm font-sans">
                       {reel.customerHandle}
                     </span>
                     <CheckCircle className="w-3 h-3 text-[#b89759] fill-[#b89759]/20" />
@@ -354,13 +367,13 @@ export function PdpReels({
         </div>
       </div>
 
-      {/* FULL-SCREEN REEL LIGHTBOX MODAL */}
+      {/* FULL-SCREEN REEL LIGHTBOX WINDOW (OPENS IN-PLACE WITHOUT REDIRECTING) */}
       {activeReelIndex !== null && reels[activeReelIndex] && (
         <div
-          className="fixed inset-0 z-[150] bg-black/90 backdrop-blur-md flex items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 z-[150] bg-black/85 backdrop-blur-md flex items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200"
           onClick={() => setActiveReelIndex(null)}
         >
-          {/* Main Reel Viewer Container */}
+          {/* Main Reel Viewer Window */}
           <div
             className="relative w-full sm:max-w-[420px] h-full sm:h-[86vh] sm:max-h-[820px] bg-black sm:rounded-[32px] overflow-hidden flex flex-col shadow-2xl border border-white/10"
             onClick={(e) => e.stopPropagation()}
@@ -441,46 +454,53 @@ export function PdpReels({
               )}
             </div>
 
-            {/* Bottom Floating Product Quick-Action Card */}
-            <div className="absolute bottom-0 inset-x-0 p-4 sm:p-5 bg-gradient-to-t from-black via-black/80 to-transparent z-30">
+            {/* Bottom Floating Product Bar with "SHOP THIS PRODUCT" */}
+            <div className="absolute bottom-0 inset-x-0 p-4 sm:p-5 bg-gradient-to-t from-black via-black/85 to-transparent z-30">
               {/* Customer Caption */}
               {reels[activeReelIndex].caption && (
-                <p className="text-xs sm:text-sm text-white/95 mb-3 leading-relaxed drop-shadow-md">
+                <p className="text-xs sm:text-sm text-white/95 mb-3 leading-relaxed drop-shadow-md font-sans">
                   "{reels[activeReelIndex].caption}"
                 </p>
               )}
 
               {/* Tagged Product Box */}
-              {product && (
-                <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-between gap-3 shadow-xl">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="relative w-11 h-13 rounded-xl overflow-hidden bg-black/20 flex-shrink-0 border border-white/15">
+              {featuredProduct && (
+                <div className="p-3 sm:p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-between gap-3 shadow-2xl">
+                  <Link
+                    href={`/product/${featuredProduct.handle}`}
+                    onClick={() => setActiveReelIndex(null)}
+                    className="flex items-center gap-3 min-w-0 group/prod cursor-pointer"
+                  >
+                    <div className="relative w-11 h-13 sm:w-12 sm:h-14 rounded-xl overflow-hidden bg-black/30 flex-shrink-0 border border-white/15">
                       <Image
-                        src={product.src}
-                        alt={product.title}
+                        src={featuredProduct.image}
+                        alt={featuredProduct.title}
                         fill
-                        className="object-cover"
-                        sizes="50px"
+                        className="object-cover group-hover/prod:scale-105 transition-transform"
+                        sizes="60px"
                       />
                     </div>
                     <div className="min-w-0">
-                      <h4 className="text-xs font-semibold text-white truncate uppercase tracking-wide">
-                        {product.title}
+                      <h4 className="text-xs sm:text-sm font-semibold text-white truncate tracking-wide group-hover/prod:underline">
+                        {featuredProduct.title}
                       </h4>
-                      <p className="text-[11px] text-white/70 font-medium">
-                        {product.price}
-                      </p>
+                      {featuredProduct.price && (
+                        <p className="text-[11px] text-white/75 font-medium mt-0.5">
+                          {featuredProduct.price}
+                        </p>
+                      )}
                     </div>
-                  </div>
+                  </Link>
 
-                  <button
-                    type="button"
-                    onClick={handleQuickAdd}
-                    className="flex-shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white text-black hover:bg-white/90 text-[10px] font-bold uppercase tracking-wider transition-all active:scale-95 cursor-pointer shadow-md"
+                  {/* DIRECT "SHOP THIS PRODUCT" BUTTON -> GOES TO SPECIFIC PDP */}
+                  <Link
+                    href={`/product/${featuredProduct.handle}`}
+                    onClick={() => setActiveReelIndex(null)}
+                    className="flex-shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full bg-white text-black hover:bg-white/90 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition-all active:scale-95 cursor-pointer shadow-lg whitespace-nowrap"
                   >
-                    <ShoppingBag className="w-3 h-3" />
-                    <span>Add to Cart</span>
-                  </button>
+                    <span>Shop This Product</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </Link>
                 </div>
               )}
             </div>
@@ -495,7 +515,7 @@ export function PdpReels({
                 );
               }}
               className="hidden sm:flex absolute -left-14 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/15 items-center justify-center transition-all cursor-pointer"
-              aria-label="Previous reel"
+              aria-label="Previous look"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -508,7 +528,7 @@ export function PdpReels({
                 setActiveReelIndex((activeReelIndex + 1) % reels.length);
               }}
               className="hidden sm:flex absolute -right-14 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/15 items-center justify-center transition-all cursor-pointer"
-              aria-label="Next reel"
+              aria-label="Next look"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
