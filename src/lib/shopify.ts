@@ -191,6 +191,9 @@ export async function getProductById(id: string) {
         shipping: metafield(namespace: "custom", key: "shipping") {
           value
         }
+        reels: metafield(namespace: "custom", key: "reels") {
+          value
+        }
         variants(first: 20) {
           edges {
             node {
@@ -257,6 +260,9 @@ export async function getProductByHandle(handle: string) {
           value
         }
         shipping: metafield(namespace: "custom", key: "shipping") {
+          value
+        }
+        reels: metafield(namespace: "custom", key: "reels") {
           value
         }
         variants(first: 20) {

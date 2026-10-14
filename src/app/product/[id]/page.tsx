@@ -56,6 +56,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           sizeGuide: shopifyProduct.sizeGuide?.value,
           washcare: shopifyProduct.washcare?.value,
           shipping: shopifyProduct.shipping?.value,
+          reels: shopifyProduct.reels?.value,
           variants: shopifyProduct.variants?.edges.map((e: any) => ({
             id: e.node.id,
             title: e.node.title,

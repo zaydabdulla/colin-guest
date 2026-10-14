@@ -13,6 +13,7 @@ import { ShopTheLook } from "@/components/shop-the-look";
 import { motion, AnimatePresence } from "framer-motion";
 import { PincodeChecker } from "@/components/pincode-checker";
 import { CustomerCollage } from "@/components/customer-collage";
+import { PdpReels } from "@/components/pdp-reels";
 import { StoreReviews } from "@/components/store-reviews";
 import { OurStore } from "@/components/our-store";
 import { trackMetaEvent } from "@/lib/meta-pixel";
@@ -322,6 +323,9 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
             </div>
           </div>
         </section>
+
+        {/* Customer Results & Try-on Reels */}
+        <PdpReels product={product} className="max-w-[1400px] mx-auto border-t border-black/5" />
 
         {/* Store Reviews Section */}
         <StoreReviews className="max-w-[1400px] mx-auto border-t-0" />

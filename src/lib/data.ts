@@ -22,6 +22,7 @@ export type Product = {
   sizeGuide?: string;
   washcare?: string;
   shipping?: string;
+  reels?: string;
   variants?: any[];
   options?: { name: string; values: string[] }[];
   createdAt?: string;

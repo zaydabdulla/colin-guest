@@ -12,6 +12,7 @@ import { ShopTheLook } from "../shop-the-look";
 import { PincodeChecker } from "@/components/pincode-checker";
 import { CustomerCollage } from "@/components/customer-collage";
 import { StoreReviews } from "@/components/store-reviews";
+import { PdpReels } from "@/components/pdp-reels";
 import { OurStore } from "../our-store";
 import SizeGuideModal from "@/components/size-guide-modal";
 
@@ -353,6 +354,9 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
           </div>
         </Link>
       </div>
+
+      {/* Customer Results & Try-on Reels */}
+      <PdpReels product={product} className="mt-4 mb-2" />
 
       {/* Store Reviews Section */}
       <StoreReviews className="mt-8 mb-6" />
