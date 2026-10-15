@@ -51,7 +51,10 @@ body {
 }
 
 body.lightbox-open nav,
-body.lightbox-open .safe-top {
+body.lightbox-open header,
+body.lightbox-open .safe-top,
+body.lightbox-open [class*="z-[320]"],
+body.lightbox-open [class*="z-[500]"] {
   display: none !important;
 }
 
