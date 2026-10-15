@@ -329,19 +329,6 @@ export function PdpReels({
                 {/* Scrim Overlay Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30 pointer-events-none" />
 
-                {/* Top Badge: Customer Stats / Size */}
-                <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between z-10">
-                  {reel.customerStats ? (
-                    <span className="px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md text-[9.5px] font-medium text-white/95 tracking-wide border border-white/10">
-                      {reel.customerStats}
-                    </span>
-                  ) : <span />}
-
-                  <div className="w-7 h-7 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white border border-white/10">
-                    <Play className="w-3 h-3 fill-white ml-0.5" />
-                  </div>
-                </div>
-
                 {/* Center Hover Glow Icon */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                   <div className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-md text-black flex items-center justify-center shadow-xl transform scale-90 group-hover:scale-100 transition-transform">
@@ -376,28 +363,6 @@ export function PdpReels({
           className="fixed inset-0 z-[99999] bg-black/92 backdrop-blur-xl flex flex-col items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
           onClick={() => setActiveReelIndex(null)}
         >
-          {/* Top Bar with Clear Close Button (Strictly matched to 9:16 card width) */}
-          <div
-            className="flex items-center justify-between mb-2.5 px-1 z-30 shrink-0"
-            style={{
-              width: "min(90vw, calc(min(76vh, 700px) * 9 / 16))",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <span className="text-[10px] uppercase tracking-widest text-white/60 font-medium font-sans">
-              Styled by You
-            </span>
-            <button
-              type="button"
-              onClick={() => setActiveReelIndex(null)}
-              className="px-3 py-1.5 rounded-full bg-white/15 hover:bg-white/25 active:scale-95 text-white text-[11px] font-medium tracking-wide flex items-center gap-1.5 transition-all border border-white/20 cursor-pointer shadow-md"
-              aria-label="Close reel viewer"
-            >
-              <X className="w-3.5 h-3.5" />
-              <span>Close</span>
-            </button>
-          </div>
-
           {/* Centered 9:16 Floating Window Card (Strict 9:16 on both laptop and mobile) */}
           <div
             className="relative aspect-[9/16] bg-black rounded-[24px] sm:rounded-[32px] overflow-hidden flex flex-col shadow-[0_25px_60px_rgba(0,0,0,0.85)] border border-white/20 shrink-0"
@@ -416,44 +381,31 @@ export function PdpReels({
               />
             </div>
 
-            {/* Top In-Video Controls */}
-            <div className="absolute top-3 inset-x-3.5 flex items-center justify-between z-30 pointer-events-auto">
-              <div className="flex items-center gap-1.5 min-w-0">
-                <span className="px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md text-white text-[10px] sm:text-[11px] font-medium border border-white/10 truncate">
-                  {reels[activeReelIndex].customerHandle}
-                </span>
-                {reels[activeReelIndex].customerStats && (
-                  <span className="hidden sm:inline-block px-2 py-1 rounded-full bg-black/40 backdrop-blur-md text-white/80 text-[9.5px] border border-white/10">
-                    {reels[activeReelIndex].customerStats}
-                  </span>
+            {/* Top In-Video Controls - Clean video with sound toggle & single close button */}
+            <div className="absolute top-3.5 right-3.5 flex items-center gap-2 z-30 pointer-events-auto">
+              {/* Audio Toggle Button */}
+              <button
+                type="button"
+                onClick={() => setIsMuted(!isMuted)}
+                className="w-9 h-9 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/75 border border-white/15 transition-all cursor-pointer active:scale-95 shadow-md"
+                aria-label={isMuted ? "Unmute audio" : "Mute audio"}
+              >
+                {isMuted ? (
+                  <VolumeX className="w-4 h-4 text-white/85" />
+                ) : (
+                  <Volume2 className="w-4 h-4 text-white" />
                 )}
-              </div>
+              </button>
 
-              <div className="flex items-center gap-1.5 shrink-0">
-                {/* Audio Toggle Button */}
-                <button
-                  type="button"
-                  onClick={() => setIsMuted(!isMuted)}
-                  className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/70 border border-white/10 transition-colors cursor-pointer"
-                  aria-label={isMuted ? "Unmute audio" : "Mute audio"}
-                >
-                  {isMuted ? (
-                    <VolumeX className="w-3.5 h-3.5 text-white/80" />
-                  ) : (
-                    <Volume2 className="w-3.5 h-3.5 text-white" />
-                  )}
-                </button>
-
-                {/* In-Video Close Icon */}
-                <button
-                  type="button"
-                  onClick={() => setActiveReelIndex(null)}
-                  className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/70 border border-white/10 transition-colors cursor-pointer"
-                  aria-label="Close reel viewer"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              {/* Single Close Button on the Reel */}
+              <button
+                type="button"
+                onClick={() => setActiveReelIndex(null)}
+                className="w-9 h-9 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/75 border border-white/15 transition-all cursor-pointer active:scale-95 shadow-md"
+                aria-label="Close reel viewer"
+              >
+                <X className="w-4 h-4 text-white" />
+              </button>
             </div>
 
             {/* Video Player (Click to Play/Pause) */}
@@ -486,12 +438,20 @@ export function PdpReels({
 
             {/* Bottom Floating Product Bar with "SHOP THIS PRODUCT" */}
             <div className="absolute bottom-0 inset-x-0 p-3 sm:p-4 bg-gradient-to-t from-black via-black/85 to-transparent z-30">
-              {/* Customer Caption */}
-              {reels[activeReelIndex].caption && (
-                <p className="text-[11px] sm:text-xs text-white/95 mb-2.5 leading-snug drop-shadow-md font-sans line-clamp-2">
-                  "{reels[activeReelIndex].caption}"
-                </p>
-              )}
+              {/* Customer Handle & Caption */}
+              <div className="mb-2.5">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className="text-xs font-semibold tracking-wide drop-shadow-sm font-sans text-white">
+                    {reels[activeReelIndex].customerHandle}
+                  </span>
+                  <CheckCircle className="w-3 h-3 text-[#b89759] fill-[#b89759]/20" />
+                </div>
+                {reels[activeReelIndex].caption && (
+                  <p className="text-[11px] sm:text-xs text-white/95 leading-snug drop-shadow-md font-sans line-clamp-2">
+                    "{reels[activeReelIndex].caption}"
+                  </p>
+                )}
+              </div>
 
               {/* Tagged Product Box */}
               {featuredProduct && (
