@@ -88,8 +88,8 @@ const DEFAULT_REELS: ReelItem[] = [
 export function PdpReels({
   product,
   className = "",
-  title = "Clientele Looks",
-  subtitle = "Real silhouettes & styling from our community",
+  title = "Styled by You",
+  subtitle = "Real fits & silhouettes from our community",
 }: PdpReelsProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -312,7 +312,7 @@ export function PdpReels({
                   setIsPlaying(true);
                   setIsMuted(false);
                 }}
-                className="group relative w-[190px] sm:w-[220px] md:w-[245px] h-[340px] sm:h-[390px] md:h-[435px] flex-shrink-0 snap-start rounded-3xl overflow-hidden bg-black/5 border border-black/[0.08] hover:border-black/25 transition-all duration-300 hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] cursor-pointer select-none"
+                className="group relative w-[190px] sm:w-[220px] md:w-[240px] aspect-[9/16] flex-shrink-0 snap-start rounded-3xl overflow-hidden bg-black/5 border border-black/[0.08] hover:border-black/25 transition-all duration-300 hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] cursor-pointer select-none"
               >
                 {/* Looping Muted Preview Video */}
                 <video
@@ -370,19 +370,22 @@ export function PdpReels({
         </div>
       </div>
 
-      {/* 9:16 REEL LIGHTBOX WINDOW (HIGH Z-INDEX & CLEAN FLOATING 9:16 CARD) */}
+      {/* 9:16 REEL LIGHTBOX WINDOW (HIGH Z-INDEX & STRICT 9:16 RATIO ON LAPTOP & MOBILE) */}
       {activeReelIndex !== null && reels[activeReelIndex] && (
         <div
           className="fixed inset-0 z-[99999] bg-black/92 backdrop-blur-xl flex flex-col items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
           onClick={() => setActiveReelIndex(null)}
         >
-          {/* Top Bar with Clear Close Button (Always visible on mobile & desktop) */}
+          {/* Top Bar with Clear Close Button (Strictly matched to 9:16 card width) */}
           <div
-            className="w-full max-w-[340px] sm:max-w-[390px] flex items-center justify-between mb-2.5 px-1 z-30 shrink-0"
+            className="flex items-center justify-between mb-2.5 px-1 z-30 shrink-0"
+            style={{
+              width: "min(90vw, calc(min(76vh, 700px) * 9 / 16))",
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             <span className="text-[10px] uppercase tracking-widest text-white/60 font-medium font-sans">
-              Clientele Look
+              Styled by You
             </span>
             <button
               type="button"
@@ -395,9 +398,14 @@ export function PdpReels({
             </button>
           </div>
 
-          {/* Centered 9:16 Floating Window Card */}
+          {/* Centered 9:16 Floating Window Card (Strict 9:16 on both laptop and mobile) */}
           <div
-            className="relative w-full max-w-[340px] sm:max-w-[390px] aspect-[9/16] max-h-[76vh] sm:max-h-[82vh] bg-black rounded-[26px] sm:rounded-[32px] overflow-hidden flex flex-col shadow-[0_25px_60px_rgba(0,0,0,0.8)] border border-white/20"
+            className="relative aspect-[9/16] bg-black rounded-[24px] sm:rounded-[32px] overflow-hidden flex flex-col shadow-[0_25px_60px_rgba(0,0,0,0.85)] border border-white/20 shrink-0"
+            style={{
+              height: "min(76vh, 700px)",
+              width: "min(90vw, calc(min(76vh, 700px) * 9 / 16))",
+              maxHeight: "calc(90vw * 16 / 9)",
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Top Reel Progress Bar */}
