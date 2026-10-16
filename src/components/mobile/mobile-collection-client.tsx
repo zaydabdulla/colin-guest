@@ -50,13 +50,15 @@ interface MobileCollectionClientProps {
   formattedCategory: string;
   displayProducts: Product[];
   collections: Collection[];
+  descriptionHtml?: string;
 }
 
 export function MobileCollectionClient({
   category,
   formattedCategory,
   displayProducts,
-  collections
+  collections,
+  descriptionHtml
 }: MobileCollectionClientProps) {
   const { openWishlist, openCart, toggleWishlist, wishlistItems } = useCartStore();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -167,42 +169,51 @@ export function MobileCollectionClient({
           <div className="pt-3 flex flex-col gap-3">
 
             {/* Header Section - Maintaining padding for text */}
-            <div className="px-6 flex justify-between items-center w-full">
-              <h1 className="text-[8px] font-bold uppercase tracking-wider text-black/80 flex-1 pr-2 truncate">
-                {formattedCategory}
-              </h1>
+            <div className="px-6 flex flex-col gap-1 w-full">
+              <div className="flex justify-between items-center w-full">
+                <p role="heading" aria-level={1} className="text-[8px] font-bold uppercase tracking-wider text-black/80 flex-1 pr-2 truncate">
+                  {formattedCategory}
+                </p>
 
-              {/* Torch and Filter Buttons */}
-              <div className="flex items-center gap-1.5 relative z-[110]">
-                <button
-                  type="button"
-                  onClick={() => setIsDense(!isDense)}
-                  className="flex items-center justify-center p-2 transition-all active:scale-90 pointer-events-auto"
-                  aria-label="Toggle grid density"
-                >
-                  <motion.div
-                    key={isDense ? "dense" : "standard"}
-                    initial={{ opacity: 0, rotate: -90, scale: 0.8 }}
-                    animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                    className="relative flex items-center justify-center text-black"
+                {/* Torch and Filter Buttons */}
+                <div className="flex items-center gap-1.5 relative z-[110]">
+                  <button
+                    type="button"
+                    onClick={() => setIsDense(!isDense)}
+                    className="flex items-center justify-center p-2 transition-all active:scale-90 pointer-events-auto"
+                    aria-label="Toggle grid density"
                   >
-                    {isDense ? (
-                      <Grid3X3 size={18} strokeWidth={1.5} />
-                    ) : (
-                      <LayoutGrid size={18} strokeWidth={1.5} />
-                    )}
-                  </motion.div>
-                </button>
+                    <motion.div
+                      key={isDense ? "dense" : "standard"}
+                      initial={{ opacity: 0, rotate: -90, scale: 0.8 }}
+                      animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      className="relative flex items-center justify-center text-black"
+                    >
+                      {isDense ? (
+                        <Grid3X3 size={18} strokeWidth={1.5} />
+                      ) : (
+                        <LayoutGrid size={18} strokeWidth={1.5} />
+                      )}
+                    </motion.div>
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => setIsFilterOpen(true)}
-                  className="text-[9px] font-semibold uppercase tracking-wider text-black px-3 py-1.5 transition-opacity active:opacity-40 pointer-events-auto bg-black/5 rounded-full"
-                >
-                  Advance Filters
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsFilterOpen(true)}
+                    className="text-[9px] font-semibold uppercase tracking-wider text-black px-3 py-1.5 transition-opacity active:opacity-40 pointer-events-auto bg-black/5 rounded-full"
+                  >
+                    Advance Filters
+                  </button>
+                </div>
               </div>
+
+              {descriptionHtml && (
+                <div 
+                  className="text-[9.5px] text-black/60 font-sans leading-relaxed mt-0.5 mb-1"
+                  dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+                />
+              )}
             </div>
 
 

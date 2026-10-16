@@ -103,7 +103,7 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
               {src ? (
                 <Image
                   src={src}
-                  alt={`${product.title} - Image ${i + 1}`}
+                  alt={`${product.title} - Colin Guest view ${i + 1}`}
                   fill
                   className="object-contain p-2 sm:p-3"
                   priority={i === 0}
@@ -129,9 +129,9 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
       <div className="px-6 pt-4 pb-3 bg-white relative z-10">
         <div className="flex justify-between items-center mb-1 w-full">
           <div className="flex items-center gap-1.5 flex-1 min-w-0">
-            <h1 className="text-xs font-bold tracking-tight text-[#1a1a1a] truncate">
+            <p role="heading" aria-level={1} className="text-xs font-bold tracking-tight text-[#1a1a1a] truncate">
               {product.title}
-            </h1>
+            </p>
           </div>
           <button
             type="button"
@@ -251,7 +251,7 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
                     <div>
                       <h4 className="text-black text-[9.5px] font-bold uppercase tracking-wider mb-1.5">Details</h4>
                       <p className="text-[9px] leading-relaxed text-black/65 font-medium">
-                        {product.details || "100% premium cotton construction. Heavyweight fabric (260 gsm). High-definition graphic print."}
+                        {product.details || "100% premium custom-milled heavyweight luxury fabric construction. Tailored drop-shoulder silhouette."}
                       </p>
                     </div>
                     <div>

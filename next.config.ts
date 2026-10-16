@@ -17,6 +17,31 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: '/collections/hoodie',
+        destination: '/collections/hoodies',
+        permanent: true,
+      },
+      {
+        source: '/products/:handle',
+        destination: '/product/:handle',
+        permanent: true,
+      },
+      {
+        source: '/product/white-minimal-polo-t-shirt',
+        destination: '/collections/shirts',
+        permanent: true,
+      },
+      {
+        source: '/blogs/news',
+        destination: '/blog',
+        permanent: true,
+      },
+      {
+        source: '/blogs/news/:handle',
+        destination: '/blog/:handle',
+        permanent: true,
+      },
+      {
         source: '/product/ladies-jeans',
         destination: '/collections/all',
         permanent: true,

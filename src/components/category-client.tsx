@@ -13,6 +13,7 @@ interface CategoryClientProps {
   formattedCategory: string;
   displayProducts: Product[];
   collections: Collection[];
+  descriptionHtml?: string;
 }
 
 const colorMap: Record<string, string> = {
@@ -87,7 +88,7 @@ function parseColors(colorData: string | undefined, options: any[], tags: string
   return Array.from(new Set(colors.map(c => c.toLowerCase().trim()))).filter(Boolean);
 }
 
-export default function CategoryClient({ category, formattedCategory, displayProducts, collections }: CategoryClientProps) {
+export default function CategoryClient({ category, formattedCategory, displayProducts, collections, descriptionHtml }: CategoryClientProps) {
   const [isDense, setIsDense] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sortOption, setSortOption] = useState("featured");
@@ -258,7 +259,7 @@ export default function CategoryClient({ category, formattedCategory, displayPro
       />
 
       {/* Top Header Row */}
-      <div className="flex flex-col gap-6 mb-10">
+      <div className="flex flex-col gap-3 mb-10">
          <div className="flex justify-between items-center">
             <h1 className="text-[10px] md:text-[12px] font-bold uppercase tracking-[0.2em] opacity-80">{formattedCategory}</h1>
             
@@ -295,6 +296,13 @@ export default function CategoryClient({ category, formattedCategory, displayPro
               </button>
             </div>
          </div>
+
+         {descriptionHtml && (
+           <div 
+             className="text-[11px] text-black/60 max-w-3xl font-sans leading-relaxed mt-0.5 mb-1"
+             dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+           />
+         )}
 
          {/* Editorial Category Toggles */}
          <div className="flex gap-2 md:gap-1.5 overflow-x-auto pb-2 scrollbar-hide no-scrollbar relative">

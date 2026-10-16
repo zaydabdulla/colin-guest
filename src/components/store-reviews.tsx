@@ -25,8 +25,8 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
     title: "Exceptional Silhouette",
     comment:
       "Heavyweight cotton with the perfect drop shoulder. The drape and wash feel truly high-end. Highly recommend.",
-    verified: true,
-    date: "2 days ago",
+    verified: false,
+    date: "",
     images: ["/customer1.jpg"],
   },
   {
@@ -36,8 +36,8 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
     title: "10/10 Fit & Quality",
     comment:
       "Fit and fabric wash are flawless. Exactly the luxury aesthetic I wanted. Looks even better in person.",
-    verified: true,
-    date: "1 week ago",
+    verified: false,
+    date: "",
     images: ["/customer2.jpg"],
   },
   {
@@ -47,8 +47,8 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
     title: "Unmatched Tailoring",
     comment:
       "Quality is crazy good. Fits true to size, feels sturdy yet comfortable, and styles effortlessly with boots or sneakers.",
-    verified: true,
-    date: "2 weeks ago",
+    verified: false,
+    date: "",
     images: ["/customer3.jpg"],
   },
   {
@@ -58,8 +58,8 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
     title: "Wardrobe Essential",
     comment:
       "Easily the best piece in my wardrobe right now. Express delivery was seamless as well.",
-    verified: true,
-    date: "3 weeks ago",
+    verified: false,
+    date: "",
     images: ["/customer4.jpg"],
   },
   {
@@ -69,8 +69,8 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
     title: "Pure Luxury Feel",
     comment:
       "Unreal drape and fabric feel. Colin Guest never disappoints. Worth every single rupee.",
-    verified: true,
-    date: "1 month ago",
+    verified: false,
+    date: "",
     images: ["/customer5.jpg"],
   },
 ];

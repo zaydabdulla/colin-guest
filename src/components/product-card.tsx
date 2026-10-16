@@ -94,7 +94,7 @@ export function ProductCard({
               >
                 <Image 
                   src={src || "/placeholder.jpg"}
-                  alt={`${product.title} - view ${i + 1}`}
+                  alt={`${product.title} - Colin Guest view ${i + 1}`}
                   fill
                   className="object-contain p-2.5 transition-transform duration-700 group-hover:scale-105"
                   priority={i === 0}

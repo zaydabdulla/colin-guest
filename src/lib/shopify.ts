@@ -162,9 +162,14 @@ export async function getProductById(id: string) {
         id
         title
         handle
+        vendor
         description
         descriptionHtml
         productType
+        seo {
+          title
+          description
+        }
         priceRange {
           minVariantPrice {
             amount
@@ -176,6 +181,8 @@ export async function getProductById(id: string) {
             node {
               url
               altText
+              width
+              height
             }
           }
         }
@@ -199,7 +206,12 @@ export async function getProductById(id: string) {
             node {
               id
               title
+              sku
               availableForSale
+              price {
+                amount
+                currencyCode
+              }
               selectedOptions {
                 name
                 value
@@ -233,9 +245,14 @@ export async function getProductByHandle(handle: string) {
         id
         title
         handle
+        vendor
         description
         descriptionHtml
         productType
+        seo {
+          title
+          description
+        }
         priceRange {
           minVariantPrice {
             amount
@@ -247,6 +264,8 @@ export async function getProductByHandle(handle: string) {
             node {
               url
               altText
+              width
+              height
             }
           }
         }
@@ -270,7 +289,12 @@ export async function getProductByHandle(handle: string) {
             node {
               id
               title
+              sku
               availableForSale
+              price {
+                amount
+                currencyCode
+              }
               selectedOptions {
                 name
                 value
@@ -376,12 +400,20 @@ export async function getCollection(handle: string) {
   const query = `
     query getCollection($handle: String!) {
       collection(handle: $handle) {
+        id
         title
         handle
         description
+        descriptionHtml
+        seo {
+          title
+          description
+        }
         image {
           url
           altText
+          width
+          height
         }
       }
     }
@@ -423,6 +455,106 @@ export async function getCollection(handle: string) {
   }
 
   return response.data?.collection;
+}
+
+export async function getBlogArticles(blogHandle: string = "news", first: number = 20) {
+  const query = `
+    query getBlogArticles($blogHandle: String!, $first: Int!) {
+      blog(handle: $blogHandle) {
+        id
+        title
+        handle
+        seo {
+          title
+          description
+        }
+        articles(first: $first, sortKey: PUBLISHED_AT, reverse: true) {
+          edges {
+            node {
+              id
+              title
+              handle
+              excerpt
+              excerptHtml
+              content
+              contentHtml
+              publishedAt
+              authorV2 {
+                name
+              }
+              image {
+                url
+                altText
+                width
+                height
+              }
+              seo {
+                title
+                description
+              }
+              tags
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const response = await shopifyFetch({
+    query,
+    variables: { blogHandle, first },
+  });
+
+  const blog = response.data?.blog;
+  if (!blog) return null;
+
+  return {
+    ...blog,
+    articles: blog.articles?.edges.map((e: any) => e.node) || [],
+  };
+}
+
+export async function getBlogArticleByHandle(blogHandle: string = "news", articleHandle: string) {
+  const query = `
+    query getBlogArticle($blogHandle: String!, $articleHandle: String!) {
+      blog(handle: $blogHandle) {
+        id
+        title
+        handle
+        articleByHandle(handle: $articleHandle) {
+          id
+          title
+          handle
+          excerpt
+          excerptHtml
+          content
+          contentHtml
+          publishedAt
+          authorV2 {
+            name
+          }
+          image {
+            url
+            altText
+            width
+            height
+          }
+          seo {
+            title
+            description
+          }
+          tags
+        }
+      }
+    }
+  `;
+
+  const response = await shopifyFetch({
+    query,
+    variables: { blogHandle, articleHandle },
+  });
+
+  return response.data?.blog?.articleByHandle || null;
 }
 
 

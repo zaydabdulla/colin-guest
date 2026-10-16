@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { getAllProducts, getAllCollections } from '@/lib/shopify';
+import { getAllProducts, getAllCollections, getBlogArticles } from '@/lib/shopify';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.colinguest.com';
@@ -8,6 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     { route: '', priority: 1.0, changeFrequency: 'daily' as const },
     { route: '/collections', priority: 0.9, changeFrequency: 'daily' as const },
+    { route: '/blog', priority: 0.8, changeFrequency: 'weekly' as const },
     { route: '/lookbook', priority: 0.8, changeFrequency: 'weekly' as const },
     { route: '/about', priority: 0.7, changeFrequency: 'monthly' as const },
     { route: '/shipping', priority: 0.5, changeFrequency: 'monthly' as const },
@@ -21,12 +22,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: item.priority,
   }));
 
-  // Fetch collections with real updatedAt timestamps
+  // Fetch collections with real updatedAt timestamps (blocking internal / GST collections)
+  const blockedCollections = ['18-gst-products', '5-gst-products', 'frontpage', 'landing-page'];
   let collectionRoutes: any[] = [];
   try {
     const collections = await getAllCollections();
     collectionRoutes = collections
-      .filter((c: any) => c.handle && c.title?.toLowerCase() !== 'landing page')
+      .filter((c: any) => c.handle && !blockedCollections.includes(c.handle.toLowerCase()) && c.title?.toLowerCase() !== 'landing page')
       .map((c: any) => ({
         url: `${baseUrl}/collections/${c.handle}`,
         lastModified: c.updatedAt ? new Date(c.updatedAt) : new Date('2026-04-01'),
@@ -53,5 +55,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Error loading products for sitemap:', e);
   }
 
-  return [...staticRoutes, ...collectionRoutes, ...productRoutes];
+  // Fetch blog articles
+  let articleRoutes: any[] = [];
+  try {
+    const blog = await getBlogArticles('news', 50);
+    if (blog?.articles) {
+      articleRoutes = blog.articles
+        .filter((a: any) => a.handle)
+        .map((a: any) => ({
+          url: `${baseUrl}/blog/${a.handle}`,
+          lastModified: a.publishedAt ? new Date(a.publishedAt) : new Date(),
+          changeFrequency: 'weekly' as const,
+          priority: 0.7,
+        }));
+    }
+  } catch (e) {
+    console.error('Error loading blog articles for sitemap:', e);
+  }
+
+  return [...staticRoutes, ...collectionRoutes, ...productRoutes, ...articleRoutes];
 }
+

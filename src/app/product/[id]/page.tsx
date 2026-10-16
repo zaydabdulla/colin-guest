@@ -57,11 +57,13 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           washcare: shopifyProduct.washcare?.value,
           shipping: shopifyProduct.shipping?.value,
           reels: shopifyProduct.reels?.value,
-          variants: shopifyProduct.variants?.edges.map((e: any) => ({
+          variants: shopifyProduct.variants?.edges?.map((e: any) => ({
             id: e.node.id,
             title: e.node.title,
+            sku: e.node.sku,
             availableForSale: e.node.availableForSale,
-            selectedOptions: e.node.selectedOptions
+            selectedOptions: e.node.selectedOptions,
+            price: e.node.price,
           })),
           amount: parseFloat(shopifyProduct.priceRange.minVariantPrice.amount),
           type: shopifyProduct.productType || "General"
@@ -147,28 +149,77 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     notFound();
   }
 
-  const jsonLd = {
+  const firstSku = product.variants?.[0]?.sku || product.handle || String(product.id);
+
+  const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": product.title,
     "image": product.srcs || [product.src],
     "description": product.desc,
+    "sku": firstSku,
+    "brand": {
+      "@type": "Brand",
+      "name": "Colin Guest"
+    },
     "offers": {
       "@type": "Offer",
       "priceCurrency": "INR",
       "price": product.amount,
-      "availability": product.variants?.some(v => v.availableForSale)
+      "availability": product.variants?.some((v: any) => v.availableForSale)
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
       "url": `https://www.colinguest.com/product/${product.handle || product.id}`,
+      "shippingDetails": {
+        "@type": "OfferShippingDetails",
+        "shippingDestination": {
+          "@type": "DefinedRegion",
+          "addressCountry": "IN"
+        }
+      },
+      "hasMerchantReturnPolicy": {
+        "@type": "MerchantReturnPolicy",
+        "applicableCountry": "IN",
+        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+        "merchantReturnDays": 7
+      }
     }
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.colinguest.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": product.category || "Collections",
+        "item": `https://www.colinguest.com/collections/${(product.category || 'all').toLowerCase().replace(/\s+/g, '-')}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": product.title,
+        "item": `https://www.colinguest.com/product/${product.handle || product.id}`
+      }
+    ]
   };
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <ProductClient product={product} suggestedProducts={suggestedProducts} allProducts={allProducts} />
     </>
@@ -189,41 +240,47 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       : await getProductByHandle(decodedId);
 
     if (shopifyProduct) {
-      // Safe image extraction: works whether it's array of objects or GraphQL edges
-      const imageUrls: string[] = Array.isArray(shopifyProduct.images)
-        ? shopifyProduct.images.map((img: any) => (typeof img === 'string' ? img : img.url || '')).filter(Boolean)
-        : (shopifyProduct.images?.edges?.map((e: any) => e.node?.url).filter(Boolean) || []);
-
-      const productTitle = shopifyProduct.title || "Product";
       const productHandle = shopifyProduct.handle || decodedId;
       const canonicalUrl = `https://www.colinguest.com/product/${productHandle}`;
-      const description = shopifyProduct.description?.trim()
-        ? shopifyProduct.description.slice(0, 160)
-        : `Buy ${productTitle} online at COLIN GUEST. Premium designer clothing.`;
+
+      // Priority: 1. Shopify SEO Title, 2. Editorial Fallback
+      const title = shopifyProduct.seo?.title || `${shopifyProduct.title} for Men | COLIN GUEST`;
+
+      const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, '').trim();
+
+      // Priority: 1. Shopify SEO Description, 2. descriptionHtml stripped, 3. description fallback
+      const rawDesc = shopifyProduct.seo?.description || 
+        (shopifyProduct.descriptionHtml ? stripHtml(shopifyProduct.descriptionHtml) : '') ||
+        shopifyProduct.description || 
+        `Buy ${shopifyProduct.title} online at COLIN GUEST. Premium designer clothing.`;
+      const description = rawDesc.length > 155 ? `${rawDesc.slice(0, 152)}...` : rawDesc;
+
+      const rawImages = shopifyProduct.images || [];
+      const ogImages = rawImages.slice(0, 4).map((img: any) => ({
+        url: typeof img === 'string' ? img : img.url || '',
+        alt: (typeof img === 'object' && img.altText) ? img.altText : `${shopifyProduct.title} - Colin Guest`,
+        width: img.width || 800,
+        height: img.height || 1000,
+      })).filter((img: any) => Boolean(img.url));
 
       return {
-        title: `${productTitle} | COLIN GUEST`,
+        title: { absolute: title },
         description,
         alternates: {
           canonical: canonicalUrl,
         },
         openGraph: {
-          title: `${productTitle} | COLIN GUEST`,
+          title,
           description,
           url: canonicalUrl,
-          images: imageUrls.slice(0, 4).map((url: string) => ({
-            url,
-            width: 800,
-            height: 1000,
-            alt: productTitle,
-          })),
+          images: ogImages.length > 0 ? ogImages : [{ url: '/collections_hero.jpg', alt: title }],
           type: 'website',
         },
         twitter: {
           card: 'summary_large_image',
-          title: `${productTitle} | COLIN GUEST`,
+          title,
           description,
-          images: imageUrls.slice(0, 1),
+          images: ogImages.slice(0, 1).map((i: any) => i.url),
         }
       };
     }
@@ -232,7 +289,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
   
   return {
-    title: "Product | COLIN GUEST",
+    title: { absolute: "Product | COLIN GUEST" },
     description: "Premium clothing at COLIN GUEST",
   };
 }

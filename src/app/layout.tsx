@@ -28,8 +28,8 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.colinguest.com"),
   title: {
-    default: "COLIN GUEST | Luxury Haute Couture & Ready-to-Wear",
-    template: "%s | COLIN GUEST",
+    default: "Colin Guest | Premium Men's Streetwear Online India",
+    template: "%s",
   },
   description: "Discover the exclusive world of Colin Guest, where heritage meets haute couture. Explore timeless elegance and modern craftsmanship in every stitch.",
   verification: {

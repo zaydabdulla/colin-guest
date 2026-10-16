@@ -114,7 +114,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
               {primaryImage ? (
                 <Image 
                   src={primaryImage}
-                  alt={product.title}
+                  alt={`${product.title} - Colin Guest`}
                   fill
                   className="object-contain p-3"
                   priority
@@ -130,7 +130,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
             {galleryImages.map((src, i) => (
                <div key={i} className="relative w-full aspect-[2/3] bg-white border border-black/5 rounded-2xl overflow-hidden shadow-sm flex items-center justify-center">
                    {src ? (
-                     <Image src={src} alt={`${product.title} view ${i + 2}`} fill className="object-contain p-3" priority={i === 0} />
+                     <Image src={src} alt={`${product.title} - Colin Guest view ${i + 2}`} fill className="object-contain p-3" priority={i === 0} />
                    ) : (
                      <div className="text-black/5 font-bold uppercase tracking-widest text-[10px]">No Detail Image</div>
                    )}
@@ -268,7 +268,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
                             <div>
                               <h4 className="text-black text-[9.5px] md:text-[11px] font-bold uppercase tracking-wider mb-1.5">Details</h4>
                               <p className="text-[9px] md:text-[10.5px] leading-relaxed text-black/65 font-medium">
-                                {product.details || "100% premium cotton construction. Heavyweight fabric (260 gsm). High-definition graphic print."}
+                                {product.details || "100% premium custom-milled heavyweight luxury fabric construction. Tailored drop-shoulder silhouette."}
                               </p>
                             </div>
                             <div>

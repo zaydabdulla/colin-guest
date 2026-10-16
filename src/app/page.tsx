@@ -1,8 +1,24 @@
+import type { Metadata } from "next";
 import { getCollectionProducts, getAllProducts, getAllCollections } from "@/lib/shopify";
 // Force Redeploy: 2026-04-24T00:50:12Z
 import { Product, Collection, extractProductMedia } from "@/lib/data";
 import LookbookClient from "@/components/lookbook-client";
 import { MobileCollectionsHub } from "@/components/mobile/mobile-collections-hub";
+
+export const metadata: Metadata = {
+  title: { absolute: "Colin Guest | Premium Men's Streetwear Online India" },
+  description: "Oversized hoodies, graphic shirts, co-ord sets and baggy jeans. Premium men's streetwear from Colin Guest, delivered across India.",
+  alternates: {
+    canonical: "https://www.colinguest.com",
+  },
+  openGraph: {
+    title: "Colin Guest | Premium Men's Streetwear Online India",
+    description: "Oversized hoodies, graphic shirts, co-ord sets and baggy jeans. Premium men's streetwear from Colin Guest, delivered across India.",
+    url: "https://www.colinguest.com",
+    siteName: "COLIN GUEST",
+    images: [{ url: "/collections_hero.jpg", width: 1200, height: 630, alt: "Colin Guest" }],
+  },
+};
 
 export default async function Home() {
   let shopifyProducts = await getCollectionProducts("Landing Page");
@@ -43,6 +59,8 @@ export default async function Home() {
 
   return (
     <>
+      <h1 className="sr-only">Premium Men&apos;s Streetwear Online India | Colin Guest</h1>
+
       {/* Desktop View - Strict Isolation */}
       <div className="hidden md:block">
         <LookbookClient products={displayProducts} />

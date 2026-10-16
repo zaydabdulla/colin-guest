@@ -22,7 +22,8 @@ export function Footer() {
   ];
   const showFooter = allowedPages.includes(pathname) || 
                      pathname.startsWith("/collections") || 
-                     pathname.startsWith("/product");
+                     pathname.startsWith("/product") ||
+                     pathname.startsWith("/blog");
 
   if (!showFooter) return null;
 
@@ -165,9 +166,9 @@ export function Footer() {
           {/* Legal Footer */}
           <div className="mt-16 pt-8 border-t border-black/[0.03] flex flex-col items-center justify-center gap-4">
             <a href="https://www.zyvextech.co/" target="_blank" rel="noopener noreferrer" className="font-serif italic text-[11px] text-black/70 hover:text-black transition-colors underline underline-offset-[5px] decoration-[0.5px] decoration-black/30 hover:decoration-black">
-              Developed by Zyvex Tech LLP
+              Developed by Zyvex Tech
             </a>
-            <p className="text-[9px] font-bold uppercase tracking-[0.4em] opacity-30">© 2024 COLIN GUEST RETAIL.</p>
+            <p className="text-[9px] font-bold uppercase tracking-[0.4em] opacity-30">© {new Date().getFullYear()} COLIN GUEST RETAIL.</p>
           </div>
         </div>
       </div>
