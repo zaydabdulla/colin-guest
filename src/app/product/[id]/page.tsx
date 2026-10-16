@@ -92,7 +92,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           const allProducts = await getAllProducts();
           suggestedProducts = allProducts
             .filter((p: any) => p.id !== shopifyProduct.id) // Don't show current product
-            .slice(0, 4)
+            .slice(0, 8)
             .map((p: any) => {
               const pMedia = extractProductMedia(p.images?.map((img: any) => img.url) || []);
               return {

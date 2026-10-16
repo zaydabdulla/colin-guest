@@ -1,10 +1,10 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Bookmark } from "lucide-react";
+import { Bookmark, ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@/lib/data";
 import { useCartStore } from "@/lib/store";
 import { ProductCard } from "@/components/product-card";
@@ -34,6 +34,24 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
 
   const { openCart, addToCart, wishlistItems, toggleWishlist } = useCartStore();
   const isWishlisted = wishlistItems.some((item: Product) => item.id === product.id);
+
+  // Suggested Products Carousel Scroll State
+  const suggestScrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollSuggestLeft, setCanScrollSuggestLeft] = useState(false);
+  const [canScrollSuggestRight, setCanScrollSuggestRight] = useState(true);
+
+  const handleSuggestScroll = () => {
+    if (!suggestScrollRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = suggestScrollRef.current;
+    setCanScrollSuggestLeft(scrollLeft > 10);
+    setCanScrollSuggestRight(scrollLeft < scrollWidth - clientWidth - 10);
+  };
+
+  const scrollSuggestByDirection = (direction: "left" | "right") => {
+    if (!suggestScrollRef.current) return;
+    const scrollAmount = direction === "left" ? -420 : 420;
+    suggestScrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+  };
 
   // Track Meta ViewContent Event
   useEffect(() => {
@@ -295,11 +313,64 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
           <div className="max-w-6xl mx-auto">
             <CustomerCollage />
             <ShopTheLook currentProduct={product} allProducts={allProducts} />
-            <h2 className="text-xl font-bold tracking-tight mt-16 mb-8">You may also like</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-               {suggestedProducts.map((suggested, i) => (
-                 <ProductCard key={suggested.id} product={suggested} index={i} />
-               ))}
+            {/* You May Also Like Header & Desktop Carousel Navigation */}
+            <div className="flex items-center justify-between mt-16 mb-8 gap-4">
+              <h2 className="text-xl font-bold tracking-tight">You may also like</h2>
+
+              {/* Desktop Arrow Controls */}
+              {suggestedProducts && suggestedProducts.length > 3 && (
+                <div className="hidden md:flex items-center gap-2 flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => scrollSuggestByDirection("left")}
+                    disabled={!canScrollSuggestLeft}
+                    aria-label="Previous recommended products"
+                    className={`w-9 h-9 lg:w-10 lg:h-10 rounded-full border border-black/10 flex items-center justify-center transition-all ${
+                      canScrollSuggestLeft
+                        ? "hover:bg-black hover:text-white text-black cursor-pointer shadow-sm active:scale-95"
+                        : "opacity-30 cursor-not-allowed text-black/40"
+                    }`}
+                  >
+                    <ChevronLeft className="w-4 h-4 lg:w-4.5 lg:h-4.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => scrollSuggestByDirection("right")}
+                    disabled={!canScrollSuggestRight}
+                    aria-label="Next recommended products"
+                    className={`w-9 h-9 lg:w-10 lg:h-10 rounded-full border border-black/10 flex items-center justify-center transition-all ${
+                      canScrollSuggestRight
+                        ? "hover:bg-black hover:text-white text-black cursor-pointer shadow-sm active:scale-95"
+                        : "opacity-30 cursor-not-allowed text-black/40"
+                    }`}
+                  >
+                    <ChevronRight className="w-4 h-4 lg:w-4.5 lg:h-4.5" />
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Horizontal Scrolling Products Row */}
+            <div className="relative w-full">
+              {canScrollSuggestRight && suggestedProducts.length > 3 && (
+                <div className="hidden md:block pointer-events-none absolute right-0 top-0 bottom-6 w-16 lg:w-24 bg-gradient-to-l from-[#fcfcfc] to-transparent z-10 transition-opacity duration-300" />
+              )}
+
+              <div
+                ref={suggestScrollRef}
+                onScroll={handleSuggestScroll}
+                className="flex gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory hide-scrollbar no-scrollbar pb-6 pt-1 scroll-smooth"
+                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              >
+                {suggestedProducts.map((suggested, i) => (
+                  <div
+                    key={suggested.id}
+                    className="w-[260px] sm:w-[280px] md:w-[290px] lg:w-[305px] flex-shrink-0 snap-start"
+                  >
+                    <ProductCard product={suggested} index={i} />
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Discover All Button with rotating black neon border */}

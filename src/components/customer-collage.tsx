@@ -231,7 +231,7 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
                   alt={activeImageModal.name}
                   fill
                   unoptimized
-                  className="object-contain"
+                  className="object-cover"
                 />
               </div>
 
