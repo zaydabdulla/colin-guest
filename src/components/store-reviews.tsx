@@ -20,7 +20,7 @@ import { useSession } from "next-auth/react";
 const DEFAULT_REVIEWS: ReviewItem[] = [
   {
     id: "cg-rev-1",
-    name: "Zayd Abdulla",
+    name: "Shanu",
     rating: 5,
     title: "Exceptional Silhouette",
     comment:
@@ -31,7 +31,7 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
   },
   {
     id: "cg-rev-2",
-    name: "Fidel Shaan",
+    name: "Hanan Shah",
     rating: 5,
     title: "10/10 Fit & Quality",
     comment:
@@ -42,7 +42,7 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
   },
   {
     id: "cg-rev-3",
-    name: "Farhan Ahammed",
+    name: "Manu & Shibina",
     rating: 5,
     title: "Unmatched Tailoring",
     comment:
@@ -53,7 +53,7 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
   },
   {
     id: "cg-rev-4",
-    name: "Mowfaq Rahman",
+    name: "Nihala ch",
     rating: 5,
     title: "Wardrobe Essential",
     comment:
@@ -64,7 +64,7 @@ const DEFAULT_REVIEWS: ReviewItem[] = [
   },
   {
     id: "cg-rev-5",
-    name: "Faaz Mohammed",
+    name: "Crab",
     rating: 5,
     title: "Pure Luxury Feel",
     comment:

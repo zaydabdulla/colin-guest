@@ -14,7 +14,7 @@ export interface ReviewItem {
 const FALLBACK_REVIEWS: ReviewItem[] = [
   {
     id: "cg-rev-1",
-    name: "Zayd Abdulla",
+    name: "Shanu",
     rating: 5,
     title: "Exceptional Silhouette",
     comment: "Heavyweight cotton with the perfect drop shoulder. The drape and wash feel truly high-end. Highly recommend.",
@@ -24,7 +24,7 @@ const FALLBACK_REVIEWS: ReviewItem[] = [
   },
   {
     id: "cg-rev-2",
-    name: "Fidel Shaan",
+    name: "Hanan Shah",
     rating: 5,
     title: "10/10 Fit & Quality",
     comment: "Fit and fabric wash are flawless. Exactly the luxury aesthetic I wanted. Looks even better in person.",
@@ -34,7 +34,7 @@ const FALLBACK_REVIEWS: ReviewItem[] = [
   },
   {
     id: "cg-rev-3",
-    name: "Farhan Ahammed",
+    name: "Manu & Shibina",
     rating: 5,
     title: "Unmatched Tailoring",
     comment: "Quality is crazy good. Fits true to size, feels sturdy yet comfortable, and styles effortlessly with boots or sneakers.",
@@ -44,7 +44,7 @@ const FALLBACK_REVIEWS: ReviewItem[] = [
   },
   {
     id: "cg-rev-4",
-    name: "Mowfaq Rahman",
+    name: "Nihala ch",
     rating: 5,
     title: "Wardrobe Essential",
     comment: "Easily the best piece in my wardrobe right now. Express delivery was seamless as well.",
@@ -54,7 +54,7 @@ const FALLBACK_REVIEWS: ReviewItem[] = [
   },
   {
     id: "cg-rev-5",
-    name: "Faaz Mohammed",
+    name: "Crab",
     rating: 5,
     title: "Pure Luxury Feel",
     comment: "Unreal drape and fabric feel. Colin Guest never disappoints. Worth every single rupee.",

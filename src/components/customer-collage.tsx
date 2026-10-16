@@ -24,7 +24,7 @@ interface CustomerReview {
 const REVIEWS_COL_1: CustomerReview[] = [
   {
     id: "1",
-    name: "Zayd Abdulla",
+    name: "Shanu",
     rating: 5,
     comment: "Heavyweight cotton with the perfect drop shoulder. Highly recommend.",
     image: "/customer1.jpg",
@@ -33,7 +33,7 @@ const REVIEWS_COL_1: CustomerReview[] = [
   },
   {
     id: "3",
-    name: "Farhan Ahammed",
+    name: "Manu & Shibina",
     rating: 5,
     comment: "Quality is crazy good. Fits true to size and looks effortless.",
     image: "/customer3.jpg",
@@ -45,7 +45,7 @@ const REVIEWS_COL_1: CustomerReview[] = [
 const REVIEWS_COL_2: CustomerReview[] = [
   {
     id: "2",
-    name: "Fidel Shaan",
+    name: "Hanan Shah",
     rating: 5,
     comment: "Fit and wash are 10/10. Exactly the luxury aesthetic I wanted.",
     image: "/customer2.jpg",
@@ -54,7 +54,7 @@ const REVIEWS_COL_2: CustomerReview[] = [
   },
   {
     id: "4",
-    name: "Mowfaq Rahman",
+    name: "Nihala ch",
     rating: 5,
     comment: "Best fit in my wardrobe. Fast delivery too.",
     image: "/customer4.jpg",
@@ -65,7 +65,7 @@ const REVIEWS_COL_2: CustomerReview[] = [
 
 const FIFTH_REVIEW: CustomerReview = {
   id: "5",
-  name: "Faaz Mohammed",
+  name: "Crab",
   rating: 5,
   comment: "Unreal drape and fabric feel. Colin Guest never disappoints.",
   image: "/customer5.jpg",
