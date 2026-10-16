@@ -12,6 +12,7 @@ import {
   ChevronRight,
   ArrowUpRight,
   CheckCircle,
+  ShoppingBag,
 } from "lucide-react";
 import { Product } from "@/lib/data";
 
@@ -103,6 +104,10 @@ export function PdpReels({
     if (activeReelIndex !== null) {
       document.body.style.overflow = "hidden";
       document.body.classList.add("lightbox-open");
+      if (activeVideoRef.current) {
+        activeVideoRef.current.currentTime = 0;
+        activeVideoRef.current.play().catch(() => {});
+      }
     } else {
       document.body.style.overflow = "";
       document.body.classList.remove("lightbox-open");
@@ -298,17 +303,16 @@ export function PdpReels({
                   setIsPlaying(true);
                   setIsMuted(false);
                 }}
-                className="group relative w-[190px] sm:w-[220px] md:w-[240px] aspect-[9/16] flex-shrink-0 snap-start rounded-3xl overflow-hidden bg-black/5 border border-black/[0.08] hover:border-black/25 transition-all duration-300 hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] cursor-pointer select-none"
+                className="group relative w-[190px] sm:w-[220px] md:w-[245px] h-[340px] sm:h-[390px] md:h-[435px] flex-shrink-0 snap-start rounded-3xl overflow-hidden bg-black/5 border border-black/[0.08] hover:border-black/25 transition-all duration-300 hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] cursor-pointer select-none"
               >
-                {/* Looping Muted Preview Video */}
+                {/* Looping Muted Preview Video - Direct Autoplay with No Cover Picture */}
                 <video
                   src={reel.videoUrl}
-                  poster={reel.posterUrl}
                   muted
                   playsInline
                   loop
                   autoPlay
-                  preload="metadata"
+                  preload="auto"
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
 
@@ -403,17 +407,31 @@ export function PdpReels({
               )}
             </div>
 
-            {/* Bottom Minimal Floating "Shop Products" Bar */}
-            <div className="absolute bottom-5 inset-x-0 flex justify-center items-center px-4 z-30 pointer-events-auto">
+            {/* Bottom Floating Bar with "SHOP PRODUCTS" (Earlier neat frosted card style) */}
+            <div className="absolute bottom-0 inset-x-0 p-3 sm:p-4 bg-gradient-to-t from-black via-black/85 to-transparent z-30 pointer-events-auto">
               <Link
                 href="/collections/all"
                 onClick={() => setActiveReelIndex(null)}
-                className="group/btn px-5 py-2.5 sm:px-6 sm:py-2.5 rounded-full bg-white text-black hover:bg-white/95 active:scale-95 transition-all duration-200 flex items-center gap-2 shadow-[0_10px_30px_rgba(0,0,0,0.6)] cursor-pointer border border-white/20"
+                className="w-full p-2.5 sm:p-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-between gap-3 shadow-2xl active:scale-[0.98] transition-all cursor-pointer group/bar"
               >
-                <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.25em] font-sans">
-                  Shop Products
-                </span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-black group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                <div className="flex items-center gap-2.5 min-w-0 pl-1">
+                  <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center shrink-0 border border-white/10">
+                    <ShoppingBag className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-[11px] sm:text-xs font-semibold text-white tracking-wide uppercase font-sans truncate">
+                      Shop Products
+                    </h4>
+                    <p className="text-[9.5px] sm:text-[10px] text-white/70 font-medium">
+                      Explore All Collections
+                    </p>
+                  </div>
+                </div>
+
+                <div className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white text-black group-hover/bar:bg-white/95 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition-all shadow-lg whitespace-nowrap">
+                  <span>Shop</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </div>
               </Link>
             </div>
 
