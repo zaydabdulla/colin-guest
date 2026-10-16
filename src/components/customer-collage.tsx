@@ -178,7 +178,6 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
           <div className="flex flex-col gap-2.5 sm:gap-3.5 pt-8 sm:pt-10">
             {renderCard(REVIEWS_COL_2[0])} {/* 2. Hanan Shah */}
             {renderCard(REVIEWS_COL_2[1])} {/* 4. Nihala ch */}
-            {renderCard(FIFTH_REVIEW)}     {/* 5. Crab */}
           </div>
         </div>
 
