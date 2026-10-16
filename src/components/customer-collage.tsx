@@ -29,7 +29,7 @@ const REVIEWS_COL_1: CustomerReview[] = [
     comment: "Heavyweight cotton with the perfect drop shoulder. Highly recommend.",
     image: "/customer1.jpg",
     fallbackImage: "/collections_hero.jpg",
-    aspectRatio: "aspect-[3/3.6]",
+    aspectRatio: "aspect-[9/16]",
   },
   {
     id: "3",
@@ -38,7 +38,7 @@ const REVIEWS_COL_1: CustomerReview[] = [
     comment: "Quality is crazy good. Fits true to size and looks effortless.",
     image: "/customer3.jpg",
     fallbackImage: "/mobile_hero.png",
-    aspectRatio: "aspect-[3/4.8]", // Taller bottom-left photo as requested!
+    aspectRatio: "aspect-[9/16]",
   },
 ];
 
@@ -50,7 +50,7 @@ const REVIEWS_COL_2: CustomerReview[] = [
     comment: "Fit and wash are 10/10. Exactly the luxury aesthetic I wanted.",
     image: "/customer2.jpg",
     fallbackImage: "/login.jpg",
-    aspectRatio: "aspect-[3/4.6]",
+    aspectRatio: "aspect-[9/16]",
   },
   {
     id: "4",
@@ -59,7 +59,7 @@ const REVIEWS_COL_2: CustomerReview[] = [
     comment: "Best fit in my wardrobe. Fast delivery too.",
     image: "/customer4.jpg",
     fallbackImage: "/collections_hero.jpg",
-    aspectRatio: "aspect-[3/3.6]",
+    aspectRatio: "aspect-[9/16]",
   },
 ];
 
@@ -70,7 +70,7 @@ const FIFTH_REVIEW: CustomerReview = {
   comment: "Unreal drape and fabric feel. Colin Guest never disappoints.",
   image: "/customer5.jpg",
   fallbackImage: "/collections_hero.jpg",
-  aspectRatio: "aspect-[3/4.4]",
+  aspectRatio: "aspect-[9/16]",
 };
 
 interface CustomerCollageProps {
@@ -255,13 +255,13 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
                 <X size={15} />
               </button>
 
-              <div className="relative w-full aspect-[3/4] bg-neutral-900 rounded-2xl overflow-hidden">
+              <div className="relative w-full aspect-[9/16] max-h-[82vh] bg-black/90 rounded-2xl overflow-hidden flex items-center justify-center">
                 <Image
                   src={failedImages[activeImageModal.id] ? activeImageModal.fallbackImage : activeImageModal.image}
                   alt={activeImageModal.name}
                   fill
                   unoptimized
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
             </motion.div>

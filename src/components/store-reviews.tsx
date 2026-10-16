@@ -424,7 +424,7 @@ export function StoreReviews({
           className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4"
           onClick={() => setActivePhoto(null)}
         >
-          <div className="relative max-w-lg w-full max-h-[85vh] aspect-[3/4] bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/10">
+          <div className="relative max-w-md w-full max-h-[85vh] aspect-[9/16] bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/10">
             <button
               onClick={() => setActivePhoto(null)}
               className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/20 text-white flex items-center justify-center hover:bg-white/40 transition-colors"
