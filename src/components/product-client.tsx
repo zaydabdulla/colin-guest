@@ -315,7 +315,9 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
             <ShopTheLook currentProduct={product} allProducts={allProducts} />
             {/* You May Also Like Header & Desktop Carousel Navigation */}
             <div className="flex items-center justify-between mt-16 mb-8 gap-4">
-              <h2 className="text-xl font-bold tracking-tight">You may also like</h2>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-serif text-[#1a1a1a] tracking-tight font-sans">
+                You may also like
+              </h2>
 
               {/* Desktop Arrow Controls */}
               {suggestedProducts && suggestedProducts.length > 3 && (
@@ -352,6 +354,9 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
 
             {/* Horizontal Scrolling Products Row */}
             <div className="relative w-full">
+              {canScrollSuggestRight && (
+                <div className="hidden md:block pointer-events-none absolute right-0 top-0 bottom-6 w-16 lg:w-24 bg-gradient-to-l from-[#fcfcfc] to-transparent z-10 transition-opacity duration-300" />
+              )}
 
               <div
                 ref={suggestScrollRef}
