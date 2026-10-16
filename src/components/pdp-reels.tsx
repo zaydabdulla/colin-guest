@@ -321,30 +321,11 @@ export function PdpReels({
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
 
-                {/* Scrim Overlay Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30 pointer-events-none" />
-
                 {/* Center Hover Glow Icon */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                   <div className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-md text-black flex items-center justify-center shadow-xl transform scale-90 group-hover:scale-100 transition-transform">
                     <Play className="w-4 h-4 fill-black ml-0.5" />
                   </div>
-                </div>
-
-                {/* Bottom Details */}
-                <div className="absolute bottom-0 inset-x-0 p-4 text-white z-10 flex flex-col justify-end">
-                  <div className="flex items-center gap-1.5 mb-1.5">
-                    <span className="text-xs font-semibold tracking-wide drop-shadow-sm font-sans">
-                      {reel.customerHandle}
-                    </span>
-                    <CheckCircle className="w-3 h-3 text-[#b89759] fill-[#b89759]/20" />
-                  </div>
-
-                  {reel.caption && (
-                    <p className="text-[11px] text-white/85 leading-snug line-clamp-2 drop-shadow-sm font-normal">
-                      "{reel.caption}"
-                    </p>
-                  )}
                 </div>
               </div>
             ))}
@@ -432,21 +413,7 @@ export function PdpReels({
             </div>
 
             {/* Bottom Floating Product Bar with "SHOP THIS PRODUCT" */}
-            <div className="absolute bottom-0 inset-x-0 p-3 sm:p-4 bg-gradient-to-t from-black via-black/85 to-transparent z-30">
-              {/* Customer Handle & Caption */}
-              <div className="mb-2.5">
-                <div className="flex items-center gap-1.5 mb-1">
-                  <span className="text-xs font-semibold tracking-wide drop-shadow-sm font-sans text-white">
-                    {reels[activeReelIndex].customerHandle}
-                  </span>
-                  <CheckCircle className="w-3 h-3 text-[#b89759] fill-[#b89759]/20" />
-                </div>
-                {reels[activeReelIndex].caption && (
-                  <p className="text-[11px] sm:text-xs text-white/95 leading-snug drop-shadow-md font-sans line-clamp-2">
-                    "{reels[activeReelIndex].caption}"
-                  </p>
-                )}
-              </div>
+            <div className="absolute bottom-0 inset-x-0 p-3 sm:p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent z-30">
 
               {/* Tagged Product Box */}
               {featuredProduct && (
