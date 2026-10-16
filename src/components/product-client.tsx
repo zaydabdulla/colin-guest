@@ -352,9 +352,6 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
 
             {/* Horizontal Scrolling Products Row */}
             <div className="relative w-full">
-              {canScrollSuggestRight && suggestedProducts.length > 3 && (
-                <div className="hidden md:block pointer-events-none absolute right-0 top-0 bottom-6 w-16 lg:w-24 bg-gradient-to-l from-[#fcfcfc] to-transparent z-10 transition-opacity duration-300" />
-              )}
 
               <div
                 ref={suggestScrollRef}

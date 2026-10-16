@@ -88,8 +88,6 @@ export function PdpReels({
   subtitle = "Real fits & silhouettes from our community",
 }: PdpReelsProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
 
   // Active full-screen reel lightbox modal
   const [activeReelIndex, setActiveReelIndex] = useState<number | null>(null);
@@ -190,22 +188,7 @@ export function PdpReels({
     return DEFAULT_REELS;
   })();
 
-  // Handle horizontal scrolling state
-  const handleScroll = () => {
-    if (!scrollRef.current) return;
-    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-    setCanScrollLeft(scrollLeft > 20);
-    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 20);
-  };
 
-  const scrollByDirection = (direction: "left" | "right") => {
-    if (!scrollRef.current) return;
-    const cardWidth = window.innerWidth < 768 ? 220 : 270;
-    scrollRef.current.scrollBy({
-      left: direction === "left" ? -cardWidth * 2 : cardWidth * 2,
-      behavior: "smooth",
-    });
-  };
 
   // Lightbox keyboard controls
   useEffect(() => {
@@ -263,7 +246,7 @@ export function PdpReels({
   return (
     <section className={`w-full py-8 md:py-16 bg-white text-black font-sans ${className}`}>
       <div className="max-w-[1400px] mx-auto px-5 md:px-12">
-        {/* HEADER SECTION (EXACT LUXURY EDITORIAL STYLE MATCHING CLIENT FEEDBACK) */}
+        {/* HEADER SECTION (CLEAN MINIMAL EDITORIAL STYLE) */}
         <div className="flex items-center justify-between mb-8 md:mb-12 gap-3 sm:gap-4">
           <div className="min-w-0">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-serif text-[#1a1a1a] tracking-tight font-sans">
@@ -273,48 +256,12 @@ export function PdpReels({
               {subtitle}
             </p>
           </div>
-
-          {/* Desktop-Only Arrow Controls (Matching StoreReviews) */}
-          <div className="hidden md:flex items-center gap-2 flex-shrink-0">
-            <button
-              type="button"
-              onClick={() => scrollByDirection("left")}
-              disabled={!canScrollLeft}
-              aria-label="Previous looks"
-              className={`w-9 h-9 lg:w-10 lg:h-10 rounded-full border border-black/10 flex items-center justify-center transition-all ${
-                canScrollLeft
-                  ? "hover:bg-black hover:text-white text-black cursor-pointer shadow-sm active:scale-95"
-                  : "opacity-30 cursor-not-allowed text-black/40"
-              }`}
-            >
-              <ChevronLeft className="w-4 h-4 lg:w-4.5 lg:h-4.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => scrollByDirection("right")}
-              disabled={!canScrollRight}
-              aria-label="Next looks"
-              className={`w-9 h-9 lg:w-10 lg:h-10 rounded-full border border-black/10 flex items-center justify-center transition-all ${
-                canScrollRight
-                  ? "hover:bg-black hover:text-white text-black cursor-pointer shadow-sm active:scale-95"
-                  : "opacity-30 cursor-not-allowed text-black/40"
-              }`}
-            >
-              <ChevronRight className="w-4 h-4 lg:w-4.5 lg:h-4.5" />
-            </button>
-          </div>
         </div>
 
-        {/* REELS CAROUSEL DECK */}
+        {/* REELS DECK (5 VIDEOS IN CLEAN ROW WITHOUT ARROWS OR FADE) */}
         <div className="relative w-full">
-          {/* Subtle Right Fade Gradient on Desktop */}
-          {canScrollRight && (
-            <div className="hidden md:block pointer-events-none absolute right-0 top-0 bottom-6 w-16 lg:w-24 bg-gradient-to-l from-white to-transparent z-10 transition-opacity duration-300" />
-          )}
-
           <div
             ref={scrollRef}
-            onScroll={handleScroll}
             className="flex gap-3.5 sm:gap-4 md:gap-5 overflow-x-auto snap-x snap-mandatory hide-scrollbar no-scrollbar pb-6 pt-1 scroll-smooth"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
