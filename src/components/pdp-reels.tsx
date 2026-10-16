@@ -40,7 +40,7 @@ interface PdpReelsProps {
 const DEFAULT_REELS: ReelItem[] = [
   {
     id: "reel-1",
-    videoUrl: "/Mobile_video.mp4",
+    videoUrl: "https://cdn.shopify.com/videos/c/o/v/009c153f625945d6a106584c957082aa.mp4",
     posterUrl: "/customer1.jpg",
     customerHandle: "@shanu",
     customerName: "Shanu",
@@ -48,7 +48,7 @@ const DEFAULT_REELS: ReelItem[] = [
   },
   {
     id: "reel-2",
-    videoUrl: "/Mobile_video.mp4",
+    videoUrl: "https://cdn.shopify.com/videos/c/o/v/223f5505368f40e79c697a9e0a8a68f2.mp4",
     posterUrl: "/customer2.jpg",
     customerHandle: "@hananshah",
     customerName: "Hanan Shah",
@@ -56,7 +56,7 @@ const DEFAULT_REELS: ReelItem[] = [
   },
   {
     id: "reel-3",
-    videoUrl: "/Mobile_video.mp4",
+    videoUrl: "https://cdn.shopify.com/videos/c/o/v/3907511697384d69aa9d70af227db06d.mp4",
     posterUrl: "/customer3.jpg",
     customerHandle: "@manu.shibina",
     customerName: "Manu & Shibina",
@@ -64,7 +64,7 @@ const DEFAULT_REELS: ReelItem[] = [
   },
   {
     id: "reel-4",
-    videoUrl: "/Mobile_video.mp4",
+    videoUrl: "https://cdn.shopify.com/videos/c/o/v/9f3a043534434cce9cf8101104a2d586.mp4",
     posterUrl: "/customer4.jpg",
     customerHandle: "@nihalach",
     customerName: "Nihala ch",
@@ -72,7 +72,7 @@ const DEFAULT_REELS: ReelItem[] = [
   },
   {
     id: "reel-5",
-    videoUrl: "/Mobile_video.mp4",
+    videoUrl: "https://cdn.shopify.com/videos/c/o/v/f90770b3453f4043b8359833ff463916.mp4",
     posterUrl: "/customer5.jpg",
     customerHandle: "@crab",
     customerName: "Crab",
