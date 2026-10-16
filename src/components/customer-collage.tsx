@@ -216,27 +216,28 @@ export function CustomerCollage({ show = SHOW_CUSTOMER_COLLAGE, className = "" }
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-transparent rounded-2xl overflow-hidden max-w-sm w-full shadow-2xl relative flex flex-col max-h-[85vh] p-2"
+              className="relative flex flex-col items-center max-w-[92vw] max-h-[88vh]"
             >
-              <button
-                onClick={() => setActiveImageModal(null)}
-                className="absolute top-4 right-4 z-10 p-2 bg-black/70 hover:bg-black text-white rounded-full transition-colors shadow-lg"
-              >
-                <X size={15} />
-              </button>
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center border border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setActiveImageModal(null)}
+                  className="absolute top-3 right-3 z-10 p-2 bg-black/60 hover:bg-black text-white rounded-full transition-colors shadow-lg"
+                  aria-label="Close"
+                >
+                  <X size={16} />
+                </button>
 
-              <div className="relative w-full aspect-[9/16] max-h-[78vh] bg-black/95 rounded-2xl overflow-hidden flex items-center justify-center">
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={failedImages[activeImageModal.id] ? activeImageModal.fallbackImage : activeImageModal.image}
                   alt={activeImageModal.name}
-                  fill
-                  unoptimized
-                  className="object-cover"
+                  className="max-h-[76vh] max-w-[90vw] sm:max-w-md w-auto h-auto object-contain rounded-2xl block"
                 />
               </div>
 
               {/* Minimal Modal Verified Badge Footer */}
-              <div className="mt-2.5 px-3.5 py-1.5 rounded-full bg-black/75 backdrop-blur-md border border-white/10 flex items-center justify-between text-white self-center gap-3">
+              <div className="mt-3 px-3.5 py-1.5 rounded-full bg-black/75 backdrop-blur-md border border-white/10 flex items-center justify-between text-white self-center gap-3 shadow-lg">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-white/90">
                   {activeImageModal.name}
                 </span>

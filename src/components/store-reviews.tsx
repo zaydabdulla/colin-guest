@@ -424,19 +424,23 @@ export function StoreReviews({
           className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4"
           onClick={() => setActivePhoto(null)}
         >
-          <div className="relative max-w-md w-full max-h-[85vh] aspect-[9/16] bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/10">
+          <div
+            className="relative rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center max-w-[92vw] max-h-[85vh] border border-white/10"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
+              type="button"
               onClick={() => setActivePhoto(null)}
-              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/20 text-white flex items-center justify-center hover:bg-white/40 transition-colors"
+              className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center transition-colors shadow-lg"
+              aria-label="Close"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={activePhoto}
               alt="Full size customer photo"
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 500px"
+              className="max-h-[82vh] max-w-[90vw] sm:max-w-md w-auto h-auto object-contain rounded-2xl block"
             />
           </div>
         </div>
