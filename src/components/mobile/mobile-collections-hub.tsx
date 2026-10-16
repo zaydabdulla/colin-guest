@@ -271,10 +271,24 @@ export function MobileCollectionsHub({ collections, allProductsImage }: MobileCo
                       if (info.offset.x < -40) moveCarousel('right');
                     }}
                   >
-                    <Link href={`/collections/${collection.handle}`} className="block w-full h-full relative">
-                      <Image src={collection.image?.url || "/placeholder.jpg"} alt={collection.title} fill className="object-cover" />
-                      <div className="absolute inset-0 flex flex-col justify-end items-center pb-8 px-4">
-                        <p className="text-white text-[10px] font-bold uppercase tracking-[0.3em] drop-shadow-md">{collection.title}</p>
+                    <Link href={`/collections/${collection.handle}`} className="block w-full h-full relative group">
+                      <Image
+                        src={collection.image?.url || "/placeholder.jpg"}
+                        alt={collection.title}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+
+                      {/* Subtle Bottom Gradient Scrim to guarantee legibility on any image tone */}
+                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/25 to-transparent pointer-events-none" />
+
+                      {/* Minimalist Frosted Capsule for Title */}
+                      <div className="absolute bottom-6 inset-x-0 flex flex-col justify-end items-center px-4 z-10 pointer-events-none">
+                        <div className="px-4 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/20 shadow-[0_4px_16px_rgba(0,0,0,0.3)] flex items-center justify-center max-w-[90%]">
+                          <p className="text-white text-[9.5px] sm:text-[10px] font-bold uppercase tracking-[0.25em] truncate">
+                            {collection.title}
+                          </p>
+                        </div>
                       </div>
                     </Link>
                   </motion.div>
