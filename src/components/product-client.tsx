@@ -311,8 +311,8 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
 
         <section className="bg-[#fcfcfc] w-full pt-12 pb-8 px-12 border-t border-black/5 z-20 relative">
           <div className="max-w-6xl mx-auto">
-            <CustomerCollage />
             <ShopTheLook currentProduct={product} allProducts={allProducts} />
+            <CustomerCollage />
             {/* You May Also Like Header & Desktop Carousel Navigation */}
             <div className="flex items-center justify-between mt-16 mb-8 gap-4">
               <h2 className="text-xl sm:text-2xl md:text-3xl font-serif text-[#1a1a1a] tracking-tight font-sans">

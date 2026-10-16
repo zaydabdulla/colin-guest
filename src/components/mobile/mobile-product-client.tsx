@@ -290,11 +290,11 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
         </div>
       </div>
 
-      {/* 5.5 Customer UGC Collage */}
-      <CustomerCollage />
-
-      {/* 5.6 Shop the Look (Outfit pairing) */}
+      {/* 5.5 Shop the Look (Elevate the look duo pairing) */}
       <ShopTheLook currentProduct={product} allProducts={allProducts} />
+
+      {/* 5.6 Customer UGC Collage (In Real Life) */}
+      <CustomerCollage />
 
       {/* 6. You May Also Like */}
       <div className="mt-8 bg-white relative z-10">
