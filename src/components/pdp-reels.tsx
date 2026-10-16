@@ -94,20 +94,44 @@ export function PdpReels({
   // Active full-screen reel lightbox modal
   const [activeReelIndex, setActiveReelIndex] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [progress, setProgress] = useState(0);
 
   const activeVideoRef = useRef<HTMLVideoElement>(null);
 
-  // Lock body scroll and hide background navbars when modal is open
+  // Lock body scroll and immediately trigger autoplay when modal opens without needing touch
   useEffect(() => {
     if (activeReelIndex !== null) {
       document.body.style.overflow = "hidden";
       document.body.classList.add("lightbox-open");
-      if (activeVideoRef.current) {
-        activeVideoRef.current.currentTime = 0;
-        activeVideoRef.current.play().catch(() => {});
-      }
+      setIsPlaying(true);
+
+      const playCurrent = () => {
+        const v = activeVideoRef.current;
+        if (!v) return;
+        v.muted = isMuted;
+        const p = v.play();
+        if (p !== undefined) {
+          p.then(() => {
+            setIsPlaying(true);
+          }).catch(() => {
+            // If browser autoplay restriction intervenes, enforce muted and play immediately
+            v.muted = true;
+            setIsMuted(true);
+            v.play().catch(() => {});
+          });
+        }
+      };
+
+      // Trigger immediately and also on next microtask/frame to ensure DOM mount
+      playCurrent();
+      const raf = requestAnimationFrame(playCurrent);
+      const timer = setTimeout(playCurrent, 50);
+
+      return () => {
+        cancelAnimationFrame(raf);
+        clearTimeout(timer);
+      };
     } else {
       document.body.style.overflow = "";
       document.body.classList.remove("lightbox-open");
@@ -116,7 +140,7 @@ export function PdpReels({
       document.body.style.overflow = "";
       document.body.classList.remove("lightbox-open");
     };
-  }, [activeReelIndex]);
+  }, [activeReelIndex, isMuted]);
 
   // Parse reels from product metafield if available, else use curated defaults
   const reels: ReelItem[] = (() => {
@@ -221,13 +245,14 @@ export function PdpReels({
   };
 
   const togglePlay = () => {
-    if (!activeVideoRef.current) return;
-    if (isPlaying) {
-      activeVideoRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      activeVideoRef.current.play();
+    const v = activeVideoRef.current;
+    if (!v) return;
+    if (v.paused) {
+      v.play().catch(() => {});
       setIsPlaying(true);
+    } else {
+      v.pause();
+      setIsPlaying(false);
     }
   };
 
@@ -301,7 +326,7 @@ export function PdpReels({
                   e.stopPropagation();
                   setActiveReelIndex(index);
                   setIsPlaying(true);
-                  setIsMuted(false);
+                  setIsMuted(true);
                 }}
                 className="group relative w-[190px] sm:w-[220px] md:w-[245px] h-[340px] sm:h-[390px] md:h-[435px] flex-shrink-0 snap-start rounded-3xl overflow-hidden bg-black/5 border border-black/[0.08] hover:border-black/25 transition-all duration-300 hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] cursor-pointer select-none"
               >
@@ -357,7 +382,14 @@ export function PdpReels({
               {/* Audio Toggle Button */}
               <button
                 type="button"
-                onClick={() => setIsMuted(!isMuted)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const nextMuted = !isMuted;
+                  setIsMuted(nextMuted);
+                  if (activeVideoRef.current) {
+                    activeVideoRef.current.muted = nextMuted;
+                  }
+                }}
                 className="w-9 h-9 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/75 border border-white/15 transition-all cursor-pointer active:scale-95 shadow-md"
                 aria-label={isMuted ? "Unmute audio" : "Mute audio"}
               >
@@ -371,7 +403,10 @@ export function PdpReels({
               {/* Single Close Button on the Reel */}
               <button
                 type="button"
-                onClick={() => setActiveReelIndex(null)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveReelIndex(null);
+                }}
                 className="w-9 h-9 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/75 border border-white/15 transition-all cursor-pointer active:scale-95 shadow-md"
                 aria-label="Close reel viewer"
               >
@@ -393,6 +428,20 @@ export function PdpReels({
                 loop
                 muted={isMuted}
                 preload="auto"
+                onLoadedMetadata={(e) => {
+                  const v = e.currentTarget;
+                  v.muted = isMuted;
+                  const p = v.play();
+                  if (p !== undefined) {
+                    p.then(() => setIsPlaying(true)).catch(() => {
+                      v.muted = true;
+                      setIsMuted(true);
+                      v.play().catch(() => {});
+                    });
+                  }
+                }}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
                 onTimeUpdate={handleTimeUpdate}
                 className="w-full h-full object-cover"
               />
