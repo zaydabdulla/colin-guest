@@ -202,7 +202,7 @@ function HeroModel({ product, index, total, progress }: { product: Product, inde
       <div className="relative w-full h-full max-h-[85%]">
         <Image
           src={product.src}
-          alt={product.title}
+          alt={product.srcAlt || `${product.title} - Colin Guest`}
           fill
           className="object-contain"
           priority={index >= 8 && index <= 12}

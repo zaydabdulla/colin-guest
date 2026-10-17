@@ -77,11 +77,13 @@ export async function getCollectionProducts(handle: string, sortKey: string = 'C
               teaser: metafield(namespace: "custom", key: "short_description") {
                 value
               }
-              images(first: 5) {
+              images(first: 10) {
                 edges {
                   node {
                     url
                     altText
+                    width
+                    height
                   }
                 }
               }
@@ -364,11 +366,13 @@ export async function getAllProducts(sortKey: string = 'CREATED_AT', reverse: bo
                 currencyCode
               }
             }
-            images(first: 5) {
+            images(first: 10) {
               edges {
                 node {
                   url
                   altText
+                  width
+                  height
                 }
               }
             }
@@ -597,11 +601,13 @@ export async function getProductRecommendations(productId: string) {
             currencyCode
           }
         }
-        images(first: 5) {
+        images(first: 10) {
           edges {
             node {
               url
               altText
+              width
+              height
             }
           }
         }

@@ -39,14 +39,16 @@ export default async function LookbookPage() {
   }
   
   const displayProducts: Product[] = shopifyProducts.map((p: any) => {
-    const rawUrls = p.images?.map((img: any) => img.url) || [];
-    const media = extractProductMedia(rawUrls);
+    const media = extractProductMedia(p.images || []);
     return {
       id: p.id,
       handle: p.handle,
       src: media.primarySrc,
+      srcAlt: media.primaryAlt,
       secondarySrc: media.secondarySrc,
+      secondarySrcAlt: media.secondaryAlt,
       srcs: media.showcaseImages,
+      imageObjects: media.showcaseImageObjects,
       sizeChartSrc: media.sizeChartImage || undefined,
       title: p.title,
       price: `${p.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(p.priceRange.minVariantPrice.amount).toLocaleString()}`,

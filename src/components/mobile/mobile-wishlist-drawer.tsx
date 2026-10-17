@@ -74,7 +74,7 @@ export function WishlistDrawer() {
                         <div className="relative w-[85px] h-[105px] rounded-lg bg-[#f5f5f5] overflow-hidden shrink-0 border border-black/5 shadow-sm">
                           <Image
                             src={product.src}
-                            alt={product.title}
+                            alt={product.srcAlt || `${product.title} - Colin Guest`}
                             fill
                             className="object-contain hover:scale-105 transition-transform duration-500 p-2 mix-blend-multiply"
                             priority={index === 0}

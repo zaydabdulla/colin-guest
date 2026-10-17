@@ -59,6 +59,7 @@ export function Navbar() {
             id: p.id,
             handle: p.handle,
             src: p.images[0]?.url || "/placeholder.jpg",
+            srcAlt: p.images[0]?.altText || null,
             title: p.title,
             price: `${p.priceRange.minVariantPrice.amount} ${p.priceRange.minVariantPrice.currencyCode}`,
             amount: parseFloat(p.priceRange.minVariantPrice.amount),
@@ -338,7 +339,7 @@ export function Navbar() {
                               {product.src ? (
                                 <Image
                                   src={product.src}
-                                  alt={product.title}
+                                  alt={product.srcAlt || `${product.title} - Colin Guest`}
                                   fill
                                   className="object-cover transition-transform duration-1000 ease-in-out group-hover:scale-110"
                                 />

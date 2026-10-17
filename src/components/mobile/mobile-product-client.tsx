@@ -103,7 +103,7 @@ export function MobileProductClient({ product, suggestedProducts, allProducts }:
               {src ? (
                 <Image
                   src={src}
-                  alt={`${product.title} - Colin Guest view ${i + 1}`}
+                  alt={product.imageObjects?.[i]?.altText || (i === 0 && product.srcAlt) || `${product.title} - Colin Guest view ${i + 1}`}
                   fill
                   className="object-contain p-2 sm:p-3"
                   priority={i === 0}

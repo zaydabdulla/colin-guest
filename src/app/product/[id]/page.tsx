@@ -37,15 +37,17 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         : await getProductByHandle(decodedId);
       
       if (shopifyProduct) {
-        const rawUrls = shopifyProduct.images?.map((img: any) => img.url) || [];
-        const media = extractProductMedia(rawUrls);
+        const media = extractProductMedia(shopifyProduct.images || []);
 
         product = {
           id: shopifyProduct.id,
           handle: shopifyProduct.handle,
           src: media.primarySrc,
+          srcAlt: media.primaryAlt,
           secondarySrc: media.secondarySrc,
+          secondarySrcAlt: media.secondaryAlt,
           srcs: media.showcaseImages,
+          imageObjects: media.showcaseImageObjects,
           sizeChartSrc: media.sizeChartImage || undefined,
           title: shopifyProduct.title,
           price: `${shopifyProduct.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(shopifyProduct.priceRange.minVariantPrice.amount).toLocaleString()}`,
@@ -73,13 +75,16 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         const recommendations = await getProductRecommendations(shopifyProduct.id);
         if (recommendations && recommendations.length > 0) {
           suggestedProducts = recommendations.map((p: any) => {
-            const pMedia = extractProductMedia(p.images?.map((img: any) => img.url) || []);
+            const pMedia = extractProductMedia(p.images || []);
             return {
               id: p.id,
               handle: p.handle,
               src: pMedia.primarySrc,
+              srcAlt: pMedia.primaryAlt,
               secondarySrc: pMedia.secondarySrc,
+              secondarySrcAlt: pMedia.secondaryAlt,
               srcs: pMedia.showcaseImages,
+              imageObjects: pMedia.showcaseImageObjects,
               sizeChartSrc: pMedia.sizeChartImage || undefined,
               title: p.title,
               price: `${p.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(p.priceRange.minVariantPrice.amount).toLocaleString()}`,
@@ -96,13 +101,16 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
             .filter((p: any) => p.id !== shopifyProduct.id) // Don't show current product
             .slice(0, 8)
             .map((p: any) => {
-              const pMedia = extractProductMedia(p.images?.map((img: any) => img.url) || []);
+              const pMedia = extractProductMedia(p.images || []);
               return {
                 id: p.id,
                 handle: p.handle,
                 src: pMedia.primarySrc,
+                srcAlt: pMedia.primaryAlt,
                 secondarySrc: pMedia.secondarySrc,
+                secondarySrcAlt: pMedia.secondaryAlt,
                 srcs: pMedia.showcaseImages,
+                imageObjects: pMedia.showcaseImageObjects,
                 sizeChartSrc: pMedia.sizeChartImage || undefined,
                 title: p.title,
                 price: `${p.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(p.priceRange.minVariantPrice.amount).toLocaleString()}`,
@@ -122,13 +130,16 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   // Fetch all products for "Shop the Look" logic
   const allRawProducts = await getAllProducts();
   const allProducts: Product[] = allRawProducts.map((p: any) => {
-    const pMedia = extractProductMedia(p.images?.map((img: any) => img.url) || []);
+    const pMedia = extractProductMedia(p.images || []);
     return {
       id: p.id,
       handle: p.handle,
       src: pMedia.primarySrc,
+      srcAlt: pMedia.primaryAlt,
       secondarySrc: pMedia.secondarySrc,
+      secondarySrcAlt: pMedia.secondaryAlt,
       srcs: pMedia.showcaseImages,
+      imageObjects: pMedia.showcaseImageObjects,
       sizeChartSrc: pMedia.sizeChartImage || undefined,
       title: p.title,
       price: `${p.priceRange.minVariantPrice.currencyCode === 'INR' ? 'RS. ' : '$'}${parseFloat(p.priceRange.minVariantPrice.amount).toLocaleString()}`,

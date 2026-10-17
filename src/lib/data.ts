@@ -5,11 +5,21 @@ export type ProductVariant = {
   selectedOptions?: { name: string; value: string }[];
 };
 
+export type ProductImageItem = {
+  url: string;
+  altText?: string | null;
+  width?: number;
+  height?: number;
+};
+
 export type Product = {
   id: string | number;
   src: string;
+  srcAlt?: string | null;
   secondarySrc?: string;
+  secondarySrcAlt?: string | null;
   srcs?: string[];
+  imageObjects?: ProductImageItem[];
   sizeChartSrc?: string;
   title: string;
   price: string;
@@ -60,39 +70,64 @@ export const models: Product[] = [
  * In Colin Guest Shopify, the LAST image uploaded for any product is the Size Chart.
  * This helper guarantees the size chart is NEVER included in showcase galleries or cards,
  * and is strictly reserved for the Size Guide.
+ * Preserves altText from Shopify Storefront API.
  */
-export function extractProductMedia(rawUrls: (string | undefined | null)[]) {
-  const validUrls = (rawUrls || []).filter((u): u is string => Boolean(u && typeof u === "string"));
+export function extractProductMedia(rawImages: (string | ProductImageItem | undefined | null)[]) {
+  const validImages: ProductImageItem[] = (rawImages || [])
+    .filter((item): item is string | ProductImageItem => Boolean(item))
+    .map((item) => {
+      if (typeof item === "string") {
+        return { url: item, altText: null };
+      }
+      return {
+        url: item.url || "",
+        altText: item.altText || null,
+        width: item.width,
+        height: item.height,
+      };
+    })
+    .filter((img) => Boolean(img.url));
 
-  if (validUrls.length === 0) {
+  if (validImages.length === 0) {
     return {
       showcaseImages: ["/placeholder.jpg"],
+      showcaseImageObjects: [{ url: "/placeholder.jpg", altText: null }],
       sizeChartImage: null,
       primarySrc: "/placeholder.jpg",
+      primaryAlt: null,
       secondarySrc: undefined,
+      secondaryAlt: null,
     };
   }
 
   // If 2 or more images, the last one is the size chart
-  if (validUrls.length > 1) {
-    const sizeChartImage = validUrls[validUrls.length - 1];
-    const showcaseImages = validUrls.slice(0, -1);
+  if (validImages.length > 1) {
+    const sizeChartImage = validImages[validImages.length - 1].url;
+    const showcaseImageObjects = validImages.slice(0, -1);
+    const showcaseImages = showcaseImageObjects.map((img) => img.url);
     const primarySrc = showcaseImages[0] || "/placeholder.jpg";
-    // secondarySrc is only a real garment photo if showcaseImages has at least 2 images (validUrls >= 3)
+    const primaryAlt = showcaseImageObjects[0]?.altText || null;
     const secondarySrc = showcaseImages.length > 1 ? showcaseImages[1] : undefined;
+    const secondaryAlt = showcaseImageObjects.length > 1 ? showcaseImageObjects[1]?.altText || null : null;
     return {
       showcaseImages,
+      showcaseImageObjects,
       sizeChartImage,
       primarySrc,
+      primaryAlt,
       secondarySrc,
+      secondaryAlt,
     };
   }
 
   // Only 1 image total (no size chart uploaded yet)
   return {
-    showcaseImages: validUrls,
+    showcaseImages: validImages.map((img) => img.url),
+    showcaseImageObjects: validImages,
     sizeChartImage: null,
-    primarySrc: validUrls[0],
+    primarySrc: validImages[0].url,
+    primaryAlt: validImages[0].altText || null,
     secondarySrc: undefined,
+    secondaryAlt: null,
   };
 }

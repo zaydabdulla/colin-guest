@@ -46,7 +46,7 @@ export function WishlistPopup() {
             {wishlistPopupProduct.src ? (
               <Image 
                 src={wishlistPopupProduct.src} 
-                alt={wishlistPopupProduct.title} 
+                alt={wishlistPopupProduct.srcAlt || `${wishlistPopupProduct.title} - Colin Guest`} 
                 fill 
                 className="object-contain p-2 mix-blend-multiply"
               />

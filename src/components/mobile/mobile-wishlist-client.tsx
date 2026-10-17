@@ -57,7 +57,7 @@ export function MobileWishlistClient() {
                           <Link href={`/product/${product.handle || encodeURIComponent(product.id)}`} className="w-full h-full block">
                             <Image
                               src={src || "/placeholder.jpg"}
-                              alt={`${product.title} - view ${i + 1}`}
+                              alt={product.imageObjects?.[i]?.altText || (i === 0 && product.srcAlt) || (i === 1 && product.secondarySrcAlt) || `${product.title} - Colin Guest view ${i + 1}`}
                               fill
                               className="object-cover"
                               sizes="50vw"

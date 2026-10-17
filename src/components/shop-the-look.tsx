@@ -114,7 +114,7 @@ export function ShopTheLook({ currentProduct, allProducts }: ShopTheLookProps) {
                   {/* Product 1 */}
                   <div className="relative group/item text-center max-w-[160px] md:max-w-[280px]">
                     <div className="w-36 h-48 md:w-56 md:h-72 relative overflow-hidden rounded-sm transition-all duration-700 shadow-sm border border-black/5 bg-white mx-auto">
-                      <Image src={currentProduct.src} alt={currentProduct.title} fill className="object-cover" />
+                      <Image src={currentProduct.src} alt={currentProduct.srcAlt || `${currentProduct.title} - Colin Guest`} fill className="object-cover" />
                     </div>
                     <div className="mt-3 space-y-1">
                       <p className="text-[10px] font-bold text-black truncate uppercase tracking-tight">{currentProduct.title}</p>
@@ -129,7 +129,7 @@ export function ShopTheLook({ currentProduct, allProducts }: ShopTheLookProps) {
                   {/* Product 2 */}
                   <div className="relative group/item text-center max-w-[160px] md:max-w-[280px]">
                     <div className="w-36 h-48 md:w-56 md:h-72 relative overflow-hidden rounded-sm transition-all duration-700 shadow-sm border border-black/5 bg-white mx-auto">
-                      <Image src={pairing.src} alt={pairing.title} fill className="object-cover" />
+                      <Image src={pairing.src} alt={pairing.srcAlt || `${pairing.title} - Colin Guest`} fill className="object-cover" />
                     </div>
                     <div className="mt-3 space-y-1">
                       <p className="text-[10px] font-bold text-black truncate uppercase tracking-tight">{pairing.title}</p>

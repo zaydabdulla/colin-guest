@@ -24,13 +24,15 @@ export function MobileHomeClient({ products, collections }: MobileHomeClientProp
   const { toggleWishlist, wishlistItems } = useCartStore();
 
   const mapShopifyProduct = (p: any): Product => {
-    const rawUrls = p.images?.map((img: any) => img.url) || [];
-    const media = extractProductMedia(rawUrls);
+    const media = extractProductMedia(p.images || []);
     return {
       id: p.id,
       src: media.primarySrc,
+      srcAlt: media.primaryAlt,
       secondarySrc: media.secondarySrc,
+      secondarySrcAlt: media.secondaryAlt,
       srcs: media.showcaseImages,
+      imageObjects: media.showcaseImageObjects,
       sizeChartSrc: media.sizeChartImage || undefined,
       title: p.title,
       price: formatPrice(p),
@@ -179,7 +181,7 @@ function HeroModel({ product, index, total, progress }: { product: Product, inde
       className="w-[75vw] max-w-[360px] h-full flex items-center justify-center pointer-events-none"
     >
       <div className="relative w-full h-full max-h-[80%] pt-8">
-        <Image src={product.src || "/placeholder.jpg"} alt={product.title} fill className="object-contain" sizes="(max-width: 768px) 75vw, 400px" quality={70} />
+        <Image src={product.src || "/placeholder.jpg"} alt={product.srcAlt || `${product.title} - Colin Guest`} fill className="object-contain" sizes="(max-width: 768px) 75vw, 400px" quality={70} />
       </div>
     </motion.div>
   );

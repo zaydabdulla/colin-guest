@@ -114,7 +114,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
               {primaryImage ? (
                 <Image 
                   src={primaryImage}
-                  alt={`${product.title} - Colin Guest`}
+                  alt={product.srcAlt || product.imageObjects?.[0]?.altText || `${product.title} - Colin Guest`}
                   fill
                   className="object-contain p-3"
                   priority
@@ -130,7 +130,7 @@ export default function ProductClient({ product, suggestedProducts, allProducts 
             {galleryImages.map((src, i) => (
                <div key={i} className="relative w-full aspect-[2/3] bg-white border border-black/5 rounded-2xl overflow-hidden shadow-sm flex items-center justify-center">
                    {src ? (
-                     <Image src={src} alt={`${product.title} - Colin Guest view ${i + 2}`} fill className="object-contain p-3" priority={i === 0} />
+                     <Image src={src} alt={product.imageObjects?.[i + 1]?.altText || `${product.title} - Colin Guest view ${i + 2}`} fill className="object-contain p-3" priority={i === 0} />
                    ) : (
                      <div className="text-black/5 font-bold uppercase tracking-widest text-[10px]">No Detail Image</div>
                    )}

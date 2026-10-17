@@ -62,7 +62,7 @@ export default function LookbookClient({ products }: LookbookClientProps) {
                     <div className="relative w-[90%] h-[90%]">
                         <Image 
                         src={listModel.src}
-                        alt={listModel.title}
+                        alt={listModel.srcAlt || `${listModel.title} - Colin Guest`}
                         fill
                         className="object-contain drop-shadow-xl group-hover:scale-105 transition-transform duration-700"
                         sizes="(max-width: 768px) 50vw, 25vw"
@@ -127,7 +127,7 @@ function ScrollModel({ model, index, activeFloat }: any) {
       <div className="relative w-full h-full max-w-[80vw] flex items-center justify-center">
         <Image 
           src={model.src} 
-          alt={model.title} 
+          alt={model.srcAlt || `${model.title} - Colin Guest`} 
           fill 
           className="object-contain" 
           priority={index < 5} 
