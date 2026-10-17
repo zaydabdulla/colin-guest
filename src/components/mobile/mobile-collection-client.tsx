@@ -9,6 +9,7 @@ import { Plus, Bookmark, ShoppingBag, LayoutGrid, Grid3X3 } from "lucide-react";
 import { motion } from "framer-motion";
 import { FilterDrawer } from "../filter-drawer";
 import { useCartStore } from "@/lib/store";
+import { OurStore } from "@/components/our-store";
 
 // Helper function to extract colors (copied from desktop client)
 function parseColors(colorData: string | undefined, options: any[], tags: string[] = []): string[] {
@@ -164,7 +165,7 @@ export function MobileCollectionClient({
       />
 
       <div className="pt-[64px] bg-white">
-        <div className="bg-[#f4f4f4] rounded-t-[32px] w-full overflow-x-hidden pb-40 shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
+        <div className="bg-[#f4f4f4] rounded-t-[32px] w-full overflow-x-hidden pb-20 shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
 
           <div className="pt-3 flex flex-col gap-3">
 
@@ -207,13 +208,6 @@ export function MobileCollectionClient({
                   </button>
                 </div>
               </div>
-
-              {descriptionHtml && (
-                <div 
-                  className="text-[9.5px] text-black/60 font-sans leading-relaxed mt-0.5 mb-1"
-                  dangerouslySetInnerHTML={{ __html: descriptionHtml }}
-                />
-              )}
             </div>
 
 
@@ -330,6 +324,22 @@ export function MobileCollectionClient({
                 <p className="text-[12px] font-medium text-gray-500">No products match your filters.</p>
               </div>
             )}
+
+            {/* Editorial Collection Story / SEO Notes */}
+            {descriptionHtml && (
+              <div className="px-6 pt-12 pb-6 mt-8 border-t border-black/[0.05] text-center max-w-sm mx-auto">
+                <span className="text-[8px] font-bold uppercase tracking-[0.35em] text-black/30 block mb-2.5 font-sans">
+                  The Collection
+                </span>
+                <div 
+                  className="text-[12.5px] font-serif italic text-black/60 leading-[1.75] tracking-wide [&>p]:mb-2 [&>p:last-child]:mb-0 selection:bg-neutral-900 selection:text-white"
+                  dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+                />
+              </div>
+            )}
+
+            {/* Visit Our Store Section */}
+            <OurStore className="pt-2 pb-6" />
 
 
             <style dangerouslySetInnerHTML={{

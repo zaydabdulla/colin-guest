@@ -7,6 +7,7 @@ import { Product, Collection } from "@/lib/data";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { FilterDrawer } from "./filter-drawer";
+import { OurStore } from "@/components/our-store";
 
 interface CategoryClientProps {
   category: string;
@@ -241,7 +242,7 @@ export default function CategoryClient({ category, formattedCategory, displayPro
   }, [displayProducts, selectedFilters, sortOption]);
 
   return (
-    <div className="pt-20 px-8 max-w-[1800px] mx-auto pb-52 transition-all duration-700">
+    <div className="pt-20 px-8 max-w-[1800px] mx-auto pb-16 transition-all duration-700">
       
       {/* Filter Drawer Component */}
       <FilterDrawer 
@@ -297,12 +298,6 @@ export default function CategoryClient({ category, formattedCategory, displayPro
             </div>
          </div>
 
-         {descriptionHtml && (
-           <div 
-             className="text-[11px] text-black/60 max-w-3xl font-sans leading-relaxed mt-0.5 mb-1"
-             dangerouslySetInnerHTML={{ __html: descriptionHtml }}
-           />
-         )}
 
          {/* Editorial Category Toggles */}
          <div className="flex gap-2 md:gap-1.5 overflow-x-auto pb-2 scrollbar-hide no-scrollbar relative">
@@ -354,6 +349,22 @@ export default function CategoryClient({ category, formattedCategory, displayPro
           </div>
         )}
       </section>
+
+      {/* Editorial Collection Story / SEO Notes */}
+      {descriptionHtml && (
+        <section className="mt-24 md:mt-32 pt-14 md:pt-20 border-t border-black/[0.06] max-w-3xl mx-auto text-center px-6">
+          <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-[0.4em] text-neutral-400 block mb-4 font-sans">
+            The Collection
+          </span>
+          <div 
+            className="font-serif italic text-[14px] md:text-[16px] text-neutral-700 leading-relaxed md:leading-[1.9] tracking-wide [&>p]:mb-3 [&>p:last-child]:mb-0 selection:bg-neutral-900 selection:text-white"
+            dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+          />
+        </section>
+      )}
+
+      {/* Visit Our Store Section */}
+      <OurStore className="mt-12 md:mt-20 pb-8" />
     </div>
   );
 }
