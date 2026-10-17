@@ -97,6 +97,24 @@ export default async function CategoryGrid({ params }: { params: Promise<{ categ
 
   const formattedCategory = isAll ? 'ALL PRODUCTS' : category.split('-').join(' ');
 
+  const DEFAULT_COLLECTION_DESCRIPTIONS: Record<string, string> = {
+    'all': "Discover the complete Colin Guest collection. Oversized hoodies, graphic shirts, co-ord sets and baggy denim tailored for contemporary streetwear.",
+    'best-sellers': "Discover COLINGUEST's best-selling streetwear, featuring statement silhouettes, oversized fits and distinctive everyday styles. Shop customer-favorite pieces designed for a modern wardrobe.",
+    'hoodies': "Shop oversized, heavyweight, acid wash and graphic hoodies for men. Premium streetwear hoodies from Colin Guest, delivered across India.",
+    'jeans': "Shop baggy, wide-leg and skater jeans for men, from acid-wash distressed to curved seam denim. Colin Guest streetwear, delivered across India.",
+    'shirts': "Bold graphic print half sleeve shirts for men in relaxed streetwear fits. Explore the Colin Guest Five Sleeve range, shipped across India.",
+    'co-ord-sets': "Men's co-ord sets with toggle and buckle-front jackets and matching wide-leg trousers. Shop Colin Guest streetwear co-ords online across India.",
+    'jackets': "Shop men's streetwear jackets including the sleek black leather jacket. Relaxed fits from Colin Guest, delivered across India.",
+    'jackets-1': "Shop men's streetwear jackets including the sleek black leather jacket. Relaxed fits from Colin Guest, delivered across India.",
+    'new-arrivals': "Discover the latest arrivals from COLINGUEST, featuring contemporary streetwear, oversized silhouettes, distinctive graphics and modern everyday styles. Explore new pieces designed to refresh your wardrobe."
+  };
+
+  const rawDesc = currentCollection?.descriptionHtml || currentCollection?.description || currentCollection?.seo?.description;
+  const cleanDesc = rawDesc && rawDesc.replace(/<[^>]*>?/gm, '').trim();
+  const collectionDescription = cleanDesc && cleanDesc.length > 0
+    ? (currentCollection?.descriptionHtml && currentCollection.descriptionHtml.includes('<p>') ? currentCollection.descriptionHtml : `<p>${cleanDesc}</p>`)
+    : `<p>${DEFAULT_COLLECTION_DESCRIPTIONS[catLower] || DEFAULT_COLLECTION_DESCRIPTIONS[currentCollection?.handle || ''] || `Explore our curated selection of ${formattedCategory} at Colin Guest. Distinctive statement silhouettes, oversized fits, and contemporary streetwear tailored for a modern wardrobe.`}</p>`;
+
   return (
     <>
       {/* Desktop View - Strict Isolation */}
@@ -106,7 +124,7 @@ export default async function CategoryGrid({ params }: { params: Promise<{ categ
           formattedCategory={formattedCategory}
           displayProducts={displayProducts}
           collections={collections}
-          descriptionHtml={currentCollection?.descriptionHtml}
+          descriptionHtml={collectionDescription}
         />
       </div>
 
@@ -117,7 +135,7 @@ export default async function CategoryGrid({ params }: { params: Promise<{ categ
           formattedCategory={formattedCategory}
           displayProducts={displayProducts}
           collections={collections}
-          descriptionHtml={currentCollection?.descriptionHtml}
+          descriptionHtml={collectionDescription}
         />
       </div>
     </>
