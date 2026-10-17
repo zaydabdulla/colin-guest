@@ -31,18 +31,13 @@ export default async function CategoryGrid({ params }: { params: Promise<{ categ
   if (isAll) {
     shopifyProducts = await getAllProducts();
   } else {
-    let shopifyHandle = category;
-    if (catLower === 'hoodies') shopifyHandle = 'hoodie';
-    if (catLower === 'jeans') shopifyHandle = 'jeans';
-    if (catLower === 'jackets') shopifyHandle = 'jackets';
-    
-    currentCollection = await getCollection(shopifyHandle);
+    currentCollection = await getCollection(category);
     if (!currentCollection) {
       // Real 404 for invalid/missing collection handles (resolves soft-404 audit blocker)
       notFound();
     }
 
-    shopifyProducts = await getCollectionProducts(shopifyHandle);
+    shopifyProducts = await getCollectionProducts(currentCollection.handle);
 
     // Fallback: If collection products query returns empty, filter all products by productType or category
     if (!shopifyProducts || shopifyProducts.length === 0) {
@@ -140,12 +135,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   }
 
   const isAll = catLower === 'all';
-  let shopifyHandle = category;
-  if (catLower === 'hoodies') shopifyHandle = 'hoodie';
-  if (catLower === 'jeans') shopifyHandle = 'jeans';
-  if (catLower === 'jackets') shopifyHandle = 'jackets';
-
-  const collection = !isAll ? await getCollection(shopifyHandle) : null;
+  const collection = !isAll ? await getCollection(category) : null;
 
   const formattedCategory = isAll
     ? 'All Products'

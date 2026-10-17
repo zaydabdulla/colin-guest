@@ -135,10 +135,22 @@ export async function getCollectionProducts(handle: string, sortKey: string = 'C
     `;
     const listResponse = await shopifyFetch({ query: listQuery });
     const collections = listResponse.data?.collections?.edges || [];
-    const match = collections.find((edge: any) =>
-      edge.node.title.toLowerCase() === handle.replace(/-/g, ' ').toLowerCase() ||
-      edge.node.handle === handle.toLowerCase().replace(/\s+/g, '-')
-    );
+    const cleanHandle = handle.toLowerCase().replace(/\s+/g, '-');
+    const cleanTitle = handle.replace(/-/g, ' ').toLowerCase();
+
+    const match = collections.find((edge: any) => {
+      const eTitle = (edge.node.title || '').toLowerCase();
+      const eHandle = (edge.node.handle || '').toLowerCase();
+      return (
+        eTitle === cleanTitle ||
+        eHandle === cleanHandle ||
+        eTitle === `${cleanTitle}s` ||
+        `${eTitle}s` === cleanTitle ||
+        eHandle === `${cleanHandle}s` ||
+        `${eHandle}s` === cleanHandle ||
+        eHandle.startsWith(cleanHandle)
+      );
+    });
 
     if (match) {
       console.log(`Found matching collection: ${match.node.title} (${match.node.handle})`);
@@ -441,10 +453,22 @@ export async function getCollection(handle: string) {
     `;
     const listResponse = await shopifyFetch({ query: listQuery });
     const collections = listResponse.data?.collections?.edges || [];
-    const match = collections.find((edge: any) =>
-      edge.node.title.toLowerCase() === handle.replace(/-/g, ' ').toLowerCase() ||
-      edge.node.handle === handle.toLowerCase().replace(/\s+/g, '-')
-    );
+    const cleanHandle = handle.toLowerCase().replace(/\s+/g, '-');
+    const cleanTitle = handle.replace(/-/g, ' ').toLowerCase();
+
+    const match = collections.find((edge: any) => {
+      const eTitle = (edge.node.title || '').toLowerCase();
+      const eHandle = (edge.node.handle || '').toLowerCase();
+      return (
+        eTitle === cleanTitle ||
+        eHandle === cleanHandle ||
+        eTitle === `${cleanTitle}s` ||
+        `${eTitle}s` === cleanTitle ||
+        eHandle === `${cleanHandle}s` ||
+        `${eHandle}s` === cleanHandle ||
+        eHandle.startsWith(cleanHandle)
+      );
+    });
 
     if (match) {
       response = await shopifyFetch({
